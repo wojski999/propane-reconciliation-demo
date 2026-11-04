@@ -155,8 +155,8 @@ local-midnight boundaries. `@hour:N` is explicitly an elapsed offset from cutoff
 `@day:N` is a posting-date offset from the requested business date. Current
 inventory movements, their delivery/POS sources, and most sale/revenue records
 occur at start + 2 hours on every supported day. Opening/closing readings bracket
-these movements; BOUNDARY readings sit exactly start - 1 hour and end + 1 hour.
-The reading manifest includes that permitted endpoint halo through end + 1 hour.
+these movements; BOUNDARY readings sit exactly start - 1 hour and end - 1 hour.
+The reading manifest ends at cutoff; no observation follows extraction or as-of.
 All other history manifests start at start - 192 hours and finish at cutoff.
 
 Intentional elapsed-time vectors: D-GRACE, I-GRACE and PAY-GRACE are exactly
@@ -204,3 +204,16 @@ and package-data tests prohibit application access to the oracle and restrict
 shipped data to the source template. Numeric oracle assertions independently
 calculate actual, expected, delta and thresholds from source/policy records;
 consistent-but-wrong P07 and P13 oracle mutations must be rejected.
+
+
+Posting-date policy: TxnDate is an explicit accounting posting date, not derived
+from the local calendar date of EventAt. DEP-SHORT retains its start-relative
+posting date when its elapsed-hour event crosses DST. I-GRACE/PAY-GRACE likewise
+retain their explicit posting dates. I-CREDIT/I-PAY/I-PAID post on the previous
+day for current-day deliveries: future daily KPI tests must separate their prior-day
+revenue from current-day delivered gallons, rather than force event parity.
+
+Every source timestamp is within its declared window, no later than extraction
+and as-of plus future_max_minutes. Coverage lies within the declared window and
+no later than extraction. Only P10's QBO covered_through is deliberately stale;
+its newer records still obey window, extraction and future-time constraints.

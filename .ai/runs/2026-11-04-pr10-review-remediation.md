@@ -43,3 +43,34 @@ additive commits on its existing branch; no new PR, rule engine or issue #5–#9
 Parent must obtain both fresh independent review verdicts and static-artifact QA
 on the final pushed head before considering merge. This task never self-approves
 or merges. The business specification remains active and incomplete.
+
+
+## Remaining findings follow-up (2026-11-04)
+
+Read full comments 6634396390 / 6634398962 and prior response 6634165071.
+Merged existing PR branch into task fork before edits; same PR, additive commits.
+Closing BOUNDARY reading now end - 1h; readings expected window ends at cutoff.
+New recursive source timestamp invariants cover all manifested content (including
+nested QBO metadata/update versions) against window, extraction, as-of/future
+policy and coverage. Only P10/issues QBO watermark comparison is exempt, with
+its exact 25h stale age checked; future-record detection remains unconditional.
+Original future closing observation plus widened window is a negative regression
+for clean/issues/P10. Metadata tests bind catalogue/scenario severity, all missing
+lookup keys from generated identities, P07 complete related refs from source
+lines/batch, and remaining related refs from explicit scenario evidence semantics.
+Negative regressions change P08 severity, drop one P07 related ref, and replace
+P12 missing_reference. No application oracle access or business engines added.
+Contract now states DEP-SHORT's explicit posting-date policy across DST and
+prior-day advance-invoice revenue versus current-day gallons for future KPI work.
+
+Fresh Python 3.12.3 venv: timeout 300 make check PASS, 181 tests, 97/97 lines,
+40/40 branch exits, zero partial branches; Ruff lint/format PASS, no exclusions.
+Three actual oracle-file mutation probes (P08 severity high to medium, drop one
+P07 related ref, change P12 missing_reference) each fail targeted pytest (exit 1);
+original bytes restored. Permanent regressions also reject the original future
+closing reading for clean/issues/P10.
+
+Independent timeout-300 chronology probe: PASS 16,437 cases (all 5,479 supported
+dates 2020-01-01 through 2034-12-31 x clean/issues/P10). No future source,
+window, coverage or extraction ordering failures. Probe uses generated outputs
+and the recursive invariant helper, independently of application/oracle logic.

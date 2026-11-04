@@ -15,3 +15,13 @@ records and policy fields and assert all four oracle fields. Retain negative
 mutation tests that prove those internally consistent false answers fail. Package
 only source data; keep boundary expected answers and findings outside application
 inputs, with a tested exact package-data allowlist and source-access guard.
+
+
+Follow-up reviews found a missed future-source invariant: widening the expected
+window did not make a reading after extraction possible. Boundary tolerance is
+not permission to include future observations. Check every nested source timestamp
+against its window, watermark, extraction and run as-of. A planted stale watermark
+may exempt only that watermark comparison, never extraction/future checks. Keep a
+regression restoring the original future closing reading even with the widened
+window. Bind severity, missing lookup keys and complete related evidence as well
+as arithmetic; deleting one valid related reference must fail independently.

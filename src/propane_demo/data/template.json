@@ -1465,7 +1465,7 @@
       {
         "reading_id": "R-BOUNDARY-CLOSE",
         "asset_id": "BOUNDARY",
-        "observed_at": "@end_hour:1",
+        "observed_at": "@end_hour:-1",
         "gallons": "1005.000",
         "gallon_basis": "net_60F",
         "temperature_f": "60.0",
@@ -2246,7 +2246,7 @@
         "source": "readings",
         "file_id": "readings.csv",
         "expected_window_start": "@start_hour:-192",
-        "expected_window_end": "@end_hour:1",
+        "expected_window_end": "@end",
         "extracted_at": "@end",
         "covered_through": "@end",
         "status": "success",

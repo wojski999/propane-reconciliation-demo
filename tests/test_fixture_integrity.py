@@ -13,6 +13,7 @@ from propane_demo.generator import business_window
 
 DAYS = [
     date(2026, 11, 3),
+    date(2026, 11, 4),
     date(2026, 3, 8),
     date(2026, 3, 9),
     date(2026, 11, 1),
@@ -458,3 +459,190 @@ def test_combined_numeric_findings_are_independently_bound():
         D(d["policies.json"]["inventory_min_gallons"]),
         D(d["policies.json"]["inventory_pct"]) * (D(reading["gallons"]) + inbound),
     )
+
+
+def assert_source_chronology(d, scenario):
+    as_of = datetime.fromisoformat(d["run.json"]["as_of"])
+    future = as_of + timedelta(minutes=d["policies.json"]["future_max_minutes"])
+    for manifest in d["manifests.json"]:
+        start, end, covered, extracted = (
+            datetime.fromisoformat(manifest[k])
+            for k in [
+                "expected_window_start",
+                "expected_window_end",
+                "covered_through",
+                "extracted_at",
+            ]
+        )
+        assert start <= covered <= end <= extracted <= as_of
+        stale = scenario in ["P10", "issues"] and manifest["file_id"] == "qbo.json"
+        if stale:
+            assert as_of - covered == timedelta(hours=25)
+        for path, instant in timestamps(d[manifest["file_id"]]):
+            assert start <= instant <= end, (manifest["file_id"], path)
+            assert instant <= extracted
+            assert instant <= future
+            if not stale:
+                assert instant <= covered
+
+
+@pytest.mark.parametrize("day", DAYS)
+@pytest.mark.parametrize("scenario", ["clean", "issues", "P10"])
+def test_source_chronology(day, scenario):
+    assert_source_chronology(dataset(scenario, business_date=day), scenario)
+
+
+@pytest.mark.parametrize("scenario", ["clean", "issues", "P10"])
+def test_original_future_closing_reading_is_rejected(scenario):
+    d = dataset(scenario)
+    close = keyed(d["readings.csv"], "reading_id")["R-BOUNDARY-CLOSE"]
+    close["observed_at"] = (
+        datetime.fromisoformat(d["run.json"]["window_end"]) + timedelta(hours=1)
+    ).isoformat()
+    # Even widening the window, as in the original fix, cannot hide future data.
+    manifest = keyed(d["manifests.json"], "file_id")["readings.csv"]
+    manifest["expected_window_end"] = close["observed_at"]
+    with pytest.raises(AssertionError):
+        assert_source_chronology(d, scenario)
+
+
+def test_oracle_semantic_metadata():
+    # Catalogue severity plus explicit scenario meaning, independent of oracle values.
+    for scenario, entry in ORACLE["scenarios"].items():
+        d = dataset(scenario)
+        for f in entry["findings"]:
+            check = f["check_id"]
+            severity = "critical" if check == "C10" else "high"
+            if (
+                check == "C05"
+                and scenario != "P14"
+                or check == "C06"
+                and "qbo:Payment:PAY-UNAPPLIED" in f["source_refs"]
+                or check == "C08"
+                and scenario in ["P09", "issues"]
+            ):
+                severity = "medium"
+            assert f["severity"] == severity
+            missing = None
+            if check == "C01":
+                row = keyed(d["deliveries.csv"], "ticket_id")["D-MISSING"]
+                missing = dict(
+                    system="qbo",
+                    type="Invoice.Line",
+                    lookup_key=f"delivery:{row['ticket_id']}",
+                )
+            elif check == "C02":
+                row = keyed(d["qbo.json"]["Invoice"], "Id")["I-ORPHAN"]
+                missing = dict(
+                    system="cargas",
+                    type="delivery",
+                    lookup_key=f"invoice:{row['Id']}:{row['Line'][0]['Id']}",
+                )
+            elif check == "C11":
+                if "cargas:delivery:D-NO-MAPPING" in f["source_refs"]:
+                    row = keyed(d["deliveries.csv"], "ticket_id")["D-NO-MAPPING"]
+                    missing = dict(
+                        system="identity",
+                        type="customer/item",
+                        lookup_key=f"customer:{row['customer_id']};item:{row['item_id']}",
+                    )
+                else:
+                    row = keyed(d["readings.csv"], "reading_id")["R-NO-READING-OPEN"]
+                    missing = dict(
+                        system="cargas",
+                        type="closing_reading",
+                        lookup_key=f"asset:{row['asset_id']};boundary:{d['run.json']['window_end']}",
+                    )
+            elif scenario == "P14":
+                row = d["qbo.json"]["RefundReceipt"][-1]
+                missing = dict(
+                    system="qbo", type="original_sale", lookup_key=f"refund:{row['Id']}"
+                )
+            assert f.get("missing_reference") == missing
+    d = dataset("P07")
+    batch = d["settlements.csv"][0]
+    deposit = keyed(d["qbo.json"]["Deposit"], "Id")[batch["qbo_deposit_id"]]
+    refs = {"policy:POLICY-1", f"pos:fee:{batch['batch_id']}:fees"}
+    refs.update(
+        f"pos:POS:{r['transaction_id']}:{r['line_id']}"
+        for r in d["pos.csv"]
+        if r["settlement_batch_id"] == batch["batch_id"]
+    )
+    refs.update(f"qbo:Deposit:{deposit['Id']}:{r['Id']}" for r in deposit["Line"][1:])
+    refs.update(
+        f"qbo:{detail['TxnType']}:{detail['TxnId']}"
+        for line in deposit["Line"]
+        if "TxnId" in (detail := line["DepositLineDetail"])
+    )
+    assert set(ORACLE["scenarios"]["P07"]["findings"][0]["related_refs"]) == refs
+
+
+@pytest.mark.parametrize(
+    "scenario,field,value",
+    [
+        ("P08", "severity", "medium"),
+        ("P07", "related_refs", []),
+        ("P12", "missing_reference", {"lookup_key": "invented"}),
+    ],
+)
+def test_oracle_metadata_mutations_are_rejected(monkeypatch, scenario, field, value):
+    finding = ORACLE["scenarios"][scenario]["findings"][0]
+    if field == "related_refs":
+        value = finding[field][1:]
+    monkeypatch.setitem(finding, field, value)
+    with pytest.raises(AssertionError):
+        test_oracle_semantic_metadata()
+
+
+# Explicit scenario evidence semantics: ticket/allocation, approval/original,
+# AR snapshot, contributing movements, failed row and journal account context.
+RELATED_EXPECTATIONS = {
+    "P01": ["cargas:meter_ticket:MT-D-MISSING"],
+    "P02": ["qbo:Item:LPG-DELIVERY"],
+    "P03": ["pos:external_reference:EXT-DUP"],
+    "P04": [
+        "cargas:meter_ticket:MT-D-PRICE identity:allocation:A-PRICE policy:POLICY-1"
+    ],
+    "P05": [
+        "identity:approval:APP-DISCOUNT policy:POLICY-1 "
+        "prices:price:PRICE-DISCOUNT qbo:SalesReceipt:SR-DISCOUNT:1",
+        "identity:approval:APP-CREDIT policy:POLICY-1 qbo:Invoice:I-CREDIT",
+    ],
+    "P06": ["ar:snapshot:AR-OPEN qbo:Invoice:I-PAY", "ar:snapshot:AR-OPEN"],
+    "P08": [
+        "cargas:delivery:D-OUT cargas:meter_ticket:MT-D-OUT "
+        "inventory:movement:M-OUT inventory:movement:M-PURCHASE "
+        "inventory:movement:M-RETAIL policy:POLICY-1 pos:POS:T-RETAIL:1"
+    ],
+    "P09": [
+        "inventory:movement:M-TRANSFER-IN "
+        "inventory:movement:M-TRANSFER-OUT policy:POLICY-1"
+    ],
+    "P10": ["file:qbo.json policy:POLICY-1"],
+    "P11": ["file:pos.csv:row:2"],
+    "P12": ["policy:POLICY-1", "policy:POLICY-1"],
+    "P13": [
+        "identity:posting:POST-I-PAY policy:POLICY-1 qbo:Invoice:I-PAY "
+        "qbo:account:CLEARING qbo:account:REVENUE"
+    ],
+    "P14": ["identity:approval:APP-REFUND policy:POLICY-1"],
+    "raw-repeat": ["qbo:Invoice:I-PRICE qbo:version:I-PRICE:0"],
+    "wrong-clearing": [
+        "identity:posting:POST-I-PAY policy:POLICY-1 qbo:Invoice:I-PAY "
+        "qbo:JournalEntry:JE-UNBALANCED:2 qbo:account:CLEARING "
+        "qbo:account:REVENUE"
+    ],
+}
+
+
+def test_all_related_evidence_matches_scenario_semantics():
+    expectations = dict(RELATED_EXPECTATIONS)
+    expectations["issues"] = [
+        RELATED_EXPECTATIONS[s][i]
+        for s, i in [("P09", 0), ("P10", 0), ("P11", 0), ("P12", 0), ("P12", 1)]
+    ]
+    for scenario, groups in expectations.items():
+        findings = ORACLE["scenarios"][scenario]["findings"]
+        assert len(findings) == len(groups)
+        for finding, expected in zip(findings, groups, strict=True):
+            assert finding["related_refs"] == sorted(expected.split())
