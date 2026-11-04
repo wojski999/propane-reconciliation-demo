@@ -532,3 +532,18 @@ known residual contributions. Opening-AR failure never blocks QBO-only capacity
 validation. Zero, unknown, void and ambiguous credit references cannot erase the
 explicit allocation uncertainty. Valid Payment applications and AppliedAmount
 continue to share max(applied, seen), never their sum.
+
+### PR 15 F1-f: rejected CreditMemo applications
+
+A negative AppliedAmount or an amount above abs(TotalAmt) leaves that credit's
+capacity persistently unresolved. Keep the existing applied_credit_invoice
+gap; emit credit_capacity instead of a guessed residual. Subsequent refunds emit
+refund_credit_capacity and later Payment lines cannot restore certainty. Revenue
+inherits these capacity gaps independently of opening AR. Signed source amounts
+remain accepted at ingestion; negative applied amounts are never treated as zero.
+Zero and valid positive applications keep the existing max(application, payment)
+policy. Independent credits retain their own known residuals.
+
+Payment allocation is normalized exclusively from Payment.Line.LinkedTxn.
+Payment header LinkedTxn is retained as source evidence but is unsupported as an
+allocation source; it does not apply a credit or change cash allocation.

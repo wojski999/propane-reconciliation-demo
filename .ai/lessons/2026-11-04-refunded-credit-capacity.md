@@ -61,3 +61,13 @@ turn a rejected amount into a known consumption or disclose a guessed residual.
 Test raw compute/render paths with both orders, opening failures, exact capacity
 controls and an unrelated healthy credit, then disable rejection propagation to
 prove the regression assertions detect the old skip behavior.
+
+## F1-f: the credit's own applied amount can reject certainty
+
+A persistent uncertainty registry must cover numeric allocation rejection on the
+CreditMemo itself, not just Payment lines. Signed source validation accepts a
+negative AppliedAmount; max(applied, seen) must not silently turn it into zero.
+Both negative and over-total application failures leave capacity unknown before
+refund or residual evaluation. Preserve the original AR gap, propagate existing
+capacity gaps to revenue, and prove later valid payments cannot clear the state.
+Keep zero/positive cent boundaries and independent healthy credits as controls.

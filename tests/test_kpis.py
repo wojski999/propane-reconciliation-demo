@@ -602,3 +602,28 @@ def test_later_valid_line_cannot_restore_rejected_credit_capacity():
     assert "credit_allocation:qbo:Payment:PAY-APPLIED:2" in keys
     assert "credit_capacity:qbo:CreditMemo:CM-BOUNDARY" in keys
     assert ar["unapplied_credits"]["contributions"] == []
+
+
+@pytest.mark.parametrize("applied", [-2500, -1000, -1, 10001])
+def test_invalid_numeric_credit_keeps_residual_unknown_and_healthy_credit_known(
+    applied,
+):
+    data = inputs()
+    records = data["records"]
+    credit = records["qbo:CreditMemo:CM-BOUNDARY"]
+    credit["AppliedAmount"] = applied
+    healthy = copy.deepcopy(credit)
+    healthy.update(Id="CM-H", TotalAmt=700, AppliedAmount=0)
+    records["qbo:CreditMemo:CM-H"] = healthy
+    ar = isolated(data).ar()
+    assert ar["value"] is None
+    assert {
+        "missing_lookup_key": "credit_capacity:qbo:CreditMemo:CM-BOUNDARY",
+        "source_refs": ["qbo:CreditMemo:CM-BOUNDARY"],
+    } in ar["gaps"]
+    residuals = ar["unapplied_credits"]["contributions"]
+    assert any(
+        c["amount"] == "7.00" and c["source_refs"] == ["qbo:CreditMemo:CM-H"]
+        for c in residuals
+    )
+    assert not any("qbo:CreditMemo:CM-BOUNDARY" in c["source_refs"] for c in residuals)

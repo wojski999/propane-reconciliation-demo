@@ -543,6 +543,8 @@ class KPIs:
                         or applied < 0
                         or applied > abs(row["TotalAmt"])
                     ):
+                        if applied < 0 or applied > abs(row["TotalAmt"]):
+                            unresolved.setdefault(key, []).append(key)
                         sheet.gap("applied_credit_invoice:" + key, [key, sk])
                     else:
                         balances[targets[0]] -= applied
@@ -656,8 +658,6 @@ class KPIs:
             )
             if key in unresolved:
                 sheet.gap("credit_capacity:" + key, [*credit["refs"], *unresolved[key]])
-            elif remaining < 0:
-                sheet.gap("credit_capacity:" + key, credit["refs"])
             else:
                 credit_left.add("unapplied_credit", remaining, credit["refs"])
         if capacity_only:

@@ -977,3 +977,109 @@ def test_raw_rejected_credit_allocation_matrix(
         "raw" in record or "missing_lookup_key" in record or "derived_from" in record
         for record in raw.values()
     )
+
+
+@pytest.mark.parametrize(
+    "applied,refund_amount,partial",
+    [
+        ("-25.00", "16.00", True),
+        ("-10.00", "40.00", True),
+        ("-0.01", "0.01", True),
+        ("0.00", "40.00", False),
+        ("25.00", "15.00", False),
+        ("25.00", "15.01", True),
+        ("40.00", "0.01", True),
+        ("40.01", "0.01", True),
+    ],
+)
+@pytest.mark.parametrize("opening", ["valid", "invalid"])
+@pytest.mark.parametrize("identity", ["direct", "event"])
+@pytest.mark.parametrize("payment_first", [False, True])
+@pytest.mark.parametrize("total", ["40.00", "-40.00"])
+def test_raw_credit_applied_numeric_capacity(
+    applied, refund_amount, partial, opening, identity, payment_first, total
+):
+    files = generate("clean")
+
+    def mutate(qbo):
+        credit = copy.deepcopy(qbo["CreditMemo"][0])
+        credit.update(
+            Id="CM-X",
+            TotalAmt=total,
+            AppliedAmount=applied,
+            RevenueEvent="EV-X",
+            TxnDate="2026-11-02",
+            EventAt="2026-11-02T20:00:00+00:00",
+            LinkedTxn=[{"TxnType": "Invoice", "TxnId": "I-PAY"}],
+        )
+        credit["Line"][0]["Amount"] = "40.00"
+        qbo["CreditMemo"].append(credit)
+        healthy = copy.deepcopy(credit)
+        healthy.update(
+            Id="CM-H",
+            TotalAmt="7.00",
+            AppliedAmount="0.00",
+            RevenueEvent="EV-H",
+        )
+        healthy["Line"][0]["Amount"] = "7.00"
+        qbo["CreditMemo"].append(healthy)
+        payment = copy.deepcopy(qbo["Payment"][0])
+        payment.update(
+            Id="P-X",
+            TotalAmt="0.00",
+            UnappliedAmt="0.00",
+            EventAt="2026-11-03T08:00:00+00:00"
+            if payment_first
+            else "2026-11-03T18:00:00+00:00",
+        )
+        payment["Line"] = [copy.deepcopy(payment["Line"][0])]
+        payment["Line"][0].update(
+            Id="1",
+            Amount="1.00" if Decimal(applied) < 0 else "0.00",
+            LinkedTxn=[
+                {"TxnType": "Invoice", "TxnId": "I-PAY"},
+                {"TxnType": "CreditMemo", "TxnId": "CM-X"},
+            ],
+        )
+        qbo["Payment"].append(payment)
+        refund = copy.deepcopy(qbo["RefundReceipt"][0])
+        refund.update(
+            Id="RR-X",
+            TotalAmt=refund_amount,
+            RevenueEvent="EV-X",
+            EventAt="2026-11-03T12:00:00+00:00",
+            LinkedTxn=[
+                {"TxnType": "Invoice", "TxnId": "I-PAY"},
+                {"TxnType": "CreditMemo", "TxnId": "CM-X"},
+            ]
+            if identity == "direct"
+            else [{"TxnType": "Invoice", "TxnId": "I-PAY"}],
+        )
+        credit["CustomerRef"] = copy.deepcopy(payment["CustomerRef"])
+        healthy["CustomerRef"] = copy.deepcopy(payment["CustomerRef"])
+        refund["CustomerRef"] = copy.deepcopy(payment["CustomerRef"])
+        refund["Line"][0]["Amount"] = refund_amount
+        qbo["RefundReceipt"].append(refund)
+
+    change(files, "qbo.json", mutate, count=True)
+    if opening == "invalid":
+        change(files, "opening_ar.json", lambda data: data.update(as_of="invalid"))
+    result, raw = run(files)
+    revenue = result["kpis"]["revenue"]
+    assert revenue["status"] == ("partial" if partial else "complete"), revenue
+    assert revenue["value"] == (None if partial else "1250.02")
+    keys = {g["missing_lookup_key"] for g in revenue["gaps"]}
+    if Decimal(applied) < 0 or Decimal(applied) > 40:
+        assert "credit_capacity:qbo:CreditMemo:CM-X" in keys
+        assert "refund_credit_capacity:qbo:RefundReceipt:RR-X" in keys
+        assert "credit_allocation:qbo:Payment:P-X:1" in keys
+    if opening == "valid" and result["kpis"]["AR"]["status"] != "unavailable":
+        credits = result["kpis"]["AR"]["unapplied_credits"]["contributions"]
+        assert any(
+            c["amount"] == "7.00" and c["source_refs"] == ["qbo:CreditMemo:CM-H"]
+            for c in credits
+        ), result["kpis"]["AR"]
+        if Decimal(applied) < 0:
+            assert not any("qbo:CreditMemo:CM-X" in c["source_refs"] for c in credits)
+    document = Document(report.render(result, raw))
+    assert all(link[1:] in document.ids for link in document.links)
