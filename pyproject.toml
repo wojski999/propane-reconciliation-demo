@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "propane-reconciliation-demo"
+version = "0.1.0"
+description = "Synthetic propane audit demonstration (foundation only)"
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest==8.4.2", "coverage==7.10.7", "ruff==0.14.3"]
+
+[project.scripts]
+propane-smoke = "propane_demo.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+exclude_lines = []
+partial_branches = []
+
+[tool.ruff]
+target-version = "py312"
+include = ["src/**/*.py", "tests/**/*.py", "scripts/**/*.py", "pyproject.toml"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
