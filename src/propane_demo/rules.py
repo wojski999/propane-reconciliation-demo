@@ -1,4 +1,4 @@
-"""Pure section-11 step-3 checks over validated, scaled source records.
+"""Pure section-11 steps 3–4 checks over validated, scaled source records.
 
 No IO, database, generator, oracle, clock or scenario dependency. Money is Decimal
 in cents internally; quantities are thousandths. Only explicit evidence is used.
@@ -22,7 +22,9 @@ def money(value):
 
 
 def volume(value):
-    return format(D(value) / 1000, ".3f")
+    # Preserve an exact sub-milligal tolerance rather than rounding the gate.
+    whole, _, fraction = format(D(value) / 1000, "f").partition(".")
+    return whole + "." + fraction.rstrip("0").ljust(3, "0")
 
 
 def percentage(value):
@@ -69,7 +71,10 @@ class Engine:
         self.now = stamp(self.run["as_of"])
         self.policy_ref = "policy:" + self.p["policy_id"]
         self.blocked = dict(inputs["blocked"])
-        self.unavailable_sources = inputs.get("unavailable_sources", {})
+        self.unavailable_sources = dict(inputs.get("unavailable_sources", {}))
+        self.inputs = inputs
+        self.alerts = {}
+        self.worksheets = {}
         self.occurrences = inputs["occurrences"]
         self.pointers = inputs["pointers"]
         self.findings = {}
@@ -128,6 +133,8 @@ class Engine:
                 "C05": "Adjustment exceeds policy or lacks required evidence.",
                 "C06": "Payment has unapplied cash or a new excess allocation.",
                 "C07": "Settled batch, deposit or linked transaction amounts differ.",
+                "C08": "Observed closing inventory differs from the signed worksheet.",
+                "C09": "Source coverage is stale; dependent scopes are unavailable.",
                 "C12": "Journal balance or configured clearing amount differs.",
             }[check],
         }
@@ -155,6 +162,82 @@ class Engine:
             "source_refs": sorted(refs),
             "missing_lookup_key": key,
         }
+
+    def freshness(self):
+        # C10 owns invalid metadata/source failures. Do not create another root.
+        for alert in self.inputs["alerts"]:
+            self.alerts[alert["alert_id"]] = alert
+            if alert["check_id"] == "C10":
+                self.emit(
+                    "C10",
+                    alert["source_refs"],
+                    alert["reason_code"],
+                    None,
+                    "any failure",
+                    alert["related_refs"],
+                    "critical",
+                    status="alert",
+                    formatter=str,
+                    explanation="Import failed; dependent scopes are unavailable.",
+                )
+        stale = {}
+        for manifest in self.inputs["manifests"]:
+            source = manifest["source"]
+            if source in self.unavailable_sources or source == "optional_empty":
+                continue
+            m = manifest["metadata"]
+            age = self.now - stamp(m["covered_through"])
+            gap = (
+                D(age.days * 86400 + age.seconds) + D(age.microseconds) / 1000000
+            ) / 3600
+            if gap > self.p["source_max_hours"]:
+                candidate = (
+                    gap,
+                    "manifest:" + manifest["manifest_id"],
+                    manifest["file_id"],
+                )
+                if source not in stale or candidate > stale[source]:
+                    stale[source] = candidate
+        for source, (gap, ref, file) in sorted(stale.items()):
+            self.unavailable_sources[source] = ref
+            self.emit(
+                "C09",
+                [ref],
+                gap,
+                D(self.p["source_max_hours"]),
+                str(self.p["source_max_hours"]),
+                ["file:" + file, self.policy_ref],
+                status="alert",
+                formatter=lambda n: format(n.normalize(), "f"),
+            )
+            alert_id = "C09|" + ref
+            self.alerts[alert_id] = {
+                "alert_id": alert_id,
+                "run_id": self.run["run_id"],
+                "source": source,
+                "check_id": "C09",
+                "severity": "high",
+                "reason_code": "STALE_COVERAGE",
+                "source_refs": [ref],
+                "related_refs": ["file:" + file, self.policy_ref],
+                "observed_at": self.run["as_of"],
+                "status": "open",
+            }
+        for scope, required in self.inputs["dependencies"].items():
+            refs = sorted(
+                {
+                    self.unavailable_sources[s]
+                    for s in required
+                    if s in self.unavailable_sources
+                }
+            )
+            if refs:
+                self.blocked[scope] = {
+                    "status": "not_evaluated"
+                    if scope.startswith("C")
+                    else "unavailable",
+                    "source_refs": refs,
+                }
 
     def old(self, row, field, hours):
         return self.now - stamp(row[field]) > timedelta(hours=hours)
@@ -1279,16 +1362,589 @@ class Engine:
                 "C12", [key, *[k for k, _ in clearing]], actual, operational[1], related
             )
 
+    def in_day(self, value):
+        return (
+            stamp(self.run["window_start"])
+            <= stamp(value)
+            < stamp(self.run["window_end"])
+        )
+
+    def inventory_missing(self, refs, kind, lookup, asset, system="inventory"):
+        self.missing(refs, system, kind, lookup, "C08:" + asset, severity="high")
+        self.partial["KPI:inventory"] = {
+            "status": "unavailable",
+            "source_refs": sorted(refs),
+            "missing_lookup_key": lookup,
+        }
+
+    def inventory(self):
+        """Movement ledger supplies signs; source records validate outflows once."""
+        if not self.allowed("C08"):
+            return
+        assets = defaultdict(list)
+        for key, row in self.rows("identity:asset:"):
+            if row["asset_id"] not in self.p["unmeasured_assets"]:
+                assets[row["asset_id"]].append((key, row["source_id"]))
+        aliases = defaultdict(list)
+        for asset, mappings in assets.items():
+            for key, source in mappings:
+                aliases[source].append((key, asset))
+        for source, choices in aliases.items():
+            if len({asset for _, asset in choices}) > 1:
+                for _, asset in choices:
+                    self.inventory_missing(
+                        [key for key, _ in choices],
+                        "asset_mapping",
+                        "asset:" + source,
+                        asset,
+                        "identity",
+                    )
+        known = {
+            alias
+            for asset, mappings in assets.items()
+            for alias in [asset, *[source for _, source in mappings]]
+        }
+        for key, row in (
+            self.rows("inventory:movement:")
+            + self.rows("cargas:reading:")
+            + self.rows("cargas:delivery:")
+            + self.rows("pos:POS:")
+        ):
+            if key.startswith("cargas:delivery:"):
+                raw_asset = row["truck_id"] or row["tank_id"]
+            elif key.startswith("pos:POS:"):
+                raw_asset = row["inventory_asset_id"]
+            else:
+                raw_asset = row["asset_id"]
+            if (
+                raw_asset
+                and raw_asset not in known
+                and raw_asset not in self.p["unmeasured_assets"]
+            ):
+                mapping_manifests = [
+                    "manifest:" + m["manifest_id"]
+                    for m in self.inputs["manifests"]
+                    if m["source"] == "identity"
+                ]
+                self.inventory_missing(
+                    [key, *mapping_manifests],
+                    "asset_mapping",
+                    "asset:" + raw_asset,
+                    raw_asset,
+                    "identity",
+                )
+        transfers = defaultdict(list)
+        for key, movement in self.rows("inventory:movement:"):
+            if movement["movement_type"].startswith("transfer_") and self.in_day(
+                movement["occurred_at"]
+            ):
+                transfers[movement["transfer_id"]].append((key, movement))
+        for transfer, pairs in sorted(transfers.items()):
+            inbound = [m for _, m in pairs if m["movement_type"] == "transfer_in"]
+            outbound = [m for _, m in pairs if m["movement_type"] == "transfer_out"]
+            valid = len(inbound) == len(outbound) == 1
+            if valid:
+                a, b = inbound[0], outbound[0]
+                valid = (
+                    a["asset_id"] == b["counterparty_asset_id"]
+                    and b["asset_id"] == a["counterparty_asset_id"]
+                    and a["quantity"] == b["quantity"]
+                    and a["gallon_basis"] == b["gallon_basis"]
+                    and a["asset_id"] in assets
+                    and b["asset_id"] in assets
+                    and a["asset_id"] != b["asset_id"]
+                )
+            if not valid:
+                refs = [k for k, _ in pairs]
+                affected = {
+                    m[field]
+                    for _, m in pairs
+                    for field in ("asset_id", "counterparty_asset_id")
+                }
+                for asset in sorted(affected):
+                    self.inventory_missing(
+                        refs, "transfer_pair", "transfer:" + transfer, asset
+                    )
+        for asset, mappings in sorted(assets.items()):
+            self.asset_inventory(asset, mappings)
+
+    def asset_inventory(self, asset, mappings):
+        scope = "C08:" + asset
+        aliases = {asset, *[source for _, source in mappings]}
+        readings = [
+            (k, r) for k, r in self.rows("cargas:reading:") if r["asset_id"] in aliases
+        ]
+        movements = [
+            (k, m)
+            for k, m in self.rows("inventory:movement:")
+            if m["asset_id"] in aliases and self.in_day(m["occurred_at"])
+        ]
+        sheet = {
+            "asset_id": asset,
+            "status": "not_evaluated",
+            "gallon_basis": None,
+            "contributions": [],
+            "ledger_inputs": [
+                {
+                    "kind": m["movement_type"],
+                    "gallons": volume(
+                        m["quantity"]
+                        * (
+                            1
+                            if m["movement_type"] in {"purchase", "transfer_in"}
+                            else -1
+                        )
+                    ),
+                    "source_refs": [k],
+                }
+                for k, m in movements
+            ],
+            "expected": None,
+            "observed": None,
+            "delta": None,
+            "tolerance": None,
+            "source_refs": [],
+        }
+        self.worksheets[asset] = sheet
+        # Preserve known ledger evidence even when another source is unavailable.
+        if not self.allowed(scope) or scope in self.partial:
+            sheet["source_refs"] = sorted(
+                {k for k, _ in readings + movements}
+                | set((self.blocked | self.partial)[scope]["source_refs"])
+            )
+            return
+        endpoints = []
+        for label, boundary in [("opening", "window_start"), ("closing", "window_end")]:
+            instant = stamp(self.run[boundary])
+            # Endpoints are nearest observations on their own half of the day.
+            midpoint = (
+                stamp(self.run["window_start"])
+                + (stamp(self.run["window_end"]) - stamp(self.run["window_start"])) / 2
+            )
+            candidates = [
+                (abs(stamp(r["observed_at"]) - instant), k, r)
+                for k, r in readings
+                if (stamp(r["observed_at"]) <= midpoint) == (label == "opening")
+            ]
+            if not candidates:
+                self.inventory_missing(
+                    [*[k for k, _ in readings], *[k for k, _ in mappings]],
+                    label + "_reading",
+                    f"asset:{asset};boundary:{self.run[boundary]}",
+                    asset,
+                    "cargas",
+                )
+                return
+            candidates.sort(key=lambda row: (row[0], row[1]))
+            if len(candidates) > 1 and candidates[0][0] == candidates[1][0]:
+                self.inventory_missing(
+                    [k for _, k, _ in candidates],
+                    "ambiguous_reading",
+                    f"asset:{asset};boundary:{self.run[boundary]}",
+                    asset,
+                    "cargas",
+                )
+                return
+            gap, key, row = candidates[0]
+            endpoints.append((key, row, gap))
+        refs = [k for k, _, _ in endpoints]
+        opening, closing = [r for _, r, _ in endpoints]
+        basis = opening["gallon_basis"]
+        sheet["source_refs"] = sorted(refs)
+        bases = {r["gallon_basis"] for _, r, _ in endpoints} | {
+            m["gallon_basis"] for _, m in movements
+        }
+        if not basis or "" in bases:
+            self.inventory_missing(
+                [*refs, *[k for k, _ in movements]],
+                "gallon_basis",
+                "asset:" + asset + ";consistent_gallon_basis",
+                asset,
+            )
+            return
+        if opening["gallon_basis"] != closing["gallon_basis"]:
+            reason = "Endpoint gallon bases do not match. No shortage/excess verdict."
+            self.emit(
+                "C08",
+                refs,
+                None,
+                None,
+                None,
+                [self.policy_ref],
+                "medium",
+                status="sensor_uncertain",
+                explanation=reason,
+            )
+            self.partial[scope] = {
+                "status": "not_evaluated",
+                "source_refs": sorted(refs),
+                "reason": reason,
+            }
+            self.partial["KPI:inventory"] = {
+                "status": "unavailable",
+                "source_refs": sorted(refs),
+                "reason": reason,
+            }
+            sheet["status"] = "sensor_uncertain"
+            return
+        if bases != {basis}:
+            self.inventory_missing(
+                [*refs, *[k for k, _ in movements]],
+                "gallon_basis",
+                "asset:" + asset + ";consistent_gallon_basis",
+                asset,
+            )
+            return
+        sheet["gallon_basis"] = basis
+        contributions = [
+            {
+                "kind": "opening",
+                "gallons": volume(opening["gallons"]),
+                "source_refs": [endpoints[0][0]],
+            }
+        ]
+        related = [self.policy_ref]
+        used = set()
+        support_ok = True
+        for key, movement in movements:
+            kind = movement["movement_type"]
+            evidence = [key]
+            quantity = movement["quantity"]
+            if kind.startswith("transfer_"):
+                pairs = [
+                    (k, m)
+                    for k, m in self.rows("inventory:movement:")
+                    if m["transfer_id"] == movement["transfer_id"]
+                    and self.in_day(m["occurred_at"])
+                ]
+                evidence.extend(k for k, _ in pairs if k != key)
+            elif kind in {"customer_delivery", "retail_sale"}:
+                source = (
+                    "cargas:delivery:" if kind == "customer_delivery" else "pos:POS:"
+                )
+                source_ref = source + movement["source_id"]
+                row = self.r.get(source_ref)
+                if row is None:
+                    self.inventory_missing([key], "movement_source", source_ref, asset)
+                    support_ok = False
+                    continue
+                if source_ref in used:
+                    self.inventory_missing(
+                        [key, source_ref], "unique_outflow", source_ref, asset
+                    )
+                    support_ok = False
+                    continue
+                used.add(source_ref)
+                evidence.append(source_ref)
+                actual_asset = (
+                    (row["truck_id"] or row["tank_id"])
+                    if kind == "customer_delivery"
+                    else row["inventory_asset_id"]
+                )
+                expected_system = "cargas" if kind == "customer_delivery" else "pos"
+                if (
+                    actual_asset not in aliases
+                    or movement["source_system"] != expected_system
+                ):
+                    self.inventory_missing(
+                        evidence, "movement_asset_source", source_ref, asset
+                    )
+                    support_ok = False
+                    continue
+                if not self.in_day(
+                    row[
+                        "delivered_at" if kind == "customer_delivery" else "occurred_at"
+                    ]
+                ):
+                    self.inventory_missing(
+                        evidence, "movement_window", source_ref, asset
+                    )
+                    support_ok = False
+                    continue
+                if kind == "customer_delivery":
+                    if row["status"] != "completed":
+                        self.inventory_missing(
+                            evidence,
+                            "movement_source_status",
+                            source_ref + ";expected_status:completed",
+                            asset,
+                        )
+                        support_ok = False
+                        continue
+                    if row["meter_ticket_id"]:
+                        evidence.append("cargas:meter_ticket:" + row["meter_ticket_id"])
+                    measured, source_basis = row["gallons"], row["gallon_basis"]
+                else:
+                    if row["status"] != "captured":
+                        self.inventory_missing(
+                            evidence,
+                            "movement_source_status",
+                            source_ref + ";expected_status:captured",
+                            asset,
+                        )
+                        support_ok = False
+                        continue
+                    events = [
+                        (k, e)
+                        for k, e in self.rows("identity:pos_event:")
+                        if "pos:POS:" + e["pos_id"] == source_ref
+                    ]
+                    if len(events) != 1:
+                        self.inventory_missing(
+                            evidence, "pos_event", source_ref, asset, "identity"
+                        )
+                        support_ok = False
+                        continue
+                    event_key, event = events[0]
+                    if "delivery_id" in event:
+                        delivery = "cargas:delivery:" + event["delivery_id"]
+                        if (
+                            delivery in self.r
+                            and self.r[delivery]["status"] == "completed"
+                            and any(
+                                m["movement_type"] == "customer_delivery"
+                                and "cargas:delivery:" + m["source_id"] == delivery
+                                for _, m in movements
+                            )
+                        ):
+                            # Explicit duplicate: retain a zero contribution.
+                            contributions.append(
+                                {
+                                    "kind": "represented_delivery",
+                                    "gallons": "0.000",
+                                    "source_refs": sorted(
+                                        [*evidence, event_key, delivery]
+                                    ),
+                                }
+                            )
+                            continue
+                        self.inventory_missing(
+                            [*evidence, event_key], "delivery_movement", delivery, asset
+                        )
+                        support_ok = False
+                        continue
+                    source_basis = basis  # Ledger states the measured POS gallon basis.
+                    if row["unit"] == "gallon":
+                        measured = row["quantity"]
+                    else:
+                        fill_key = "identity:fill:" + row["item_id"]
+                        fill = self.r.get(fill_key)
+                        if fill is None:
+                            self.inventory_missing(
+                                evidence,
+                                "sku_fill_gallons",
+                                row["item_id"],
+                                asset,
+                                "identity",
+                            )
+                            self.partial["KPI:retail"] = {
+                                "status": "unavailable",
+                                "source_refs": evidence,
+                            }
+                            support_ok = False
+                            continue
+                        measured = D(row["quantity"]) * fill["gallons"] / 1000
+                        evidence.append(fill_key)
+                if not source_basis or source_basis != basis or measured != quantity:
+                    self.inventory_missing(
+                        evidence, "movement_quantity_basis", source_ref, asset
+                    )
+                    support_ok = False
+                    continue
+            sign = 1 if kind in {"purchase", "transfer_in"} else -1
+            contributions.append(
+                {
+                    "kind": kind,
+                    "gallons": volume(sign * quantity),
+                    "source_refs": sorted(evidence),
+                }
+            )
+            # Fill mappings appear in the worksheet; finding identity keeps the
+            # agreed source-event evidence (not a redundant crosswalk).
+            related.extend(k for k in evidence if not k.startswith("identity:fill:"))
+        # Detect absent ledger entries for actual measured-asset outflows.
+        for key, row in self.rows("cargas:delivery:") + self.rows("pos:POS:"):
+            delivery = key.startswith("cargas:")
+            if delivery:
+                relevant = (row["truck_id"] or row["tank_id"]) in aliases and row[
+                    "status"
+                ] == "completed"
+                when = row["delivered_at"]
+            else:
+                relevant = (
+                    row["inventory_asset_id"] in aliases and row["status"] == "captured"
+                )
+                when = row["occurred_at"]
+                events = [
+                    e
+                    for _, e in self.rows("identity:pos_event:")
+                    if "pos:POS:" + e["pos_id"] == key
+                ]
+                if len(events) == 1 and "delivery_id" in events[0]:
+                    continue
+            if relevant and self.in_day(when) and key not in used:
+                self.inventory_missing([key], "inventory_movement", key, asset)
+                support_ok = False
+        sheet["contributions"] = contributions
+        if not support_ok:
+            return
+        tolerance = max(
+            D(self.p["inventory_min_gallons"]) * 1000,
+            D(self.p["inventory_pct"])
+            * (
+                opening["gallons"]
+                + sum(
+                    m["quantity"]
+                    for _, m in movements
+                    if m["movement_type"] in {"purchase", "transfer_in"}
+                )
+            ),
+        )
+        sheet["tolerance"] = volume(tolerance)
+        reasons = []
+        if any(
+            gap > timedelta(minutes=self.p["reading_max_minutes"])
+            for _, _, gap in endpoints
+        ):
+            reasons.append(
+                "Endpoint is more than 60 minutes from its boundary (C09 freshness)."
+            )
+        if any(r["quality"] != "valid" for _, r, _ in endpoints):
+            reasons.append("Endpoint quality is not valid.")
+        if opening["uncertainty_gallons"] + closing["uncertainty_gallons"] > tolerance:
+            reasons.append("Combined endpoint uncertainty exceeds tolerance.")
+        if reasons:
+            self.emit(
+                "C08",
+                refs,
+                None,
+                None,
+                volume(tolerance),
+                related,
+                "medium",
+                status="sensor_uncertain",
+                explanation=" ".join(reasons) + " No shortage/excess verdict.",
+            )
+            self.partial[scope] = {
+                "status": "not_evaluated",
+                "source_refs": sorted(refs),
+                "reason": " ".join(reasons),
+            }
+            sheet["status"] = "sensor_uncertain"
+            return
+        expected = sum(D(c["gallons"]) * 1000 for c in contributions)
+        delta = closing["gallons"] - expected
+        sheet.update(
+            status="evaluated",
+            expected=volume(expected),
+            observed=volume(closing["gallons"]),
+            delta=volume(delta),
+        )
+        if abs(delta) > tolerance:
+            self.emit(
+                "C08",
+                refs,
+                closing["gallons"],
+                expected,
+                volume(tolerance),
+                related,
+                formatter=volume,
+            )
+
+    def consolidate(self):
+        """No mixed-basis or partial total masquerades as whole-business stock."""
+        sheets = list(self.worksheets.values())
+        if (
+            not sheets
+            or "KPI:inventory" in self.partial
+            or any(s["status"] != "evaluated" for s in sheets)
+        ):
+            return {
+                "status": "unavailable",
+                "expected": None,
+                "observed": None,
+                "delta": None,
+                "contributions": [],
+            }
+        bases = {s["gallon_basis"] for s in sheets}
+        if len(bases) != 1:
+            refs = sorted({ref for sheet in sheets for ref in sheet["source_refs"]})
+            self.inventory_missing(
+                refs,
+                "gallon_basis",
+                "whole_business;consistent_gallon_basis",
+                "consolidated",
+            )
+            return {
+                "status": "unavailable",
+                "expected": None,
+                "observed": None,
+                "delta": None,
+                "contributions": [],
+            }
+        contributions = [
+            c | {"asset_id": s["asset_id"]}
+            for s in sheets
+            for c in s["contributions"]
+            if c["kind"] not in {"transfer_in", "transfer_out"}
+        ]
+        expected = sum(D(c["gallons"]) for c in contributions)
+        observed = sum(D(s["observed"]) for s in sheets)
+        return {
+            "status": "evaluated",
+            "gallon_basis": next(iter(bases)),
+            "expected": format(expected, ".3f"),
+            "observed": format(observed, ".3f"),
+            "delta": format(observed - expected, ".3f"),
+            "contributions": contributions,
+            "eliminated_transfers": sorted(
+                {
+                    ref
+                    for s in sheets
+                    for c in s["contributions"]
+                    if c["kind"] in {"transfer_in", "transfer_out"}
+                    for ref in c["source_refs"]
+                }
+            ),
+        }
+
+    def propagate_support(self):
+        # Eligibility only: no arithmetic for future KPIs in this step.
+        for finding in list(self.findings.values()):
+            if finding["check_id"] == "C05" and finding["missing_reference"]:
+                self.partial["KPI:revenue"] = {
+                    "status": "unavailable",
+                    "source_refs": finding["source_refs"],
+                }
+            if finding["check_id"] != "C11":
+                continue
+            refs = finding["source_refs"]
+            kind = finding["missing_reference"]["type"]
+            kpis = set()
+            if kind == "customer/item":
+                kpis.add("delivered")
+            if finding["missing_reference"]["system"] == "ar" or kind in {
+                "invoice_balance",
+                "credit_invoice",
+                "credit_application",
+                "credit_allocation",
+            }:
+                kpis.add("AR")
+            if kind == "pos_event":
+                kpis.add("revenue")
+            for kpi in kpis:
+                self.partial["KPI:" + kpi] = {
+                    "status": "unavailable",
+                    "source_refs": refs,
+                }
+
 
 def reconcile(inputs):
-    """Compute only step-3 findings and evaluation eligibility.
-
-    A caller may pass additional `blocked` scopes from a future freshness engine;
-    no C08/C09/KPI result or stale-source completeness is claimed here.
-    """
+    """Evaluate implemented checks after import and freshness eligibility gates."""
     with localcontext() as context:
         context.prec = 80
         engine = Engine(inputs)
+        engine.freshness()
         engine.billing()
         engine.duplicates()
         engine.sale_prices()
@@ -1298,8 +1954,14 @@ def reconcile(inputs):
         engine.payments()
         engine.settlements()
         engine.accounting()
+        engine.inventory()
+        engine.propagate_support()
+        consolidation = engine.consolidate()
         return {
             "findings": sorted(engine.findings.values(), key=lambda f: f["finding_id"]),
             "not_evaluated": dict(sorted((engine.blocked | engine.partial).items())),
-            "freshness_evaluated": False,
+            "freshness_evaluated": True,
+            "alerts": sorted(engine.alerts.values(), key=lambda a: a["alert_id"]),
+            "inventory": engine.worksheets,
+            "consolidation": consolidation,
         }

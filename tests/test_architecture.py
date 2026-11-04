@@ -14,7 +14,7 @@ ALLOWED_INTERNAL_IMPORTS = {
     "generator": {"contracts"},
     "validation": {"contracts"},
     "ingestion": {"contracts", "generator", "validation"},
-    "rule_inputs": {"ingestion"},
+    "rule_inputs": {"ingestion", "rules"},
     "rules": set(),
 }
 

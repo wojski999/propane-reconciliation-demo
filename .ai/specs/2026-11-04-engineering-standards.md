@@ -17,7 +17,7 @@ Current graph: `cli -> smoke -> standard library`;
 `generator -> contracts -> standard library`;
 `ingestion -> validation / generator / contracts -> standard library`;
 `validation -> contracts -> standard library`;
-`rule_inputs -> ingestion -> ...`; `rules -> standard library` only.
+`rule_inputs -> ingestion / rules -> ...`; `rules -> standard library` only.
 The rules import allowlist excludes IO, persistence, CLI, rendering and network;
 the boundary adapter detaches validated scaled values from SQLite. Generator reads packaged synthetic
 source templates only. The independent expected oracle stays under tests and is
