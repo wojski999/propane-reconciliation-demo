@@ -1,0 +1,3088 @@
+{
+  "clean": {
+    "qbo.json": {
+      "Invoice": [
+        {
+          "Id": "I-PRICE",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-PRICE",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "200.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "200.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "LPG-DELIVERY"
+                },
+                "Qty": "100.000",
+                "UnitPrice": "2.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "Balance": "200.00"
+        },
+        {
+          "Id": "I-CREDIT",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-CREDIT",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "200.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "200.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "LPG-DELIVERY"
+                },
+                "Qty": "100.000",
+                "UnitPrice": "2.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "Balance": "100.00"
+        },
+        {
+          "Id": "I-PAY",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-PAY",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "100.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "100.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "LPG-DELIVERY"
+                },
+                "Qty": "50.000",
+                "UnitPrice": "2.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "Balance": "100.00"
+        },
+        {
+          "Id": "I-OUT",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-OUT",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "200.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "200.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "LPG-DELIVERY"
+                },
+                "Qty": "100.000",
+                "UnitPrice": "2.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "Balance": "200.00"
+        },
+        {
+          "Id": "I-SPLIT-A",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-SPLIT-A",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "40.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "40.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "LPG-DELIVERY"
+                },
+                "Qty": "20.000",
+                "UnitPrice": "2.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "Balance": "40.00"
+        },
+        {
+          "Id": "I-SPLIT-B",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-SPLIT-B",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "60.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "60.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "LPG-DELIVERY"
+                },
+                "Qty": "30.000",
+                "UnitPrice": "2.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "Balance": "60.00"
+        },
+        {
+          "Id": "I-COMBINED",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-COMBINED",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "100.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "100.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "LPG-DELIVERY"
+                },
+                "Qty": "50.000",
+                "UnitPrice": "2.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "Balance": "100.00"
+        },
+        {
+          "Id": "I-SERVICE",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-SERVICE",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "20.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "20.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "20.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "Balance": "20.00"
+        },
+        {
+          "Id": "I-EQUAL-A",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-EQUAL-A",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "20.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "20.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "20.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "Balance": "20.00"
+        },
+        {
+          "Id": "I-EQUAL-B",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-EQUAL-B",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "20.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "20.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "20.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "Balance": "20.00"
+        },
+        {
+          "Id": "I-PAID",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-PAID",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "100.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "100.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "LPG-DELIVERY"
+                },
+                "Qty": "50.000",
+                "UnitPrice": "2.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-36",
+          "Balance": "0.00"
+        },
+        {
+          "Id": "I-VOID",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-VOID",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "200.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "200.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "LPG-DELIVERY"
+                },
+                "Qty": "100.000",
+                "UnitPrice": "2.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "Balance": "200.00",
+          "status": "void"
+        },
+        {
+          "Id": "I-FRACTION",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-FRACTION",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "0.01",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "0.01",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "LPG-DELIVERY"
+                },
+                "Qty": "0.005",
+                "UnitPrice": "2.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "Balance": "0.01"
+        },
+        {
+          "Id": "I-GRACE",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@date",
+          "DocNumber": "I-GRACE",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "200.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "200.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "LPG-DELIVERY"
+                },
+                "Qty": "100.000",
+                "UnitPrice": "2.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-24",
+          "Balance": "200.00"
+        }
+      ],
+      "SalesReceipt": [
+        {
+          "Id": "SR-ORIGINAL",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "SR-ORIGINAL",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "200.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "200.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "10.000",
+                "UnitPrice": "20.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30"
+        },
+        {
+          "Id": "SR-BATCH",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "SR-BATCH",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "500.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "500.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "25.000",
+                "UnitPrice": "20.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30"
+        },
+        {
+          "Id": "SR-RETAIL",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "SR-RETAIL",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "100.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "100.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "RETAIL"
+                },
+                "Qty": "50.000",
+                "UnitPrice": "2.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30"
+        },
+        {
+          "Id": "SR-DISCOUNT",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "SR-DISCOUNT",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "90.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "90.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "DISCOUNT-SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "100.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              },
+              "DiscountAmount": "10.00",
+              "ApprovalRef": "APP-DISCOUNT"
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30"
+        },
+        {
+          "Id": "SR-CYLINDER",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "SR-CYLINDER",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "20.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "20.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "CYLINDER"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "20.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30"
+        },
+        {
+          "Id": "SR-TAX",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "SR-TAX",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "22.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "20.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "20.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "TxnTaxDetail": {
+            "TotalTax": "2.00",
+            "TaxLine": [
+              {
+                "Id": "TAX-1",
+                "Amount": "2.00"
+              }
+            ]
+          }
+        },
+        {
+          "Id": "SR-CONTAINER",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "SR-CONTAINER",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "10.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "10.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "CONTAINER"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "10.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30"
+        },
+        {
+          "Id": "SR-T-EQUAL-A",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "SR-T-EQUAL-A",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "20.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "20.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "20.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30"
+        },
+        {
+          "Id": "SR-T-EQUAL-B",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "SR-T-EQUAL-B",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "20.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "20.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "20.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30"
+        },
+        {
+          "Id": "SR-ZERO",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "SR-ZERO",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "0.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "0.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "0.000",
+                "UnitPrice": "20.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30"
+        },
+        {
+          "Id": "SR-PRICE-BOUNDARY",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "SR-PRICE-BOUNDARY",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "20.01",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "20.01",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "20.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30"
+        }
+      ],
+      "Payment": [
+        {
+          "Id": "PAY-APPLIED",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "100.00",
+          "Line": [
+            {
+              "Id": "1",
+              "Amount": "100.00",
+              "LinkedTxn": [
+                {
+                  "TxnId": "I-PAID",
+                  "TxnType": "Invoice"
+                }
+              ]
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-29",
+          "UnappliedAmt": "0.00",
+          "PaymentRefNum": "PAY-APPLIED"
+        },
+        {
+          "Id": "PAY-UNAPPLIED",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "0.01",
+          "Line": [],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-29",
+          "UnappliedAmt": "0.01",
+          "PaymentRefNum": "PAY-UNAPPLIED"
+        },
+        {
+          "Id": "PAY-GRACE",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@date",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "25.00",
+          "Line": [],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-24",
+          "UnappliedAmt": "25.00",
+          "PaymentRefNum": "PAY-GRACE"
+        }
+      ],
+      "CreditMemo": [
+        {
+          "Id": "CM-BOUNDARY",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "CM-BOUNDARY",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "100.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "100.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "100.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [
+            {
+              "TxnId": "I-CREDIT",
+              "TxnType": "Invoice"
+            }
+          ],
+          "EventAt": "@hour:-29",
+          "ApprovalRef": "APP-CREDIT",
+          "AppliedAmount": "100.00"
+        }
+      ],
+      "RefundReceipt": [
+        {
+          "Id": "RR-BOUNDARY",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "RR-BOUNDARY",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "100.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "100.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "100.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [
+            {
+              "TxnId": "SR-ORIGINAL",
+              "TxnType": "SalesReceipt"
+            }
+          ],
+          "EventAt": "@hour:-29",
+          "ApprovalRef": "APP-REFUND",
+          "RevenueEvent": "REFUND-BOUNDARY"
+        },
+        {
+          "Id": "RR-BATCH",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "RR-BATCH",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "20.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "20.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "20.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [
+            {
+              "TxnId": "SR-BATCH",
+              "TxnType": "SalesReceipt"
+            }
+          ],
+          "EventAt": "@hour:-29",
+          "ApprovalRef": "APP-REFUND",
+          "RevenueEvent": "REFUND-BATCH"
+        }
+      ],
+      "JournalEntry": [
+        {
+          "Id": "JE-UNBALANCED",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "JE-UNBALANCED",
+          "TotalAmt": "100.00",
+          "Line": [
+            {
+              "Id": "1",
+              "Amount": "100.00",
+              "JournalEntryLineDetail": {
+                "PostingType": "Debit",
+                "AccountRef": {
+                  "value": "CLEARING"
+                }
+              }
+            },
+            {
+              "Id": "2",
+              "Amount": "100.00",
+              "JournalEntryLineDetail": {
+                "PostingType": "Credit",
+                "AccountRef": {
+                  "value": "REVENUE"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "ExternalRef": "I-PAY"
+        }
+      ],
+      "Customer": [
+        {
+          "Id": "C-1",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "DisplayName": "Synthetic customer",
+          "CustomerClass": "standard"
+        }
+      ],
+      "Item": [
+        {
+          "Id": "LPG-DELIVERY",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "Name": "LPG-DELIVERY",
+          "Classification": "delivery"
+        },
+        {
+          "Id": "SERVICE",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "Name": "SERVICE",
+          "Classification": "service"
+        },
+        {
+          "Id": "RETAIL",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "Name": "RETAIL",
+          "Classification": "retail"
+        },
+        {
+          "Id": "CYLINDER",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "Name": "CYLINDER",
+          "Classification": "cylinder"
+        },
+        {
+          "Id": "CONTAINER",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "Name": "CONTAINER",
+          "Classification": "container_deposit"
+        },
+        {
+          "Id": "DISCOUNT-SERVICE",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "Name": "Discount service",
+          "Classification": "service"
+        }
+      ],
+      "Deposit": [
+        {
+          "Id": "DEP-SHORT",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "TotalAmt": "470.00",
+          "Line": [
+            {
+              "Id": "1",
+              "Amount": "470.00",
+              "DepositLineDetail": {
+                "AccountRef": {
+                  "value": "CLEARING"
+                },
+                "TxnType": "SalesReceipt",
+                "TxnId": "SR-BATCH"
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30"
+        }
+      ]
+    },
+    "deliveries.csv": [
+      {
+        "ticket_id": "D-PRICE",
+        "customer_id": "CE-C1",
+        "tank_id": "ISOLATED",
+        "truck_id": "",
+        "delivered_at": "@hour:-30",
+        "item_id": "CE-LPG",
+        "gallons": "100.000",
+        "gallon_basis": "net_60F",
+        "unit_price": "2.00",
+        "net_amount": "200.00",
+        "status": "completed",
+        "external_invoice_id": "I-PRICE",
+        "meter_ticket_id": "MT-D-PRICE"
+      },
+      {
+        "ticket_id": "D-CREDIT",
+        "customer_id": "CE-C1",
+        "tank_id": "ISOLATED",
+        "truck_id": "",
+        "delivered_at": "@hour:-30",
+        "item_id": "CE-LPG",
+        "gallons": "100.000",
+        "gallon_basis": "net_60F",
+        "unit_price": "2.00",
+        "net_amount": "200.00",
+        "status": "completed",
+        "external_invoice_id": "I-CREDIT",
+        "meter_ticket_id": "MT-D-CREDIT"
+      },
+      {
+        "ticket_id": "D-PAY",
+        "customer_id": "CE-C1",
+        "tank_id": "ISOLATED",
+        "truck_id": "",
+        "delivered_at": "@hour:-30",
+        "item_id": "CE-LPG",
+        "gallons": "50.000",
+        "gallon_basis": "net_60F",
+        "unit_price": "2.00",
+        "net_amount": "100.00",
+        "status": "completed",
+        "external_invoice_id": "I-PAY",
+        "meter_ticket_id": "MT-D-PAY"
+      },
+      {
+        "ticket_id": "D-OUT",
+        "customer_id": "CE-C1",
+        "tank_id": "BULK-A",
+        "truck_id": "",
+        "delivered_at": "@hour:-30",
+        "item_id": "CE-LPG",
+        "gallons": "100.000",
+        "gallon_basis": "net_60F",
+        "unit_price": "2.00",
+        "net_amount": "200.00",
+        "status": "completed",
+        "external_invoice_id": "I-OUT",
+        "meter_ticket_id": "MT-D-OUT"
+      },
+      {
+        "ticket_id": "D-SPLIT",
+        "customer_id": "CE-C1",
+        "tank_id": "ISOLATED",
+        "truck_id": "",
+        "delivered_at": "@hour:-30",
+        "item_id": "CE-LPG",
+        "gallons": "50.000",
+        "gallon_basis": "net_60F",
+        "unit_price": "2.00",
+        "net_amount": "100.00",
+        "status": "completed",
+        "external_invoice_id": "",
+        "meter_ticket_id": "MT-D-SPLIT"
+      },
+      {
+        "ticket_id": "D-COMB-A",
+        "customer_id": "CE-C1",
+        "tank_id": "ISOLATED",
+        "truck_id": "",
+        "delivered_at": "@hour:-30",
+        "item_id": "CE-LPG",
+        "gallons": "20.000",
+        "gallon_basis": "net_60F",
+        "unit_price": "2.00",
+        "net_amount": "40.00",
+        "status": "completed",
+        "external_invoice_id": "I-COMBINED",
+        "meter_ticket_id": "MT-D-COMB-A"
+      },
+      {
+        "ticket_id": "D-COMB-B",
+        "customer_id": "CE-C1",
+        "tank_id": "ISOLATED",
+        "truck_id": "",
+        "delivered_at": "@hour:-30",
+        "item_id": "CE-LPG",
+        "gallons": "30.000",
+        "gallon_basis": "net_60F",
+        "unit_price": "2.00",
+        "net_amount": "60.00",
+        "status": "completed",
+        "external_invoice_id": "I-COMBINED",
+        "meter_ticket_id": "MT-D-COMB-B"
+      },
+      {
+        "ticket_id": "D-PAID",
+        "customer_id": "CE-C1",
+        "tank_id": "ISOLATED",
+        "truck_id": "",
+        "delivered_at": "@hour:-30",
+        "item_id": "CE-LPG",
+        "gallons": "50.000",
+        "gallon_basis": "net_60F",
+        "unit_price": "2.00",
+        "net_amount": "100.00",
+        "status": "completed",
+        "external_invoice_id": "I-PAID",
+        "meter_ticket_id": "MT-D-PAID"
+      },
+      {
+        "ticket_id": "D-CANCELLED",
+        "customer_id": "CE-C1",
+        "tank_id": "UNMEASURED",
+        "truck_id": "",
+        "delivered_at": "@hour:-30",
+        "item_id": "CE-LPG",
+        "gallons": "100.000",
+        "gallon_basis": "net_60F",
+        "unit_price": "2.00",
+        "net_amount": "200.00",
+        "status": "cancelled",
+        "external_invoice_id": "",
+        "meter_ticket_id": "MT-D-CANCELLED"
+      },
+      {
+        "ticket_id": "D-FRACTION",
+        "customer_id": "CE-C1",
+        "tank_id": "UNMEASURED",
+        "truck_id": "",
+        "delivered_at": "@hour:-30",
+        "item_id": "CE-LPG",
+        "gallons": "0.005",
+        "gallon_basis": "net_60F",
+        "unit_price": "2.00",
+        "net_amount": "0.01",
+        "status": "completed",
+        "external_invoice_id": "I-FRACTION",
+        "meter_ticket_id": "MT-D-FRACTION"
+      },
+      {
+        "ticket_id": "D-GRACE",
+        "customer_id": "CE-C1",
+        "tank_id": "UNMEASURED",
+        "truck_id": "",
+        "delivered_at": "@hour:-24",
+        "item_id": "CE-LPG",
+        "gallons": "100.000",
+        "gallon_basis": "net_60F",
+        "unit_price": "2.00",
+        "net_amount": "200.00",
+        "status": "completed",
+        "external_invoice_id": "",
+        "meter_ticket_id": "MT-D-GRACE"
+      }
+    ],
+    "readings.csv": [
+      {
+        "reading_id": "R-OPEN",
+        "asset_id": "BULK-A",
+        "observed_at": "@start",
+        "gallons": "1000.000",
+        "gallon_basis": "net_60F",
+        "temperature_f": "60.0",
+        "quality": "valid",
+        "uncertainty_gallons": "0.500",
+        "capacity_gallons": "2000.000"
+      },
+      {
+        "reading_id": "R-CLOSE",
+        "asset_id": "BULK-A",
+        "observed_at": "@end",
+        "gallons": "1050.000",
+        "gallon_basis": "net_60F",
+        "temperature_f": "60.0",
+        "quality": "valid",
+        "uncertainty_gallons": "0.500",
+        "capacity_gallons": "2000.000"
+      },
+      {
+        "reading_id": "R-TRUCK-OPEN",
+        "asset_id": "TRUCK-A",
+        "observed_at": "@start",
+        "gallons": "100.000",
+        "gallon_basis": "net_60F",
+        "temperature_f": "60.0",
+        "quality": "valid",
+        "uncertainty_gallons": "0.500",
+        "capacity_gallons": "2000.000"
+      },
+      {
+        "reading_id": "R-UNCERTAIN",
+        "asset_id": "TRUCK-A",
+        "observed_at": "@end",
+        "gallons": "150.000",
+        "gallon_basis": "net_60F",
+        "temperature_f": "60.0",
+        "quality": "valid",
+        "uncertainty_gallons": "0.500",
+        "capacity_gallons": "2000.000"
+      },
+      {
+        "reading_id": "R-DEPOT-OPEN",
+        "asset_id": "DEPOT",
+        "observed_at": "@start",
+        "gallons": "500.000",
+        "gallon_basis": "net_60F",
+        "temperature_f": "60.0",
+        "quality": "valid",
+        "uncertainty_gallons": "0.500",
+        "capacity_gallons": "2000.000"
+      },
+      {
+        "reading_id": "R-DEPOT-CLOSE",
+        "asset_id": "DEPOT",
+        "observed_at": "@end",
+        "gallons": "450.000",
+        "gallon_basis": "net_60F",
+        "temperature_f": "60.0",
+        "quality": "valid",
+        "uncertainty_gallons": "0.500",
+        "capacity_gallons": "2000.000"
+      },
+      {
+        "reading_id": "R-ISOLATED-OPEN",
+        "asset_id": "ISOLATED",
+        "observed_at": "@start",
+        "gallons": "1000.000",
+        "gallon_basis": "net_60F",
+        "temperature_f": "60.0",
+        "quality": "valid",
+        "uncertainty_gallons": "0.500",
+        "capacity_gallons": "2000.000"
+      },
+      {
+        "reading_id": "R-ISOLATED-CLOSE",
+        "asset_id": "ISOLATED",
+        "observed_at": "@end",
+        "gallons": "595.000",
+        "gallon_basis": "net_60F",
+        "temperature_f": "60.0",
+        "quality": "valid",
+        "uncertainty_gallons": "0.500",
+        "capacity_gallons": "2000.000"
+      },
+      {
+        "reading_id": "R-BOUNDARY-OPEN",
+        "asset_id": "BOUNDARY",
+        "observed_at": "@hour:-25",
+        "gallons": "1000.000",
+        "gallon_basis": "net_60F",
+        "temperature_f": "60.0",
+        "quality": "valid",
+        "uncertainty_gallons": "2.500",
+        "capacity_gallons": "2000.000"
+      },
+      {
+        "reading_id": "R-BOUNDARY-CLOSE",
+        "asset_id": "BOUNDARY",
+        "observed_at": "@hour:1",
+        "gallons": "1005.000",
+        "gallon_basis": "net_60F",
+        "temperature_f": "60.0",
+        "quality": "valid",
+        "uncertainty_gallons": "2.500",
+        "capacity_gallons": "2000.000"
+      }
+    ],
+    "pos.csv": [
+      {
+        "transaction_id": "T-BATCH",
+        "line_id": "1",
+        "occurred_at": "@hour:-30",
+        "customer_id": "POS-C1",
+        "item_id": "SERVICE",
+        "quantity": "25.000",
+        "unit": "each",
+        "unit_price": "20.00",
+        "net_amount": "500.00",
+        "discount_amount": "0.00",
+        "tax_amount": "0.00",
+        "gross_amount": "500.00",
+        "tender": "card",
+        "status": "captured",
+        "original_transaction_id": "",
+        "settlement_batch_id": "B-SETTLED",
+        "inventory_asset_id": "",
+        "external_reference": "EXT-T-BATCH",
+        "approval_id": ""
+      },
+      {
+        "transaction_id": "T-REFUND",
+        "line_id": "1",
+        "occurred_at": "@hour:-30",
+        "customer_id": "POS-C1",
+        "item_id": "SERVICE",
+        "quantity": "1.000",
+        "unit": "each",
+        "unit_price": "-20.00",
+        "net_amount": "-20.00",
+        "discount_amount": "0.00",
+        "tax_amount": "0.00",
+        "gross_amount": "-20.00",
+        "tender": "card",
+        "status": "refunded",
+        "original_transaction_id": "T-BATCH",
+        "settlement_batch_id": "B-SETTLED",
+        "inventory_asset_id": "",
+        "external_reference": "EXT-T-REFUND",
+        "approval_id": ""
+      },
+      {
+        "transaction_id": "T-RETAIL",
+        "line_id": "1",
+        "occurred_at": "@hour:-30",
+        "customer_id": "POS-C1",
+        "item_id": "RETAIL",
+        "quantity": "50.000",
+        "unit": "gallon",
+        "unit_price": "2.00",
+        "net_amount": "100.00",
+        "discount_amount": "0.00",
+        "tax_amount": "0.00",
+        "gross_amount": "100.00",
+        "tender": "card",
+        "status": "captured",
+        "original_transaction_id": "",
+        "settlement_batch_id": "",
+        "inventory_asset_id": "BULK-A",
+        "external_reference": "EXT-T-RETAIL",
+        "approval_id": ""
+      },
+      {
+        "transaction_id": "T-DISCOUNT",
+        "line_id": "1",
+        "occurred_at": "@hour:-30",
+        "customer_id": "POS-C1",
+        "item_id": "DISCOUNT-SERVICE",
+        "quantity": "1.000",
+        "unit": "each",
+        "unit_price": "100.00",
+        "net_amount": "90.00",
+        "discount_amount": "10.00",
+        "tax_amount": "0.00",
+        "gross_amount": "90.00",
+        "tender": "card",
+        "status": "captured",
+        "original_transaction_id": "",
+        "settlement_batch_id": "",
+        "inventory_asset_id": "",
+        "external_reference": "EXT-T-DISCOUNT",
+        "approval_id": "APP-DISCOUNT"
+      },
+      {
+        "transaction_id": "T-EQUAL-A",
+        "line_id": "1",
+        "occurred_at": "@hour:-30",
+        "customer_id": "POS-C1",
+        "item_id": "SERVICE",
+        "quantity": "1.000",
+        "unit": "each",
+        "unit_price": "20.00",
+        "net_amount": "20.00",
+        "discount_amount": "0.00",
+        "tax_amount": "0.00",
+        "gross_amount": "20.00",
+        "tender": "card",
+        "status": "captured",
+        "original_transaction_id": "",
+        "settlement_batch_id": "",
+        "inventory_asset_id": "",
+        "external_reference": "EXT-T-EQUAL-A",
+        "approval_id": ""
+      },
+      {
+        "transaction_id": "T-EQUAL-B",
+        "line_id": "1",
+        "occurred_at": "@hour:-30",
+        "customer_id": "POS-C1",
+        "item_id": "SERVICE",
+        "quantity": "1.000",
+        "unit": "each",
+        "unit_price": "20.00",
+        "net_amount": "20.00",
+        "discount_amount": "0.00",
+        "tax_amount": "0.00",
+        "gross_amount": "20.00",
+        "tender": "card",
+        "status": "captured",
+        "original_transaction_id": "",
+        "settlement_batch_id": "",
+        "inventory_asset_id": "",
+        "external_reference": "EXT-T-EQUAL-B",
+        "approval_id": ""
+      },
+      {
+        "transaction_id": "T-CYLINDER",
+        "line_id": "1",
+        "occurred_at": "@hour:-30",
+        "customer_id": "POS-C1",
+        "item_id": "CYLINDER",
+        "quantity": "1.000",
+        "unit": "each",
+        "unit_price": "20.00",
+        "net_amount": "20.00",
+        "discount_amount": "0.00",
+        "tax_amount": "0.00",
+        "gross_amount": "20.00",
+        "tender": "card",
+        "status": "captured",
+        "original_transaction_id": "",
+        "settlement_batch_id": "",
+        "inventory_asset_id": "ISOLATED",
+        "external_reference": "EXT-T-CYLINDER",
+        "approval_id": ""
+      },
+      {
+        "transaction_id": "T-TAX",
+        "line_id": "1",
+        "occurred_at": "@hour:-30",
+        "customer_id": "POS-C1",
+        "item_id": "SERVICE",
+        "quantity": "1.000",
+        "unit": "each",
+        "unit_price": "20.00",
+        "net_amount": "20.00",
+        "discount_amount": "0.00",
+        "tax_amount": "2.00",
+        "gross_amount": "22.00",
+        "tender": "card",
+        "status": "captured",
+        "original_transaction_id": "",
+        "settlement_batch_id": "",
+        "inventory_asset_id": "",
+        "external_reference": "EXT-T-TAX",
+        "approval_id": ""
+      },
+      {
+        "transaction_id": "T-PENDING",
+        "line_id": "1",
+        "occurred_at": "@hour:-30",
+        "customer_id": "POS-C1",
+        "item_id": "SERVICE",
+        "quantity": "1.000",
+        "unit": "each",
+        "unit_price": "20.00",
+        "net_amount": "20.00",
+        "discount_amount": "0.00",
+        "tax_amount": "0.00",
+        "gross_amount": "20.00",
+        "tender": "card",
+        "status": "pending",
+        "original_transaction_id": "",
+        "settlement_batch_id": "",
+        "inventory_asset_id": "",
+        "external_reference": "EXT-T-PENDING",
+        "approval_id": ""
+      },
+      {
+        "transaction_id": "T-VOID",
+        "line_id": "1",
+        "occurred_at": "@hour:-30",
+        "customer_id": "POS-C1",
+        "item_id": "SERVICE",
+        "quantity": "1.000",
+        "unit": "each",
+        "unit_price": "20.00",
+        "net_amount": "20.00",
+        "discount_amount": "0.00",
+        "tax_amount": "0.00",
+        "gross_amount": "20.00",
+        "tender": "card",
+        "status": "void",
+        "original_transaction_id": "",
+        "settlement_batch_id": "",
+        "inventory_asset_id": "",
+        "external_reference": "EXT-T-VOID",
+        "approval_id": ""
+      },
+      {
+        "transaction_id": "T-DELIVERY",
+        "line_id": "1",
+        "occurred_at": "@hour:-30",
+        "customer_id": "POS-C1",
+        "item_id": "LPG-DELIVERY",
+        "quantity": "100.000",
+        "unit": "gallon",
+        "unit_price": "2.00",
+        "net_amount": "200.00",
+        "discount_amount": "0.00",
+        "tax_amount": "0.00",
+        "gross_amount": "200.00",
+        "tender": "card",
+        "status": "captured",
+        "original_transaction_id": "",
+        "settlement_batch_id": "",
+        "inventory_asset_id": "BULK-A",
+        "external_reference": "EXT-T-DELIVERY",
+        "approval_id": ""
+      }
+    ],
+    "settlements.csv": [
+      {
+        "batch_id": "B-SETTLED",
+        "settled_at": "@hour:-144",
+        "gross": "500.00",
+        "refunds": "20.00",
+        "fees": "10.00",
+        "net": "470.00",
+        "qbo_deposit_id": "DEP-SHORT"
+      }
+    ],
+    "movements.csv": [
+      {
+        "movement_id": "M-PURCHASE",
+        "occurred_at": "@hour:-30",
+        "asset_id": "BULK-A",
+        "counterparty_asset_id": "",
+        "movement_type": "purchase",
+        "quantity": "200.000",
+        "gallon_basis": "net_60F",
+        "source_system": "supplier",
+        "source_id": "PUR-1",
+        "transfer_id": ""
+      },
+      {
+        "movement_id": "M-OUT",
+        "occurred_at": "@hour:-30",
+        "asset_id": "BULK-A",
+        "counterparty_asset_id": "",
+        "movement_type": "customer_delivery",
+        "quantity": "100.000",
+        "gallon_basis": "net_60F",
+        "source_system": "cargas",
+        "source_id": "D-OUT",
+        "transfer_id": ""
+      },
+      {
+        "movement_id": "M-RETAIL",
+        "occurred_at": "@hour:-30",
+        "asset_id": "BULK-A",
+        "counterparty_asset_id": "",
+        "movement_type": "retail_sale",
+        "quantity": "50.000",
+        "gallon_basis": "net_60F",
+        "source_system": "pos",
+        "source_id": "T-RETAIL:1",
+        "transfer_id": ""
+      },
+      {
+        "movement_id": "M-TRANSFER-OUT",
+        "occurred_at": "@hour:-30",
+        "asset_id": "DEPOT",
+        "counterparty_asset_id": "TRUCK-A",
+        "movement_type": "transfer_out",
+        "quantity": "50.000",
+        "gallon_basis": "net_60F",
+        "source_system": "inventory",
+        "source_id": "LOAD-1",
+        "transfer_id": "X-1"
+      },
+      {
+        "movement_id": "M-TRANSFER-IN",
+        "occurred_at": "@hour:-30",
+        "asset_id": "TRUCK-A",
+        "counterparty_asset_id": "DEPOT",
+        "movement_type": "transfer_in",
+        "quantity": "50.000",
+        "gallon_basis": "net_60F",
+        "source_system": "inventory",
+        "source_id": "LOAD-1",
+        "transfer_id": "X-1"
+      },
+      {
+        "movement_id": "M-D-PRICE",
+        "occurred_at": "@hour:-30",
+        "asset_id": "ISOLATED",
+        "counterparty_asset_id": "",
+        "movement_type": "customer_delivery",
+        "quantity": "100.000",
+        "gallon_basis": "net_60F",
+        "source_system": "cargas",
+        "source_id": "D-PRICE",
+        "transfer_id": ""
+      },
+      {
+        "movement_id": "M-D-CREDIT",
+        "occurred_at": "@hour:-30",
+        "asset_id": "ISOLATED",
+        "counterparty_asset_id": "",
+        "movement_type": "customer_delivery",
+        "quantity": "100.000",
+        "gallon_basis": "net_60F",
+        "source_system": "cargas",
+        "source_id": "D-CREDIT",
+        "transfer_id": ""
+      },
+      {
+        "movement_id": "M-D-PAY",
+        "occurred_at": "@hour:-30",
+        "asset_id": "ISOLATED",
+        "counterparty_asset_id": "",
+        "movement_type": "customer_delivery",
+        "quantity": "50.000",
+        "gallon_basis": "net_60F",
+        "source_system": "cargas",
+        "source_id": "D-PAY",
+        "transfer_id": ""
+      },
+      {
+        "movement_id": "M-D-SPLIT",
+        "occurred_at": "@hour:-30",
+        "asset_id": "ISOLATED",
+        "counterparty_asset_id": "",
+        "movement_type": "customer_delivery",
+        "quantity": "50.000",
+        "gallon_basis": "net_60F",
+        "source_system": "cargas",
+        "source_id": "D-SPLIT",
+        "transfer_id": ""
+      },
+      {
+        "movement_id": "M-D-COMB-A",
+        "occurred_at": "@hour:-30",
+        "asset_id": "ISOLATED",
+        "counterparty_asset_id": "",
+        "movement_type": "customer_delivery",
+        "quantity": "20.000",
+        "gallon_basis": "net_60F",
+        "source_system": "cargas",
+        "source_id": "D-COMB-A",
+        "transfer_id": ""
+      },
+      {
+        "movement_id": "M-D-COMB-B",
+        "occurred_at": "@hour:-30",
+        "asset_id": "ISOLATED",
+        "counterparty_asset_id": "",
+        "movement_type": "customer_delivery",
+        "quantity": "30.000",
+        "gallon_basis": "net_60F",
+        "source_system": "cargas",
+        "source_id": "D-COMB-B",
+        "transfer_id": ""
+      },
+      {
+        "movement_id": "M-D-PAID",
+        "occurred_at": "@hour:-30",
+        "asset_id": "ISOLATED",
+        "counterparty_asset_id": "",
+        "movement_type": "customer_delivery",
+        "quantity": "50.000",
+        "gallon_basis": "net_60F",
+        "source_system": "cargas",
+        "source_id": "D-PAID",
+        "transfer_id": ""
+      },
+      {
+        "movement_id": "M-CYLINDER",
+        "occurred_at": "@hour:-30",
+        "asset_id": "ISOLATED",
+        "counterparty_asset_id": "",
+        "movement_type": "retail_sale",
+        "quantity": "5.000",
+        "gallon_basis": "net_60F",
+        "source_system": "pos",
+        "source_id": "T-CYLINDER:1",
+        "transfer_id": ""
+      }
+    ],
+    "prices.csv": [
+      {
+        "price_id": "PRICE-BASE",
+        "item_id": "LPG-DELIVERY",
+        "customer_class": "standard",
+        "effective_from": "2020-01-01",
+        "effective_to": "2035-01-01",
+        "unit": "gallon",
+        "gallon_basis": "net_60F",
+        "unit_price": "2.00",
+        "approved_discount_pct": "0.00"
+      },
+      {
+        "price_id": "PRICE-SERVICE",
+        "item_id": "SERVICE",
+        "customer_class": "standard",
+        "effective_from": "2020-01-01",
+        "effective_to": "2035-01-01",
+        "unit": "each",
+        "gallon_basis": "net_60F",
+        "unit_price": "20.00",
+        "approved_discount_pct": "10.00"
+      },
+      {
+        "price_id": "PRICE-RETAIL",
+        "item_id": "RETAIL",
+        "customer_class": "standard",
+        "effective_from": "2020-01-01",
+        "effective_to": "2035-01-01",
+        "unit": "gallon",
+        "gallon_basis": "net_60F",
+        "unit_price": "2.00",
+        "approved_discount_pct": "10.00"
+      },
+      {
+        "price_id": "PRICE-CYLINDER",
+        "item_id": "CYLINDER",
+        "customer_class": "standard",
+        "effective_from": "2020-01-01",
+        "effective_to": "2035-01-01",
+        "unit": "each",
+        "gallon_basis": "net_60F",
+        "unit_price": "20.00",
+        "approved_discount_pct": "10.00"
+      },
+      {
+        "price_id": "PRICE-CONTAINER",
+        "item_id": "CONTAINER",
+        "customer_class": "standard",
+        "effective_from": "2020-01-01",
+        "effective_to": "2035-01-01",
+        "unit": "each",
+        "gallon_basis": "net_60F",
+        "unit_price": "10.00",
+        "approved_discount_pct": "10.00"
+      },
+      {
+        "price_id": "PRICE-DISCOUNT",
+        "item_id": "DISCOUNT-SERVICE",
+        "customer_class": "standard",
+        "effective_from": "2020-01-01",
+        "effective_to": "2035-01-01",
+        "unit": "each",
+        "gallon_basis": "net_60F",
+        "unit_price": "100.00",
+        "approved_discount_pct": "10.00"
+      }
+    ],
+    "identity.json": {
+      "customers": [
+        {
+          "mapping_id": "CUSTOMER-1",
+          "cargas": "CE-C1",
+          "pos": "POS-C1",
+          "qbo": "C-1"
+        }
+      ],
+      "items": [
+        {
+          "mapping_id": "ITEM-1",
+          "cargas": "CE-LPG",
+          "qbo": "LPG-DELIVERY",
+          "unit": "gallon",
+          "gallon_basis": "net_60F"
+        }
+      ],
+      "assets": [
+        {
+          "mapping_id": "ASSET-BULK-A",
+          "source_id": "BULK-A",
+          "asset_id": "BULK-A"
+        },
+        {
+          "mapping_id": "ASSET-ISOLATED",
+          "source_id": "ISOLATED",
+          "asset_id": "ISOLATED"
+        },
+        {
+          "mapping_id": "ASSET-TRUCK-A",
+          "source_id": "TRUCK-A",
+          "asset_id": "TRUCK-A"
+        },
+        {
+          "mapping_id": "ASSET-DEPOT",
+          "source_id": "DEPOT",
+          "asset_id": "DEPOT"
+        },
+        {
+          "mapping_id": "ASSET-BOUNDARY",
+          "source_id": "BOUNDARY",
+          "asset_id": "BOUNDARY"
+        }
+      ],
+      "allocations": [
+        {
+          "mapping_id": "A-PRICE",
+          "delivery_id": "D-PRICE",
+          "invoice_id": "I-PRICE",
+          "line_id": "1",
+          "gallons": "100.000",
+          "net_amount": "200.00"
+        },
+        {
+          "mapping_id": "A-CREDIT",
+          "delivery_id": "D-CREDIT",
+          "invoice_id": "I-CREDIT",
+          "line_id": "1",
+          "gallons": "100.000",
+          "net_amount": "200.00"
+        },
+        {
+          "mapping_id": "A-PAY",
+          "delivery_id": "D-PAY",
+          "invoice_id": "I-PAY",
+          "line_id": "1",
+          "gallons": "50.000",
+          "net_amount": "100.00"
+        },
+        {
+          "mapping_id": "A-OUT",
+          "delivery_id": "D-OUT",
+          "invoice_id": "I-OUT",
+          "line_id": "1",
+          "gallons": "100.000",
+          "net_amount": "200.00"
+        },
+        {
+          "mapping_id": "A-SPLIT-A",
+          "delivery_id": "D-SPLIT",
+          "invoice_id": "I-SPLIT-A",
+          "line_id": "1",
+          "gallons": "20.000",
+          "net_amount": "40.00"
+        },
+        {
+          "mapping_id": "A-SPLIT-B",
+          "delivery_id": "D-SPLIT",
+          "invoice_id": "I-SPLIT-B",
+          "line_id": "1",
+          "gallons": "30.000",
+          "net_amount": "60.00"
+        },
+        {
+          "mapping_id": "A-COMB-A",
+          "delivery_id": "D-COMB-A",
+          "invoice_id": "I-COMBINED",
+          "line_id": "1",
+          "gallons": "20.000",
+          "net_amount": "40.00"
+        },
+        {
+          "mapping_id": "A-COMB-B",
+          "delivery_id": "D-COMB-B",
+          "invoice_id": "I-COMBINED",
+          "line_id": "1",
+          "gallons": "30.000",
+          "net_amount": "60.00"
+        },
+        {
+          "mapping_id": "A-PAID",
+          "delivery_id": "D-PAID",
+          "invoice_id": "I-PAID",
+          "line_id": "1",
+          "gallons": "50.000",
+          "net_amount": "100.00"
+        },
+        {
+          "mapping_id": "A-FRACTION",
+          "delivery_id": "D-FRACTION",
+          "invoice_id": "I-FRACTION",
+          "line_id": "1",
+          "gallons": "0.005",
+          "net_amount": "0.01"
+        }
+      ],
+      "pos_events": [
+        {
+          "mapping_id": "EVENT-T-BATCH",
+          "pos_id": "T-BATCH:1",
+          "qbo_entity": "SalesReceipt",
+          "qbo_id": "SR-BATCH",
+          "inventory_counted": true
+        },
+        {
+          "mapping_id": "EVENT-T-RETAIL",
+          "pos_id": "T-RETAIL:1",
+          "qbo_entity": "SalesReceipt",
+          "qbo_id": "SR-RETAIL",
+          "inventory_counted": true
+        },
+        {
+          "mapping_id": "EVENT-T-DISCOUNT",
+          "pos_id": "T-DISCOUNT:1",
+          "qbo_entity": "SalesReceipt",
+          "qbo_id": "SR-DISCOUNT",
+          "inventory_counted": true
+        },
+        {
+          "mapping_id": "EVENT-T-CYLINDER",
+          "pos_id": "T-CYLINDER:1",
+          "qbo_entity": "SalesReceipt",
+          "qbo_id": "SR-CYLINDER",
+          "inventory_counted": true
+        },
+        {
+          "mapping_id": "EVENT-T-TAX",
+          "pos_id": "T-TAX:1",
+          "qbo_entity": "SalesReceipt",
+          "qbo_id": "SR-TAX",
+          "inventory_counted": true
+        },
+        {
+          "mapping_id": "EVENT-DELIVERY",
+          "pos_id": "T-DELIVERY:1",
+          "qbo_entity": "Invoice",
+          "qbo_id": "I-OUT",
+          "delivery_id": "D-OUT",
+          "inventory_counted": true
+        },
+        {
+          "mapping_id": "EVENT-T-EQUAL-A",
+          "pos_id": "T-EQUAL-A:1",
+          "qbo_entity": "SalesReceipt",
+          "qbo_id": "SR-T-EQUAL-A",
+          "inventory_counted": true
+        },
+        {
+          "mapping_id": "EVENT-T-EQUAL-B",
+          "pos_id": "T-EQUAL-B:1",
+          "qbo_entity": "SalesReceipt",
+          "qbo_id": "SR-T-EQUAL-B",
+          "inventory_counted": true
+        },
+        {
+          "mapping_id": "EVENT-REFUND",
+          "pos_id": "T-REFUND:1",
+          "qbo_entity": "RefundReceipt",
+          "qbo_id": "RR-BATCH",
+          "inventory_counted": false
+        }
+      ],
+      "sku_fill_gallons": {
+        "CYLINDER": "5.000"
+      },
+      "approvals": [
+        {
+          "approval_id": "APP-CREDIT",
+          "policy_id": "POLICY-1"
+        },
+        {
+          "approval_id": "APP-REFUND",
+          "policy_id": "POLICY-1"
+        },
+        {
+          "approval_id": "APP-DISCOUNT",
+          "policy_id": "POLICY-1",
+          "approved_discount_pct": "10.00"
+        }
+      ],
+      "posting_map": [
+        {
+          "mapping_id": "POST-I-PAY",
+          "journal_id": "JE-UNBALANCED",
+          "external_ref": "I-PAY",
+          "account_id": "CLEARING",
+          "expected_net": "100.00"
+        }
+      ]
+    },
+    "opening_ar.json": {
+      "snapshot_id": "AR-OPEN",
+      "as_of": "@hour:-72",
+      "balances": [
+        {
+          "customer_id": "C-1",
+          "amount": "0.00"
+        }
+      ]
+    },
+    "policies.json": {
+      "policy_id": "POLICY-1",
+      "fictional": true,
+      "version": "1",
+      "timezone": "America/Denver",
+      "currency": "USD",
+      "money_rounding": "ROUND_HALF_UP",
+      "money_places": 2,
+      "gallon_places": 3,
+      "basis": "net_60F",
+      "billing_grace_hours": 24,
+      "payment_grace_hours": 24,
+      "settlement_grace_business_days": 2,
+      "business_days": "Mon-Fri; no holidays",
+      "price_tolerance": "0.01",
+      "credit_limit": "100.00",
+      "discount_limit_pct": "10.00",
+      "inventory_min_gallons": "2.000",
+      "inventory_pct": "0.005",
+      "reading_max_minutes": 60,
+      "source_max_hours": 24,
+      "future_max_minutes": 5,
+      "revenue_policy": "Distinct nonvoid sale events less net adjustments; exclude tax/container deposits; payment/deposit not revenue",
+      "opening_ar_cutoff": "@hour:-72",
+      "optional": null,
+      "synthetic": true,
+      "unmeasured_assets": [
+        "UNMEASURED"
+      ]
+    },
+    "run.json": {
+      "run_id": "@run",
+      "business_date": "@date",
+      "window_start": "@start",
+      "window_end": "@end",
+      "as_of": "@end",
+      "contract_version": "1"
+    },
+    "manifests.json": [
+      {
+        "manifest_id": "QBO-OK",
+        "run_id": "@run",
+        "source": "qbo",
+        "file_id": "qbo.json",
+        "expected_window_start": "@hour:-72",
+        "expected_window_end": "@end",
+        "extracted_at": "@end",
+        "covered_through": "@end",
+        "status": "success",
+        "row_count": "40",
+        "error_code": ""
+      },
+      {
+        "manifest_id": "CARGAS-OK",
+        "run_id": "@run",
+        "source": "cargas",
+        "file_id": "deliveries.csv",
+        "expected_window_start": "@hour:-72",
+        "expected_window_end": "@end",
+        "extracted_at": "@end",
+        "covered_through": "@end",
+        "status": "success",
+        "row_count": "11",
+        "error_code": ""
+      },
+      {
+        "manifest_id": "READINGS-OK",
+        "run_id": "@run",
+        "source": "readings",
+        "file_id": "readings.csv",
+        "expected_window_start": "@hour:-72",
+        "expected_window_end": "@end",
+        "extracted_at": "@end",
+        "covered_through": "@end",
+        "status": "success",
+        "row_count": "10",
+        "error_code": ""
+      },
+      {
+        "manifest_id": "POS-OK",
+        "run_id": "@run",
+        "source": "pos",
+        "file_id": "pos.csv",
+        "expected_window_start": "@hour:-72",
+        "expected_window_end": "@end",
+        "extracted_at": "@end",
+        "covered_through": "@end",
+        "status": "success",
+        "row_count": "11",
+        "error_code": ""
+      },
+      {
+        "manifest_id": "SETTLEMENTS-OK",
+        "run_id": "@run",
+        "source": "settlements",
+        "file_id": "settlements.csv",
+        "expected_window_start": "@hour:-72",
+        "expected_window_end": "@end",
+        "extracted_at": "@end",
+        "covered_through": "@end",
+        "status": "success",
+        "row_count": "1",
+        "error_code": ""
+      },
+      {
+        "manifest_id": "INVENTORY-OK",
+        "run_id": "@run",
+        "source": "inventory",
+        "file_id": "movements.csv",
+        "expected_window_start": "@hour:-72",
+        "expected_window_end": "@end",
+        "extracted_at": "@end",
+        "covered_through": "@end",
+        "status": "success",
+        "row_count": "13",
+        "error_code": ""
+      },
+      {
+        "manifest_id": "PRICES-OK",
+        "run_id": "@run",
+        "source": "prices",
+        "file_id": "prices.csv",
+        "expected_window_start": "@hour:-72",
+        "expected_window_end": "@end",
+        "extracted_at": "@end",
+        "covered_through": "@end",
+        "status": "success",
+        "row_count": "6",
+        "error_code": ""
+      },
+      {
+        "manifest_id": "EMPTY-OK",
+        "run_id": "@run",
+        "source": "optional_empty",
+        "file_id": "empty.json",
+        "expected_window_start": "@hour:-72",
+        "expected_window_end": "@end",
+        "extracted_at": "@end",
+        "covered_through": "@end",
+        "status": "success",
+        "row_count": "0",
+        "error_code": ""
+      },
+      {
+        "manifest_id": "IDENTITY-OK",
+        "run_id": "@run",
+        "source": "identity",
+        "file_id": "identity.json",
+        "expected_window_start": "@hour:-72",
+        "expected_window_end": "@end",
+        "extracted_at": "@end",
+        "covered_through": "@end",
+        "status": "success",
+        "row_count": "8",
+        "error_code": ""
+      },
+      {
+        "manifest_id": "AR-OK",
+        "run_id": "@run",
+        "source": "ar",
+        "file_id": "opening_ar.json",
+        "expected_window_start": "@hour:-72",
+        "expected_window_end": "@end",
+        "extracted_at": "@end",
+        "covered_through": "@end",
+        "status": "success",
+        "row_count": "3",
+        "error_code": ""
+      }
+    ],
+    "empty.json": [],
+    "boundary_cases.json": [
+      {
+        "case_id": "PRICE-EXACT",
+        "actual": "20.01",
+        "expected": "20.00",
+        "delta": "0.01",
+        "threshold": "0.01",
+        "verdict": "pass"
+      },
+      {
+        "case_id": "INVENTORY-EXACT",
+        "opening": "1000.000",
+        "expected": "1000.000",
+        "observed": "1005.000",
+        "delta": "5.000",
+        "threshold": "5.000",
+        "verdict": "pass"
+      },
+      {
+        "case_id": "READING-EXACT",
+        "age_minutes": "60",
+        "uncertainty": "5.000",
+        "tolerance": "5.000",
+        "verdict": "pass"
+      },
+      {
+        "case_id": "BILLING-GRACE",
+        "age_hours": "24",
+        "unallocated": "1.000",
+        "verdict": "not_due"
+      },
+      {
+        "case_id": "PAYMENT-GRACE",
+        "age_hours": "24",
+        "unapplied": "25.00",
+        "verdict": "not_due"
+      },
+      {
+        "case_id": "FRESHNESS-EXACT",
+        "age_hours": "24",
+        "future_minutes": "5",
+        "verdict": "pass"
+      },
+      {
+        "case_id": "SETTLEMENT-GRACE",
+        "business_days": "2",
+        "verdict": "not_due"
+      },
+      {
+        "case_id": "ROUND-HALF-UP",
+        "quantity": "0.005",
+        "unit_price": "1.00",
+        "net": "0.01"
+      },
+      {
+        "case_id": "GALLON-PRECISION",
+        "quantity": "0.001",
+        "basis": "net_60F"
+      }
+    ],
+    "updates.json": {
+      "source": "qbo",
+      "entity": "Customer",
+      "records": [
+        {
+          "Id": "C-1",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-2"
+          },
+          "DisplayName": "Synthetic customer",
+          "CustomerClass": "standard"
+        },
+        {
+          "Id": "C-1",
+          "SyncToken": "1",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "DisplayName": "Synthetic updated customer",
+          "CustomerClass": "standard"
+        }
+      ]
+    }
+  },
+  "mutations": {
+    "P01": [
+      {
+        "file": "deliveries.csv",
+        "append": {
+          "ticket_id": "D-MISSING",
+          "customer_id": "CE-C1",
+          "tank_id": "UNMEASURED",
+          "truck_id": "",
+          "delivered_at": "@hour:-30",
+          "item_id": "CE-LPG",
+          "gallons": "100.000",
+          "gallon_basis": "net_60F",
+          "unit_price": "2.00",
+          "net_amount": "200.00",
+          "status": "completed",
+          "external_invoice_id": "",
+          "meter_ticket_id": "MT-D-MISSING"
+        }
+      }
+    ],
+    "P02": [
+      {
+        "file": "qbo.json",
+        "append": {
+          "Id": "I-ORPHAN",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-ORPHAN",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "200.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "200.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "LPG-DELIVERY"
+                },
+                "Qty": "100.000",
+                "UnitPrice": "2.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "Balance": "200.00"
+        },
+        "collection": "Invoice"
+      }
+    ],
+    "P03": [
+      {
+        "file": "pos.csv",
+        "append": {
+          "transaction_id": "T-DUP-A",
+          "line_id": "1",
+          "occurred_at": "@hour:-30",
+          "customer_id": "POS-C1",
+          "item_id": "SERVICE",
+          "quantity": "1.000",
+          "unit": "each",
+          "unit_price": "20.00",
+          "net_amount": "20.00",
+          "discount_amount": "0.00",
+          "tax_amount": "0.00",
+          "gross_amount": "20.00",
+          "tender": "card",
+          "status": "captured",
+          "original_transaction_id": "",
+          "settlement_batch_id": "",
+          "inventory_asset_id": "",
+          "external_reference": "EXT-DUP",
+          "approval_id": ""
+        }
+      },
+      {
+        "file": "pos.csv",
+        "append": {
+          "transaction_id": "T-DUP-B",
+          "line_id": "1",
+          "occurred_at": "@hour:-30",
+          "customer_id": "POS-C1",
+          "item_id": "SERVICE",
+          "quantity": "1.000",
+          "unit": "each",
+          "unit_price": "20.00",
+          "net_amount": "20.00",
+          "discount_amount": "0.00",
+          "tax_amount": "0.00",
+          "gross_amount": "20.00",
+          "tender": "card",
+          "status": "captured",
+          "original_transaction_id": "",
+          "settlement_batch_id": "",
+          "inventory_asset_id": "",
+          "external_reference": "EXT-DUP",
+          "approval_id": ""
+        }
+      },
+      {
+        "file": "qbo.json",
+        "append": {
+          "Id": "SR-T-DUP-A",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "SR-T-DUP-A",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "20.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "20.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "20.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30"
+        },
+        "collection": "SalesReceipt"
+      },
+      {
+        "file": "identity.json",
+        "append": {
+          "mapping_id": "EVENT-T-DUP-A",
+          "pos_id": "T-DUP-A:1",
+          "qbo_entity": "SalesReceipt",
+          "qbo_id": "SR-T-DUP-A",
+          "inventory_counted": true
+        },
+        "collection": "pos_events"
+      },
+      {
+        "file": "qbo.json",
+        "append": {
+          "Id": "SR-T-DUP-B",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "SR-T-DUP-B",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "20.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "20.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "20.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30"
+        },
+        "collection": "SalesReceipt"
+      },
+      {
+        "file": "identity.json",
+        "append": {
+          "mapping_id": "EVENT-T-DUP-B",
+          "pos_id": "T-DUP-B:1",
+          "qbo_entity": "SalesReceipt",
+          "qbo_id": "SR-T-DUP-B",
+          "inventory_counted": true
+        },
+        "collection": "pos_events"
+      }
+    ],
+    "P04": [
+      {
+        "file": "qbo.json",
+        "index": 0,
+        "changes": {
+          "Id": "I-PRICE",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-PRICE",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "210.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "210.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "LPG-DELIVERY"
+                },
+                "Qty": "100.000",
+                "UnitPrice": "2.10",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "Balance": "210.00"
+        },
+        "collection": "Invoice"
+      },
+      {
+        "file": "identity.json",
+        "index": 0,
+        "changes": {
+          "mapping_id": "A-PRICE",
+          "delivery_id": "D-PRICE",
+          "invoice_id": "I-PRICE",
+          "line_id": "1",
+          "gallons": "100.000",
+          "net_amount": "210.00"
+        },
+        "collection": "allocations"
+      }
+    ],
+    "P05": [
+      {
+        "file": "qbo.json",
+        "index": 0,
+        "changes": {
+          "Id": "CM-UNUSUAL",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "CM-UNUSUAL",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "150.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "150.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "150.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [
+            {
+              "TxnId": "I-CREDIT",
+              "TxnType": "Invoice"
+            }
+          ],
+          "EventAt": "@hour:-30",
+          "ApprovalRef": "APP-CREDIT",
+          "AppliedAmount": "150.00"
+        },
+        "collection": "CreditMemo"
+      },
+      {
+        "file": "qbo.json",
+        "index": 1,
+        "changes": {
+          "Balance": "50.00"
+        },
+        "collection": "Invoice"
+      },
+      {
+        "file": "pos.csv",
+        "index": 3,
+        "changes": {
+          "net_amount": "85.00",
+          "gross_amount": "85.00",
+          "discount_amount": "15.00"
+        }
+      },
+      {
+        "file": "qbo.json",
+        "index": 3,
+        "changes": {
+          "Id": "SR-DISCOUNT",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "SR-DISCOUNT",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "85.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "85.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "DISCOUNT-SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "100.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              },
+              "DiscountAmount": "15.00",
+              "ApprovalRef": "APP-DISCOUNT"
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30"
+        },
+        "collection": "SalesReceipt"
+      },
+      {
+        "file": "prices.csv",
+        "index": 5,
+        "changes": {
+          "approved_discount_pct": "15.00"
+        }
+      },
+      {
+        "file": "identity.json",
+        "collection": "approvals",
+        "index": 2,
+        "changes": {
+          "approved_discount_pct": "15.00"
+        }
+      }
+    ],
+    "P06": [
+      {
+        "file": "qbo.json",
+        "index": 1,
+        "changes": {
+          "TotalAmt": "25.00",
+          "UnappliedAmt": "25.00"
+        },
+        "collection": "Payment"
+      },
+      {
+        "file": "qbo.json",
+        "append": {
+          "Id": "PAY-EXCESS",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "110.00",
+          "Line": [
+            {
+              "Id": "1",
+              "Amount": "110.00",
+              "LinkedTxn": [
+                {
+                  "TxnId": "I-PAY",
+                  "TxnType": "Invoice"
+                }
+              ]
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "UnappliedAmt": "0.00",
+          "PaymentRefNum": "PAY-EXCESS"
+        },
+        "collection": "Payment"
+      },
+      {
+        "file": "qbo.json",
+        "index": 2,
+        "changes": {
+          "Balance": "-10.00"
+        },
+        "collection": "Invoice"
+      }
+    ],
+    "P07": [
+      {
+        "file": "qbo.json",
+        "index": 0,
+        "changes": {
+          "Id": "DEP-SHORT",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "TotalAmt": "460.00",
+          "Line": [
+            {
+              "Id": "1",
+              "Amount": "460.00",
+              "DepositLineDetail": {
+                "AccountRef": {
+                  "value": "CLEARING"
+                },
+                "TxnType": "SalesReceipt",
+                "TxnId": "SR-BATCH"
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30"
+        },
+        "collection": "Deposit"
+      }
+    ],
+    "P08": [
+      {
+        "file": "readings.csv",
+        "index": 1,
+        "changes": {
+          "gallons": "1020.000"
+        }
+      }
+    ],
+    "P09": [
+      {
+        "file": "readings.csv",
+        "index": 3,
+        "changes": {
+          "quality": "uncertain"
+        }
+      }
+    ],
+    "P10": [
+      {
+        "file": "manifests.json",
+        "index": 0,
+        "changes": {
+          "manifest_id": "QBO-STALE",
+          "covered_through": "@hour:-25"
+        }
+      }
+    ],
+    "P11": [
+      {
+        "file": "manifests.json",
+        "index": 3,
+        "changes": {
+          "manifest_id": "POS-FAILED",
+          "status": "failed",
+          "error_code": "CSV_SCHEMA",
+          "row_count": "1"
+        }
+      }
+    ],
+    "P12": [
+      {
+        "file": "deliveries.csv",
+        "append": {
+          "ticket_id": "D-NO-MAPPING",
+          "customer_id": "UNKNOWN",
+          "tank_id": "UNMEASURED",
+          "truck_id": "",
+          "delivered_at": "@hour:-30",
+          "item_id": "UNKNOWN",
+          "gallons": "100.000",
+          "gallon_basis": "net_60F",
+          "unit_price": "2.00",
+          "net_amount": "200.00",
+          "status": "completed",
+          "external_invoice_id": "",
+          "meter_ticket_id": "MT-D-NO-MAPPING"
+        }
+      },
+      {
+        "file": "identity.json",
+        "append": {
+          "mapping_id": "ASSET-NO-READING",
+          "source_id": "TRUCK-NO-READING",
+          "asset_id": "TRUCK-NO-READING"
+        },
+        "collection": "assets"
+      },
+      {
+        "file": "readings.csv",
+        "append": {
+          "reading_id": "R-NO-READING-OPEN",
+          "asset_id": "TRUCK-NO-READING",
+          "observed_at": "@start",
+          "gallons": "100.000",
+          "gallon_basis": "net_60F",
+          "temperature_f": "60.0",
+          "quality": "valid",
+          "uncertainty_gallons": "0.500",
+          "capacity_gallons": "2000.000"
+        }
+      }
+    ],
+    "P13": [
+      {
+        "file": "qbo.json",
+        "index": 0,
+        "changes": {
+          "Id": "JE-UNBALANCED",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "JE-UNBALANCED",
+          "TotalAmt": "100.00",
+          "Line": [
+            {
+              "Id": "1",
+              "Amount": "100.00",
+              "JournalEntryLineDetail": {
+                "PostingType": "Debit",
+                "AccountRef": {
+                  "value": "CLEARING"
+                }
+              }
+            },
+            {
+              "Id": "2",
+              "Amount": "90.00",
+              "JournalEntryLineDetail": {
+                "PostingType": "Credit",
+                "AccountRef": {
+                  "value": "REVENUE"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "ExternalRef": "I-PAY"
+        },
+        "collection": "JournalEntry"
+      }
+    ],
+    "P14": [
+      {
+        "file": "qbo.json",
+        "append": {
+          "Id": "RR-NO-ORIGINAL",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "RR-NO-ORIGINAL",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "20.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "20.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "SERVICE"
+                },
+                "Qty": "1.000",
+                "UnitPrice": "20.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "ApprovalRef": "APP-REFUND"
+        },
+        "collection": "RefundReceipt"
+      }
+    ],
+    "raw-repeat": [
+      {
+        "file": "qbo.json",
+        "append": {
+          "Id": "I-PRICE",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "I-PRICE",
+          "CustomerRef": {
+            "value": "C-1"
+          },
+          "TotalAmt": "200.00",
+          "Line": [
+            {
+              "Id": "1",
+              "DetailType": "SalesItemLineDetail",
+              "Amount": "200.00",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "LPG-DELIVERY"
+                },
+                "Qty": "100.000",
+                "UnitPrice": "2.00",
+                "TaxCodeRef": {
+                  "value": "NON"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "Balance": "200.00"
+        },
+        "collection": "Invoice"
+      }
+    ],
+    "wrong-clearing": [
+      {
+        "file": "qbo.json",
+        "index": 0,
+        "changes": {
+          "Id": "JE-UNBALANCED",
+          "SyncToken": "0",
+          "MetaData": {
+            "LastUpdatedTime": "@hour:-1"
+          },
+          "TxnDate": "@previous_date",
+          "DocNumber": "JE-UNBALANCED",
+          "TotalAmt": "100.00",
+          "Line": [
+            {
+              "Id": "1",
+              "Amount": "90.00",
+              "JournalEntryLineDetail": {
+                "PostingType": "Debit",
+                "AccountRef": {
+                  "value": "CLEARING"
+                }
+              }
+            },
+            {
+              "Id": "2",
+              "Amount": "90.00",
+              "JournalEntryLineDetail": {
+                "PostingType": "Credit",
+                "AccountRef": {
+                  "value": "REVENUE"
+                }
+              }
+            }
+          ],
+          "LinkedTxn": [],
+          "EventAt": "@hour:-30",
+          "ExternalRef": "I-PAY"
+        },
+        "collection": "JournalEntry"
+      }
+    ]
+  }
+}

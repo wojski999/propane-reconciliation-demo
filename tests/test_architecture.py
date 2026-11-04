@@ -6,7 +6,13 @@ from pathlib import Path
 import pytest
 
 # Add real modules here when introduced; do not create empty layers in advance.
-ALLOWED_INTERNAL_IMPORTS = {"__init__": set(), "smoke": set(), "cli": {"smoke"}}
+ALLOWED_INTERNAL_IMPORTS = {
+    "__init__": set(),
+    "smoke": set(),
+    "cli": {"smoke"},
+    "contracts": set(),
+    "generator": {"contracts"},
+}
 
 
 def check_application_dependency_direction():

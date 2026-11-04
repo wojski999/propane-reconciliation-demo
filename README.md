@@ -4,8 +4,9 @@ A public demonstration of daily propane distribution checks using synthetic data
 The planned report highlights transactions needing attention and traces each
 finding to its source. No real systems, client records or credentials are used.
 
-**Current status: repository foundation only.** No reconciliation checks, KPIs,
-business fixture generator or vendor integrations are implemented yet. See the
+**Current status: foundation and step-1 synthetic fixtures.** The deterministic
+generator and independent test oracle are available. Reconciliation checks, KPIs
+and vendor integrations are not implemented yet. See the
 [approved specification](.ai/specs/2026-11-04-propane-reconciliation-demo.md).
 
 ## Run the foundation smoke sample
@@ -39,3 +40,27 @@ The selected stack is Python 3.12, SQLite, plain HTML, pytest, coverage and Ruff
 No runtime packages are needed; development versions are pinned in `pyproject.toml`.
 Business work follows the six ordered steps in specification section 11, one
 issue and reviewed, green PR per step. The foundation PR does not implement them.
+
+
+## Generate inspectable synthetic inputs
+
+After the editable installation above, use the pure Python API:
+
+```python
+from pathlib import Path
+from propane_demo.generator import generate
+
+output = Path("artifacts/fixtures")
+output.mkdir(parents=True, exist_ok=True)
+for name, content in generate(scenario="P08").items():
+    (output / name).write_bytes(content)
+```
+
+Scenarios: `clean`, `P01`–`P14`, `raw-repeat`, `wrong-clearing`, `issues`.
+Defaults: seed 20261104, business date 2026-11-03, America/Denver timezone.
+The seed namespaces the run ID; fixed financial values preserve hand calculations.
+See the [fixture contracts](.ai/specs/2026-11-04-fixture-contracts.md) for exact
+headers, entity-specific fields, evidence IDs, boundaries and combined suppression.
+The independent oracle under tests describes expected **future** findings; the
+generator does not execute checks or claim a clean audit. The business CLI and
+report remain later ordered implementation steps.
