@@ -26,9 +26,16 @@ approval is recorded in the spec. Engineering choices are reviewable in this PR.
   applied, custom no-browser descriptor installed, existing labels preserved and
   31 missing default labels created. Cross-skill check: `SKILL_COVERAGE_OK`. No worker or merge workflow installed.
 
+- Fresh archive of committed `cb121f4` installed into a new venv and passed
+  `make check`: 15 tests, 27/27 lines, 2/2 branches, Ruff passed.
+- Verified all 74 SKILL.md files and relative Claude symlink targets.
+- GitHub rulesets query returned `[]`; no server-side merge protection configured.
+- Reviewed copied tracker descriptor and removed its branch-protection bypass
+  example; this project never uses admin bypass. Installed upstream skills remain intact.
+
 ## Resume notes
 
-Foundation implementation complete locally. Verify a committed fresh checkout,
-open Phase A PR with om-open-pr, wait for current-head green CI and inspect the
+Foundation implementation complete locally. Fresh committed checkout verified.
+Open Phase A PR with om-open-pr, wait for current-head green CI and inspect the
 HTML artifact. Final independent review and merge are separate responsibilities.
 No business implementation step is complete or claimed by this run.

@@ -47,7 +47,7 @@ is corrected in this PR from the owner's explicit implementation authorization.
 | 2.10 | Application foundation | 1:1 process; choice stack | deviation | Approved minimal smoke path only; no ORM/DI/framework scaffolding. |
 | 2.11 | Local database | choice | done | Standard-library in-memory SQLite, no service/credentials/Docker. |
 | 2.12 | Engineering standards | 1:1 process; choice content | proposal | Standards implemented for PR review under authorized Phase A; not separately owner-reviewed yet. |
-| 2.13 | Fresh checkout validation | 1:1 | todo | Reproduce install and make check from committed tree before delivery. |
+| 2.13 | Fresh checkout validation | 1:1 | done | Fresh archive of cb121f4: editable install and full make check passed. |
 | 2.14 | PR CI | 1:1 process; choice tools | done | CI invokes make check; pinned actions; temporary SQLite and installed CLI E2E. |
 | 2.15 | Coverage | 1:1; choice gate | done | All src discovered; separate exact 100% line/branch gates; negative gate tests. |
 | 2.16 | Merge gate | 1:1; choice ruleset | done | Green current-head CI plus independent approval policy; no ruleset changes. |
@@ -99,7 +99,7 @@ Owner-delegated answers: full validation `make check`; tracker GitHub Issues;
 no browser (static HTML with pytest E2E); default labels; QA gate on, green CI and
 independent approval; specs `.ai/specs`; all default process docs. Queue eligibility
 and other optional settings retain skill defaults, without installing workers or
-activating automerge labels. No native approval or branch protection is claimed.
+activating automerge labels. GitHub rulesets query returned an empty list; enforcement is process policy plus CI, not configured branch protection. No native approval is claimed.
 The standards are proposed for this PR's independent review. Agent-runtime
 provisioning, comparison exercises and override A/B homework are explicitly not
 claimed as completed. Steps 3.12-3.14 continue through parent-owned phases/review.
@@ -110,7 +110,7 @@ claimed as completed. Steps 3.12-3.14 continue through parent-owned phases/revie
 - [x] 100% application line and branch gates independently checked without rounding.
 - [x] Automated dependency-direction enforcement; no bypass exclusions.
 - [x] Project skills, lock and relative symlinks; pipeline docs and tracker descriptor.
-- [ ] Fresh committed checkout passes installation and full validation.
+- [x] Fresh committed checkout passes installation and full validation.
 - [ ] PR current-head CI green and uploaded HTML artifact inspected.
 - [ ] Independent approved review and merge (separate responsibility).
 

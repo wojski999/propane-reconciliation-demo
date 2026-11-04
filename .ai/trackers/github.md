@@ -376,9 +376,9 @@ GitHub rejects self-approval (reviewing your own PR); surface that instead of wo
 `{prNumber}`; squash is the default merge strategy. `--auto` merges when checks pass; `--delete-branch` only when asked.
 ```bash
 gh pr merge {prNumber} --squash
-gh pr merge {prNumber} --squash --match-head-commit "<headRefOid>" --admin   # head-SHA guard + bypass-protection
+gh pr merge {prNumber} --squash --match-head-commit "<headRefOid>"   # head-SHA guard; no bypass
 ```
-`--match-head-commit` refuses the merge when a newer commit landed after the caller's gate. `--admin` bypasses branch-protection requirements and needs admin rights on the repository. Without those rights GitHub refuses the merge; surface the refusal and never retry another way.
+`--match-head-commit` refuses the merge when a newer commit landed after the caller's gate. This repository never uses `--admin` or bypasses branch protection. A refusal is reported, never worked around. Merge also requires explicit task-level authorization; the Phase A implementation task is not authorized to merge.
 
 #### mark-pr-ready
 Promote a draft PR.
