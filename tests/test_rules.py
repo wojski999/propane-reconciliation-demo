@@ -171,10 +171,8 @@ def test_pos_gross_bridge_and_discount_approval():
     )
     data = inputs("P05")
     data["records"]["identity:approval:APP-DISCOUNT"]["approved_discount_pct"] = 10000
-    assert any(
-        f["missing_reference"]["type"] == "approved_discount_pct"
-        for f in actual(data, "C11")
-    )
+    assert actual(data, "C11") == []
+    assert len(actual(data, "C04")) == 2
 
 
 def test_adjustments_missing_approval_original_void_zero_and_negative():
@@ -277,11 +275,8 @@ def test_missing_batch_support_deposit_link_and_reconciliation():
     data = inputs()
     r = data["records"]
     r["qbo:Deposit:DEP-SHORT"]["Line"][0]["DepositLineDetail"]["TxnId"] = "SR-ORIGINAL"
-    assert actual(data, "C07") == []
-    assert (
-        actual(data, "C11")[0]["missing_reference"]["lookup_key"]
-        == "qbo:SalesReceipt:SR-BATCH;qbo:SalesReceipt:SR-ORIGINAL"
-    )
+    assert any("no cross-batch" in f["explanation"] for f in actual(data, "C07"))
+    assert actual(data, "C11") == []
     data = inputs()
     r = data["records"]
     del r["identity:pos_event:EVENT-T-BATCH"]
@@ -445,11 +440,9 @@ def test_settlement_not_due_pending_excluded_and_required_links():
     data = inputs()
     r = data["records"]
     r["pos:POS:T-DELIVERY:1"]["settlement_batch_id"] = "B-SETTLED"
-    found = actual(data, "C11")
-    assert any(
-        f["missing_reference"]["lookup_key"] == "qbo:Payment:PAY-DELIVERY"
-        for f in found
-    )
+    found = actual(data, "C07")
+    assert any("qbo:Payment:PAY-DELIVERY" in f["related_refs"] for f in found)
+    assert actual(data, "C11") == []
 
 
 def test_posting_operational_payment_batch_missing_and_credit_sign():
@@ -582,7 +575,7 @@ def test_independent_adjustment_scope_block_and_missing_crosswalk_target():
     assert actual(data) == []  # crosswalk not needed for standalone valid sale price
 
 
-def test_extra_missing_deposit_link_prevents_comparison():
+def test_extra_missing_deposit_target_marks_link_support_unavailable():
     data = inputs()
     data["records"]["qbo:Deposit:DEP-SHORT"]["Line"][2]["DepositLineDetail"].update(
         TxnType="Payment", TxnId="MISSING"
@@ -767,3 +760,222 @@ def test_ambiguous_credit_blocks_later_balance_and_clearing_comparisons():
         and f["missing_reference"]["type"] == "configured_posting"
         for f in result["findings"]
     )
+
+
+@pytest.mark.parametrize(
+    "delivery,invoices",
+    [("D-PRICE", ["I-PRICE"]), ("D-SPLIT", ["I-SPLIT-A", "I-SPLIT-B"])],
+)
+def test_existing_unmapped_delivery_blocks_only_dependent_c02(delivery, invoices):
+    data = inputs()
+    for invoice in invoices:
+        data["records"]["qbo:Invoice:" + invoice]["EventAt"] = (
+            "2026-11-02T06:00:00+00:00"
+        )
+    data["records"]["cargas:delivery:" + delivery]["customer_id"] = "UNMAPPED"
+    result = reconcile(data)
+    assert not [f for f in result["findings"] if f["check_id"] == "C02"]
+    assert any(
+        f["source_refs"] == ["cargas:delivery:" + delivery] for f in actual(data, "C11")
+    )
+    for invoice in invoices:
+        assert result["not_evaluated"]["C02:qbo:Invoice:" + invoice + ":1"][
+            "source_refs"
+        ] == ["cargas:delivery:" + delivery]
+
+
+def test_simultaneous_tax_and_gross_findings_resolve_to_raw_document():
+    data = inputs()
+    parent = "qbo:SalesReceipt:SR-TAX"
+    data["records"][parent]["TxnTaxDetail"]["TotalTax"] = 700
+    data["records"][parent]["TotalAmt"] = 3100
+    found = actual(data, "C04")
+    assert {numbers(f) for f in found} == {
+        ("7.00", "2.00", "5.00", "0.01"),
+        ("31.00", "27.00", "4.00", "0.01"),
+    }
+    assert len({f["finding_id"] for f in found}) == 2
+    tax = next(f for f in found if f["actual"] == "7.00")
+    assert tax["source_refs"] == [data["pointers"][parent] + "/TxnTaxDetail/TotalTax"]
+    assert parent in tax["related_refs"]
+
+
+def test_emit_identical_deduplicates_but_conflicting_collision_fails_explicitly():
+    engine = Engine(inputs())
+    engine.emit("C04", ["same"], 200, 100, "0.01")
+    engine.emit("C04", ["same"], 200, 100, "0.01")
+    assert len(engine.findings) == 1
+    with pytest.raises(ValueError, match="Conflicting finding ID: C04\\|same"):
+        engine.emit("C04", ["same"], 300, 100, "0.01")
+    assert engine.findings["C04|same"]["actual"] == "2.00"
+
+
+@pytest.mark.parametrize("kind", ["unlinked", "absent", "foreign"])
+def test_deposit_amount_survives_link_errors_with_independent_link_evidence(kind):
+    data = inputs("P07")
+    row = data["records"]["qbo:Deposit:DEP-SHORT"]
+    detail = row["Line"][1]["DepositLineDetail"]
+    if kind == "unlinked":
+        detail.pop("TxnId")
+        detail.pop("TxnType")
+    else:
+        detail.update(
+            TxnId="MISSING" if kind == "absent" else "SR-ORIGINAL",
+            TxnType="SalesReceipt",
+        )
+    found = actual(data, "C07")
+    assert any(numbers(f) == ("460.00", "470.00", "-10.00", "0.01") for f in found)
+    assert len({f["finding_id"] for f in found}) == len(found)
+    assert bool(actual(data, "C11")) == (kind == "absent")
+    assert any("no cross-batch" in f["explanation"] for f in found)
+
+
+def test_multiple_c07_components_do_not_collide():
+    data = inputs("P07")
+    r = data["records"]
+    batch = r["pos:batch:B-SETTLED"]
+    batch.update(gross=51000, refunds=3000, net=44000)
+    row = r["qbo:Deposit:DEP-SHORT"]
+    row["Line"][0]["Amount"] += 200
+    row["Line"][0]["DepositLineDetail"]["TxnId"] = "SR-ORIGINAL"
+    found = actual(data, "C07")
+    assert len(found) >= 7
+    assert len({f["finding_id"] for f in found}) == len(found)
+
+
+@pytest.mark.parametrize("amount,expected", [(500, "5.00"), (1, None), (0, None)])
+def test_only_new_allocation_excess_after_negative_replay_balance(amount, expected):
+    data = inputs("P06")
+    row = copy.deepcopy(data["records"]["qbo:Payment:PAY-EXCESS"])
+    row.update(Id="ZZ-AFTER", EventAt="2026-11-04T06:00:00+00:00", TotalAmt=amount)
+    row["Line"][0]["Amount"] = amount
+    data["records"]["qbo:Payment:ZZ-AFTER"] = row
+    found = [
+        f for f in actual(data, "C06") if "qbo:Payment:ZZ-AFTER:1" in f["source_refs"]
+    ]
+    if expected is None:
+        assert found == []
+    else:
+        assert numbers(found[0]) == (expected, "0.00", expected, "0.01")
+
+
+def test_unlinked_cash_not_double_counted_in_clearing_and_no_opening_customer_needed():
+    data = inputs("P06")
+    r = data["records"]
+    payment = r["qbo:Payment:PAY-UNAPPLIED"]
+    payment["Line"] = [{"Id": "1", "Amount": 2500}]
+    journal = r["qbo:JournalEntry:JE-UNBALANCED"]
+    for line in journal["Line"]:
+        line["Amount"] = 2500
+    r["identity:posting:POST-I-PAY"]["external_ref"] = "PAY-UNAPPLIED"
+    assert actual(data, "C12") == []
+    payment["CustomerRef"]["value"] = "NEW-CUSTOMER"
+    assert any(
+        f["source_refs"] == ["qbo:Payment:PAY-UNAPPLIED"] and f["actual"] == "25.00"
+        for f in actual(data, "C06")
+    )
+    assert any(
+        f["missing_reference"]["type"] == "customer_balance"
+        for f in actual(data, "C11")
+    )
+
+
+def test_explicit_discount_approval_breach_has_computable_price_verdict():
+    data = inputs()
+    data["records"]["identity:approval:APP-DISCOUNT"]["approved_discount_pct"] = 5000
+    found = actual(data, "C04")
+    assert len(found) == 2
+    assert all(f["delta"] == "-5.00" for f in found)
+    assert actual(data, "C11") == []
+
+
+def test_ambiguous_mapping_basis_never_selects_first():
+    data = inputs()
+    mappings = data["records"]
+    key, row = next(
+        (k, v)
+        for k, v in mappings.items()
+        if k.startswith("identity:item:") and v["qbo"] == "LPG-DELIVERY"
+    )
+    duplicate = copy.deepcopy(row)
+    duplicate["gallon_basis"] = (
+        "observed" if row["gallon_basis"] != "observed" else "net_60F"
+    )
+    mappings[key + "-OTHER"] = duplicate
+    found = actual(data, "C11")
+    assert any(f["missing_reference"]["type"] == "gallon_basis" for f in found)
+    assert not any(
+        "qbo:Invoice:I-PRICE:1" in f["source_refs"] for f in actual(data, "C04")
+    )
+
+
+def test_zero_credit_cross_reference_after_negative_balance_is_not_new_excess():
+    data = inputs()
+    r = data["records"]
+    row = copy.deepcopy(r["qbo:Payment:PAY-APPLIED"])
+    row.update(TotalAmt=10002)
+    row["Line"][0].update(
+        Amount=10002, LinkedTxn=[{"TxnType": "Invoice", "TxnId": "I-CREDIT"}]
+    )
+    row["Line"].append(
+        {
+            "Id": "2",
+            "Amount": 10000,
+            "LinkedTxn": [
+                {"TxnType": "Invoice", "TxnId": "I-CREDIT"},
+                {"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"},
+            ],
+        }
+    )
+    r["qbo:Payment:PAY-APPLIED"] = row
+    found = actual(data, "C06")
+    assert len(found) == 1
+    assert numbers(found[0]) == ("100.02", "100.00", "0.02", "0.01")
+    assert found[0]["source_refs"] == ["qbo:Payment:PAY-APPLIED:1"]
+
+
+def test_extra_existing_foreign_deposit_link_is_high_c07_not_missing_support():
+    data = inputs()
+    r = data["records"]
+    deposit = r["qbo:Deposit:DEP-SHORT"]
+    foreign = r["qbo:SalesReceipt:SR-ORIGINAL"]
+    deposit["Line"].append(
+        {
+            "Id": "FOREIGN",
+            "Amount": foreign["TotalAmt"],
+            "DepositLineDetail": {"TxnId": "SR-ORIGINAL", "TxnType": "SalesReceipt"},
+        }
+    )
+    deposit["TotalAmt"] += foreign["TotalAmt"]
+    found = actual(data, "C07")
+    link_finding = next(f for f in found if "no cross-batch" in f["explanation"])
+    assert link_finding["severity"] == "high"
+    assert "qbo:SalesReceipt:SR-ORIGINAL" in link_finding["related_refs"]
+    assert "qbo:Deposit:DEP-SHORT:FOREIGN" in link_finding["related_refs"]
+    assert actual(data, "C11") == []
+    assert any(f["expected"] == "470.00" and f["delta"] == "200.00" for f in found)
+    data["records"] = dict(reversed(list(r.items())))
+    data["occurrences"].reverse()
+    assert actual(data, "C07") == found
+
+
+def test_tax_primary_pointer_resolves_to_immutable_raw_json_value():
+    files = generate()
+    qbo = json.loads(files["qbo.json"])
+    row = next(r for r in qbo["SalesReceipt"] if r["Id"] == "SR-TAX")
+    row["TxnTaxDetail"]["TaxLine"][0]["Amount"] = "7.00"
+    row["TotalAmt"] = "25.00"
+    files["qbo.json"] = json.dumps(qbo).encode()
+    db = ingest(files.__getitem__)
+    try:
+        data = from_database(db)
+    finally:
+        db.close()
+    found = actual(data, "C04")
+    assert len(found) == 2
+    tax = next(f for f in found if f["delta"] == "-5.00")
+    filename, pointer = tax["source_refs"][0].removeprefix("file:").split("#")
+    value = json.loads(files[filename])
+    for segment in pointer.strip("/").split("/"):
+        value = value[int(segment)] if isinstance(value, list) else value[segment]
+    assert value == "2.00" == tax["actual"]

@@ -336,3 +336,45 @@ fees. Deposit totals, line totals, expected transaction links and linked amounts
 are checked separately; pending/void POS and void deposits are excluded.
 Configured journal clearing amounts derive from linked operational records;
 no expected operational amount or manual journal requirement is introduced.
+
+## Step-3 review clarifications
+
+C02 distinguishes absent/inactive deliveries from existing completed deliveries
+whose identity mapping is unavailable. The latter reuse the delivery's C11 root
+and mark each allocated invoice line not evaluated, including split billing.
+An ambiguous item measurement basis likewise produces C11 rather than selecting
+an arbitrary first mapping.
+
+C04 limits the eligible discount to the lesser of explicit approval and price
+policy. An existing approval that is exceeded still supplies a computable price:
+compare actual net with quantity times effective price less the approved discount.
+Missing approval remains C11. Tax and gross bridges are independent findings.
+The tax primary ref is the current parent's immutable file/JSON pointer followed
+by `/TxnTaxDetail/TotalTax`; tax-line pointers and the parent are related evidence.
+Gross uses the existing parent record. These refs resolve inside retained raw JSON,
+without invented source records or a new evidence registry. Tax lines need no Id.
+
+C07 amount comparisons do not require successful transaction-link comparison.
+Absent targets produce C11 for that link scope; existing unexpected/foreign or
+omitted expected links produce high C07 with the existing batch, deposit and
+immutable deposit `/Line` pointer as primary evidence. Linked record amounts,
+deposit total/line sum, batch gross/refund/net and expected settlement amount
+remain separate comparisons, never cross-batch netting. Existing derived
+`pos:component:<batch>:gross|refunds|net` refs resolve to the corresponding fields
+of `pos:batch:<batch>` and its immutable occurrence; fee refs resolve to its fees.
+All related native transaction refs name existing records; absent IDs belong in
+missing_reference, not fabricated anchors. A conflicting finding ID raises an
+explicit deterministic ValueError; only identical full findings deduplicate.
+
+C06 reports incremental excess against max(prior signed balance, zero); it keeps
+the signed replay balance and event history, and a new allocation of at most one
+cent cannot create another excess finding. Unapplied cash does not depend on an
+opening customer balance; missing customer coverage still blocks AR replay.
+C06 and C12 share cash computation: linked non-credit cash plus unapplied cash.
+Unlinked lines and UnappliedAmt can describe the same unapplied amount, so use
+the maximum (also TotalAmt when there are no links), never add those twice.
+Credit cross-references remain noncash and cannot reduce AR a second time.
+
+The synthetic configured clearing account is **debit-positive**: debit amounts
+are positive and credit amounts negative. Operational amounts use the same sign.
+This is an explicit demo posting assumption, not a configurable client policy.

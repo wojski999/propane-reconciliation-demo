@@ -42,6 +42,24 @@ def active(row):
     return row.get("status", "") not in {"void", "cancelled", "pending"}
 
 
+def payment_cash(row):
+    """Cash allocations plus unapplied cash; unlinked lines describe that same cash."""
+    unlinked = [line for line in row["Line"] if not linked(line)]
+    all_links = [target for line in row["Line"] for target in linked(line)]
+    unapplied = max(
+        row["UnappliedAmt"],
+        sum(line["Amount"] for line in unlinked),
+        row["TotalAmt"] if not all_links else 0,
+    )
+    cash = sum(
+        line["Amount"]
+        for line in row["Line"]
+        if linked(line)
+        and not any(k.startswith("qbo:CreditMemo:") for k in linked(line))
+    )
+    return unapplied, cash + unapplied
+
+
 class Engine:
     """A fresh instance per call; no mutation of caller-owned inputs."""
 
@@ -87,7 +105,7 @@ class Engine:
         refs = sorted(set(refs))
         finding_id = "|".join([check, *refs])
         delta = None if actual is None or expected is None else actual - expected
-        self.findings[finding_id] = {
+        finding = {
             "finding_id": finding_id,
             "check_id": check,
             "severity": severity,
@@ -102,8 +120,22 @@ class Engine:
             "related_refs": sorted(set(related) - set(refs)),
             "missing_reference": missing,
             "explanation": explanation
-            or f"{check}: inspect the compared values and evidence.",
+            or {
+                "C01": "Delivery has unallocated billable volume after grace.",
+                "C02": "Invoice lacks completed delivery allocations after grace.",
+                "C03": "Repeated source or external transaction identity needs review.",
+                "C04": "Sale price, line arithmetic or document bridge differs.",
+                "C05": "Adjustment exceeds policy or lacks required evidence.",
+                "C06": "Payment has unapplied cash or a new excess allocation.",
+                "C07": "Settled batch, deposit or linked transaction amounts differ.",
+                "C12": "Journal balance or configured clearing amount differs.",
+            }[check],
         }
+
+        previous = self.findings.get(finding_id)
+        if previous is not None and previous != finding:
+            raise ValueError("Conflicting finding ID: " + finding_id)
+        self.findings[finding_id] = finding
 
     def missing(self, refs, system, kind, key, scope, related=(), severity="medium"):
         self.emit(
@@ -160,10 +192,12 @@ class Engine:
         if {"identity", "cargas"} & self.unavailable_sources.keys():
             return
         deliveries = {}
+        unsupported = set()
         for key, row in self.rows("cargas:delivery:"):
             if row["status"] != "completed":
                 continue
             if not self.mapping(key, row):
+                unsupported.add(key)
                 continue
             deliveries[key] = row
             if not self.allowed("C01") or not self.old(
@@ -218,6 +252,17 @@ class Engine:
                 allocations = [
                     (k, a) for k, a in self.allocations() if self.line_ref(a) == key
                 ]
+                roots = sorted(
+                    {"cargas:delivery:" + a["delivery_id"] for _, a in allocations}
+                    & unsupported
+                )
+                if roots:
+                    self.partial["C02:" + key] = {
+                        "status": "not_evaluated",
+                        "source_refs": roots,
+                        "reason": "Allocated delivery lacks required identity mapping.",
+                    }
+                    continue
                 valid = [
                     (k, a)
                     for k, a in allocations
@@ -349,7 +394,7 @@ class Engine:
 
     def discount(self, key, amount, base, approval_id, price, related):
         if amount == 0:
-            return True
+            return 0
         approval = self.approval(approval_id)
         if not approval or base <= 0:
             self.missing(
@@ -360,23 +405,13 @@ class Engine:
                 "C04:" + key,
                 related,
             )
-            return False
+            return None
         percent = D(amount) / base * 100
         allowed = min(
             D(price["approved_discount_pct"]) / 1000,
             D(approval[1].get("approved_discount_pct", 0)) / 1000,
         )
-        if percent > allowed:
-            self.missing(
-                [key],
-                "identity",
-                "approved_discount_pct",
-                "approval:" + approval_id + ";percent:" + format(percent, "f"),
-                "C04:" + key,
-                [approval[0], *related],
-            )
-            return False
-        return True
+        return rounded(base * allowed / 100) if percent > allowed else amount
 
     def unusual_discount(self, key, discount, base, approval_id, related):
         if base > 0 and D(discount) * 100 / base > D(self.p["discount_limit_pct"]):
@@ -414,7 +449,9 @@ class Engine:
                     item = detail["ItemRef"]["value"]
                     item_row = self.r.get("qbo:Item:" + item)
                     if not item_row:
-                        self.missing([key], "qbo", "Item", item, "C04:" + key)
+                        self.missing(
+                            [key], "qbo", "Item", "qbo:Item:" + item, "C04:" + key
+                        )
                         continue
                     mappings = [
                         m for _, m in self.rows("identity:item:") if m["qbo"] == item
@@ -424,7 +461,13 @@ class Engine:
                         if item_row["Classification"] in {"delivery", "retail"}
                         else "each"
                     )
-                    basis = mappings[0]["gallon_basis"] if mappings else self.p["basis"]
+                    bases = {m["gallon_basis"] for m in mappings}
+                    if len(bases) > 1:
+                        self.missing(
+                            [key], "identity", "gallon_basis", item, "C04:" + key
+                        )
+                        continue
+                    basis = next(iter(bases)) if bases else self.p["basis"]
                     price = self.price(
                         key,
                         item,
@@ -438,11 +481,12 @@ class Engine:
                     price_key, p = price
                     base = D(detail["Qty"]) * p["unit_price"] / 1000
                     discount = line.get("DiscountAmount", 0)
-                    if not self.discount(
+                    approved = self.discount(
                         key, discount, base, line.get("ApprovalRef", ""), p, [price_key]
-                    ):
+                    )
+                    if approved is None:
                         continue
-                    expected = rounded(base - discount)
+                    expected = rounded(base - approved)
                     allocations = [
                         (k, a) for k, a in self.allocations() if self.line_ref(a) == key
                     ]
@@ -522,10 +566,10 @@ class Engine:
                 if "TotalTax" in tax:
                     self.compare(
                         "C04",
-                        [parent],
+                        [self.pointers[parent] + "/TxnTaxDetail/TotalTax"],
                         tax["TotalTax"],
                         sum(t["Amount"] for t in tax.get("TaxLine", [])),
-                        tax_refs,
+                        [parent, *tax_refs],
                     )
                 self.compare(
                     "C04",
@@ -568,14 +612,15 @@ class Engine:
                 continue
             price_key, p = price
             base = D(row["quantity"]) * p["unit_price"] / 1000
-            if self.discount(
+            approved = self.discount(
                 key, row["discount_amount"], base, row["approval_id"], p, [price_key]
-            ):
+            )
+            if approved is not None:
                 self.compare(
                     "C04",
                     [key, price_key],
                     row["net_amount"],
-                    rounded(base - row["discount_amount"]),
+                    rounded(base - approved),
                     ["identity:approval:" + row["approval_id"]]
                     if row["discount_amount"]
                     else [],
@@ -810,6 +855,21 @@ class Engine:
         ]
         for _, key, row in sorted(events):
             customer = row["CustomerRef"]["value"]
+            if key.startswith("qbo:Payment:"):
+                unlinked = [line for line in row["Line"] if not linked(line)]
+                unapplied, _ = payment_cash(row)
+                if unapplied > 1 and self.old(
+                    row, "EventAt", self.p["payment_grace_hours"]
+                ):
+                    self.emit(
+                        "C06",
+                        [key],
+                        unapplied,
+                        0,
+                        "0.01",
+                        [snapshot_key, *[key + ":" + line["Id"] for line in unlinked]],
+                        severity="medium",
+                    )
             if customer not in opening_customers:
                 self.missing(
                     [key, snapshot_key],
@@ -848,25 +908,6 @@ class Engine:
                 balances[target] -= amount
                 history[target].append(key)
                 continue
-            unlinked = [line for line in row["Line"] if not linked(line)]
-            all_links = [target for line in row["Line"] for target in linked(line)]
-            unapplied = max(
-                row["UnappliedAmt"],
-                sum(line["Amount"] for line in unlinked),
-                row["TotalAmt"] if not all_links else 0,
-            )
-            if unapplied > 1 and self.old(
-                row, "EventAt", self.p["payment_grace_hours"]
-            ):
-                self.emit(
-                    "C06",
-                    [key],
-                    unapplied,
-                    0,
-                    "0.01",
-                    [snapshot_key, *[key + ":" + line["Id"] for line in unlinked]],
-                    severity="medium",
-                )
             for line in sorted(row["Line"], key=lambda x: x["Id"]):
                 line_key = key + ":" + line["Id"]
                 targets = [k for k in linked(line) if k.startswith("qbo:Invoice:")]
@@ -938,12 +979,12 @@ class Engine:
                     credit["seen"] += line["Amount"]
                 allocation = max(0, line["Amount"] - already)
                 before = balances[target]
-                if allocation - before > 1:
+                if allocation - max(before, 0) > 1:
                     self.emit(
                         "C06",
                         [line_key],
                         allocation,
-                        before,
+                        max(before, 0),
                         "0.01",
                         [snapshot_key, target, *credit_links, *history[target]],
                     )
@@ -1029,10 +1070,7 @@ class Engine:
                 )
             else:
                 absent = sorted(
-                    set(k for k in expected_links if k not in links or k not in self.r)
-                    | set(
-                        k for k in links if k not in self.r or k not in expected_links
-                    )
+                    k for k in set(links + expected_links) if k not in self.r
                 )
                 if absent:
                     self.missing(
@@ -1043,11 +1081,28 @@ class Engine:
                         "C07:" + key,
                         related,
                     )
-                    continue
+                unexpected = sorted(set(links) - set(expected_links) - set(absent))
+                missing_links = sorted(set(expected_links) - set(links) - set(absent))
+                if unexpected or missing_links:
+                    self.emit(
+                        "C07",
+                        [key, deposit_key, self.pointers[deposit_key] + "/Line"],
+                        len(unexpected) + len(missing_links),
+                        0,
+                        "0",
+                        [*related, *refs, *unexpected, *missing_links],
+                        formatter=str,
+                        explanation=(
+                            "Deposit links differ from the batch's explicit "
+                            "transaction mappings; no cross-batch netting is allowed."
+                        ),
+                    )
                 for line in lines:
                     detail = line["DepositLineDetail"]
                     if "TxnId" in detail:
                         target = f"qbo:{detail['TxnType']}:{detail['TxnId']}"
+                        if target not in self.r:
+                            continue
                         sign = -1 if detail["TxnType"] == "RefundReceipt" else 1
                         self.compare(
                             "C07",
@@ -1056,36 +1111,34 @@ class Engine:
                             sign * self.r[target]["TotalAmt"],
                             [key, *related],
                         )
-                related.extend([*links, *refs[1:]])
-                primary = [key, *refs[:1]]
-                self.compare("C07", primary, deposit["TotalAmt"], expected, related)
+            related.extend([*[k for k in links if k in self.r], *refs[1:]])
+            primary = [key, *refs[:1]]
+            self.compare("C07", primary, deposit["TotalAmt"], expected, related)
+            self.compare(
+                "C07",
+                [deposit_key],
+                deposit["TotalAmt"],
+                sum(line["Amount"] for line in lines),
+                refs,
+            )
+            captured = sum(
+                p["gross_amount"] for _, p in pos if p["status"] == "captured"
+            )
+            refunds = -sum(
+                p["gross_amount"] for _, p in pos if p["status"] == "refunded"
+            )
+            for field, observed in [
+                ("gross", captured),
+                ("refunds", refunds),
+                ("net", expected),
+            ]:
                 self.compare(
                     "C07",
-                    [deposit_key],
-                    deposit["TotalAmt"],
-                    sum(line["Amount"] for line in lines),
-                    refs,
+                    [key, "pos:component:" + batch["batch_id"] + ":" + field],
+                    batch[field],
+                    observed,
+                    related,
                 )
-                # Compare source batch gross/refunds with actual contributing POS,
-                # rather than accepting self-consistent but invented batch totals.
-                captured = sum(
-                    p["gross_amount"] for _, p in pos if p["status"] == "captured"
-                )
-                refunds = -sum(
-                    p["gross_amount"] for _, p in pos if p["status"] == "refunded"
-                )
-                for field, observed in [
-                    ("gross", captured),
-                    ("refunds", refunds),
-                    ("net", expected),
-                ]:
-                    self.compare(
-                        "C07",
-                        [key, "pos:component:" + batch["batch_id"] + ":" + field],
-                        batch[field],
-                        observed,
-                        related,
-                    )
 
     def operational(self, reference):
         choices = [
@@ -1115,11 +1168,7 @@ class Engine:
                     return None
             # Credit links are noncash. Only explicitly cash allocations plus
             # unapplied cash count toward a payment clearing posting.
-            amount = row["UnappliedAmt"] + sum(
-                line["Amount"]
-                for line in row["Line"]
-                if not any(k.startswith("qbo:CreditMemo:") for k in linked(line))
-            )
+            _, amount = payment_cash(row)
         elif key.startswith("pos:batch:"):
             amount = (
                 sum(

@@ -74,3 +74,17 @@ def test_dependency_check_rejects_empty_discovery(monkeypatch):
     monkeypatch.setattr(Path, "rglob", lambda self, pattern: iter(()))
     with pytest.raises(AssertionError, match="No application modules discovered"):
         check_application_dependency_direction()
+
+
+@pytest.mark.parametrize("source", ["import pathlib", "open('forbidden')"])
+def test_rules_purity_guard_rejects_forbidden_import_and_call(monkeypatch, source):
+    original = Path.read_text
+    monkeypatch.setattr(
+        Path,
+        "read_text",
+        lambda path, *args, **kwargs: source
+        if path.name == "rules.py"
+        else original(path, *args, **kwargs),
+    )
+    with pytest.raises(AssertionError, match="Rules must"):
+        check_application_dependency_direction()

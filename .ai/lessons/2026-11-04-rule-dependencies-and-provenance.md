@@ -24,3 +24,17 @@ a balance that ignored the unknown allocation. Mark that invoice history uncerta
 for subsequent payments, retaining the root evidence. The same ambiguous payment
 cannot supply a guessed operational cash amount for clearing comparisons. Keep a
 test spanning the original missing support, later event and posting calculation.
+
+Two independent reviews found that missing supporting mappings had been treated
+as absent business counterparts, and link failure suppressed an independently
+computable deposit comparison. Gate only the calculation requiring that support.
+Retain independent amount results and missing-link evidence together. Component
+findings need distinct resolvable evidence keys; never overwrite different results
+under one ID. An explicit collision error caught inconsistent Item lookup keys in
+the remediation tests, which now use one canonical QBO key for the same root.
+
+For sequential allocations, negative balances are valid replay state but not new
+available credit: compare each allocation to max(balance, zero). Share the cash
+representation between payment and clearing rules so unapplied and unlinked
+representations do not double count. Independent oracle equality is necessary but
+must be supplemented by adversarial combinations and mutation-sensitive tests.
