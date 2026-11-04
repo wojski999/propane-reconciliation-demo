@@ -72,17 +72,25 @@ def test_installed_entrypoint_end_to_end(tmp_path):
 
 
 @pytest.mark.parametrize(
-    ("lines", "branches", "expected"),
-    [(0, 0, 0), (1, 0, 1), (0, 1, 1)],
+    ("statements", "measured_branches", "lines", "branches", "expected"),
+    [
+        (5000, 5000, 0, 0, 0),
+        (5000, 5000, 1, 0, 1),
+        (5000, 5000, 0, 1, 1),
+        (0, 5000, 0, 0, 1),
+        (5000, 0, 0, 0, 1),
+    ],
 )
-def test_coverage_gates_fail_independently(tmp_path, lines, branches, expected):
+def test_coverage_gates_fail_independently(
+    tmp_path, statements, measured_branches, lines, branches, expected
+):
     data = tmp_path / "coverage.json"
     data.write_text(
         json.dumps(
             {
                 "totals": {
-                    "num_statements": 5000,
-                    "num_branches": 5000,
+                    "num_statements": statements,
+                    "num_branches": measured_branches,
                     "missing_lines": lines,
                     "missing_branches": branches,
                 }

@@ -4,10 +4,9 @@ Date: 2026-11-04. Phase A delivery branch; not merged. Steps marked done describ
 verified branch content, not availability on main. Owner explicitly approved
 implementation and the stack; independent review and merge remain separate.
 
-Reference checklist: [setup template](https://github.com/wojski999/ai-tech-leaders/blob/c7b2b337a522041d5b22ccb0861d816dd4acedc0/podrecznik/28-wzor-setupu-projektu-l01-l04.md).
-Source revision: `c7b2b337a522041d5b22ccb0861d816dd4acedc0`; full L01-L04
-transcripts and setup-skill references read before implementation. No source
-transcripts or private execution paths are copied into this public repository.
+Checklist audit: the step table below records the repository setup sequence,
+owner-approved stack adaptations, scope exclusions and verification evidence.
+It is retained as delivery history and is self-contained for public visitors.
 
 ## Initial audit
 
