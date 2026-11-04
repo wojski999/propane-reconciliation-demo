@@ -16,6 +16,17 @@ ALLOWED_INTERNAL_IMPORTS = {
     "ingestion": {"contracts", "generator", "validation"},
     "rule_inputs": {"ingestion", "rules"},
     "rules": set(),
+    "kpis": {"rules"},
+    "report": set(),
+    "business": {
+        "contracts",
+        "generator",
+        "ingestion",
+        "kpis",
+        "report",
+        "rule_inputs",
+    },
+    "__main__": {"business"},
 }
 
 
@@ -35,9 +46,16 @@ def check_application_dependency_direction():
                     "Use absolute imports for dependency enforcement"
                 )
                 imports = [node.module or ""]
-            if module == "rules":
+            if module in {"rules", "kpis"}:
                 assert all(
-                    name in {"collections", "datetime", "decimal", "zoneinfo"}
+                    name
+                    in {
+                        "collections",
+                        "datetime",
+                        "decimal",
+                        "zoneinfo",
+                        "propane_demo.rules",
+                    }
                     for name in imports
                 ), "Rules must remain pure"
             for imported in imports:
@@ -46,7 +64,7 @@ def check_application_dependency_direction():
                     assert target in ALLOWED_INTERNAL_IMPORTS[module], (
                         f"Forbidden dependency: {module} -> {target}"
                     )
-            if module == "rules" and isinstance(node, ast.Call):
+            if module in {"rules", "kpis"} and isinstance(node, ast.Call):
                 assert not (
                     isinstance(node.func, ast.Name)
                     and node.func.id in {"open", "exec", "eval", "compile"}
@@ -77,13 +95,16 @@ def test_dependency_check_rejects_empty_discovery(monkeypatch):
 
 
 @pytest.mark.parametrize("source", ["import pathlib", "open('forbidden')"])
-def test_rules_purity_guard_rejects_forbidden_import_and_call(monkeypatch, source):
+@pytest.mark.parametrize("module", ["rules.py", "kpis.py"])
+def test_rules_purity_guard_rejects_forbidden_import_and_call(
+    monkeypatch, source, module
+):
     original = Path.read_text
     monkeypatch.setattr(
         Path,
         "read_text",
         lambda path, *args, **kwargs: source
-        if path.name == "rules.py"
+        if path.name == module
         else original(path, *args, **kwargs),
     )
     with pytest.raises(AssertionError, match="Rules must"):

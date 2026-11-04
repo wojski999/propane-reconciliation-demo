@@ -34,3 +34,13 @@ unknown nonblank bases remain invalid C10 input. Smoke command, exits, static
 artifact and validation commands are unchanged. The literal C12 finding ID now
 includes the already reviewed posting-mapping primary key, an internal identity
 contract refinement with unchanged amounts.
+
+Step 5 introduces the separate `python -m propane_demo` business command. It writes
+synthetic inputs, computed results/alerts/evidence JSON, offline summary and standalone
+HTML to the chosen directory. Its exits are 0 complete (including exceptions),
+2 incomplete evidence and 1 fatal configuration/render/filesystem boundary. Fixed
+seed/date/cutoff defaults are documented in README. Existing propane-smoke behavior,
+make check and foundation-smoke-report remain unchanged; CI additionally exports
+business-evidence-report from the real clean-scenario E2E test. No runtime dependency,
+persistent SQLite format or migration is introduced. The internal KPI/report JSON is
+versioned with run contract/rule/policy metadata, not a promised external API.

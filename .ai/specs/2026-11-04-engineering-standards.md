@@ -88,3 +88,13 @@ Coverage is a safety requirement, not proof of business correctness.
 | Dependencies | AST allowlist | Architecture test | New real edges |
 | Security | SQL parameters, escaping | Hostile label test | Optional API |
 | Quality | make check | CI and HTML artifact | Audit acceptance |
+
+## Step-5 dependency extension
+
+`__main__ -> business`; `business -> generator / ingestion / rule_inputs / kpis /
+report / contracts`; `kpis -> rules` (pure helpers only); `report -> standard library`.
+The purity allowlist and banned IO/dynamic-call tests apply to kpis as well as rules.
+The business command owns files and safe exits, while kpis returns only detached
+worksheets. Rendering accepts computed results and immutable evidence, escapes
+all dynamic text and uses hashed local IDs. No application layer reads the oracle,
+network or optional narrative credentials. Existing smoke remains separate.
