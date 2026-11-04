@@ -13,7 +13,13 @@ functions, variables, tables and columns; PascalCase types and UPPER_CASE consta
 Use Decimal for money/quantity arithmetic when introduced; floats are not financial
 values. Add real modules when needed, never empty speculative layers.
 
-Current graph: `cli -> smoke -> standard library`. CLI owns arguments, filesystem
+Current graph: `cli -> smoke -> standard library`;
+`generator -> contracts -> standard library`. Generator reads packaged synthetic
+source templates only. The independent expected oracle stays under tests and is
+never an application input. Do not read test boundary answers or configured
+expected amounts in checks; derive every comparison from source records.
+The package-data allowlist contains only data/template.json and is tested. See the fixture contracts dated 2026-11-04.
+CLI owns arguments, filesystem
 output and exit status. Smoke owns only a synthetic infrastructure marker and its
 HTML. `tests/test_architecture.py` inspects every application module, rejects
 undeclared modules/import edges, relative imports and direct dynamic imports.

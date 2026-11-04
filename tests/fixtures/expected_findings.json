@@ -1,0 +1,754 @@
+{
+  "contract_version": "1",
+  "business_date": "2026-11-03",
+  "authoring": "Independent explicit hand calculations; expected future engine results, not generator verdicts.",
+  "scenarios": {
+    "clean": {
+      "findings": [],
+      "alerts": [],
+      "not_evaluated": [],
+      "legitimate_cascades": []
+    },
+    "P01": {
+      "findings": [
+        {
+          "finding_id": "C01|cargas:delivery:D-MISSING",
+          "check_id": "C01",
+          "severity": "high",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "100.000",
+          "expected": "0.000",
+          "delta": "100.000",
+          "threshold": "0.001",
+          "source_refs": [
+            "cargas:delivery:D-MISSING"
+          ],
+          "related_refs": [
+            "cargas:meter_ticket:MT-D-MISSING"
+          ],
+          "missing_reference": {
+            "system": "qbo",
+            "type": "Invoice.Line",
+            "lookup_key": "delivery:D-MISSING"
+          },
+          "explanation": "100 completed gallons remain unallocated after 24 hours."
+        }
+      ],
+      "alerts": [],
+      "not_evaluated": [],
+      "legitimate_cascades": []
+    },
+    "P02": {
+      "findings": [
+        {
+          "finding_id": "C02|qbo:Invoice:I-ORPHAN:1",
+          "check_id": "C02",
+          "severity": "high",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "100.000",
+          "expected": "0.000",
+          "delta": "100.000",
+          "threshold": "0.001",
+          "source_refs": [
+            "qbo:Invoice:I-ORPHAN:1"
+          ],
+          "related_refs": [
+            "qbo:Item:LPG-DELIVERY"
+          ],
+          "missing_reference": {
+            "system": "cargas",
+            "type": "delivery",
+            "lookup_key": "invoice:I-ORPHAN:1"
+          },
+          "explanation": "100 invoiced gallons have no completed delivery allocation."
+        }
+      ],
+      "alerts": [],
+      "not_evaluated": [],
+      "legitimate_cascades": []
+    },
+    "P03": {
+      "findings": [
+        {
+          "finding_id": "C03|pos:POS:T-DUP-A:1|pos:POS:T-DUP-B:1",
+          "check_id": "C03",
+          "severity": "high",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "2",
+          "expected": "1",
+          "delta": "1",
+          "threshold": "1",
+          "source_refs": [
+            "pos:POS:T-DUP-A:1",
+            "pos:POS:T-DUP-B:1"
+          ],
+          "related_refs": [
+            "pos:external_reference:EXT-DUP"
+          ],
+          "missing_reference": null,
+          "explanation": "Distinct sale IDs share EXT-DUP and match customer, type and amount."
+        }
+      ],
+      "alerts": [],
+      "not_evaluated": [],
+      "legitimate_cascades": []
+    },
+    "P04": {
+      "findings": [
+        {
+          "finding_id": "C04|cargas:delivery:D-PRICE|prices:price:PRICE-BASE|qbo:Invoice:I-PRICE:1",
+          "check_id": "C04",
+          "severity": "high",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "210.00",
+          "expected": "200.00",
+          "delta": "10.00",
+          "threshold": "0.01",
+          "source_refs": [
+            "cargas:delivery:D-PRICE",
+            "prices:price:PRICE-BASE",
+            "qbo:Invoice:I-PRICE:1"
+          ],
+          "related_refs": [
+            "cargas:meter_ticket:MT-D-PRICE",
+            "identity:allocation:A-PRICE",
+            "policy:POLICY-1"
+          ],
+          "missing_reference": null,
+          "explanation": "100.000 gallons times 2.00 = 200.00; billed net 210.00, one line-level root discrepancy."
+        }
+      ],
+      "alerts": [],
+      "not_evaluated": [],
+      "legitimate_cascades": []
+    },
+    "P05": {
+      "findings": [
+        {
+          "finding_id": "C05|pos:POS:T-DISCOUNT:1",
+          "check_id": "C05",
+          "severity": "medium",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "15.00",
+          "expected": "10.00",
+          "delta": "5.00",
+          "threshold": "10.00",
+          "source_refs": [
+            "pos:POS:T-DISCOUNT:1"
+          ],
+          "related_refs": [
+            "identity:approval:APP-DISCOUNT",
+            "policy:POLICY-1",
+            "prices:price:PRICE-DISCOUNT",
+            "qbo:SalesReceipt:SR-DISCOUNT:1"
+          ],
+          "missing_reference": null,
+          "explanation": "15 / 100 = 15%; limit 10%; 5 percentage points above policy. One crosswalked adjustment event."
+        },
+        {
+          "finding_id": "C05|qbo:CreditMemo:CM-UNUSUAL:1",
+          "check_id": "C05",
+          "severity": "medium",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "150.00",
+          "expected": "100.00",
+          "delta": "50.00",
+          "threshold": "100.00",
+          "source_refs": [
+            "qbo:CreditMemo:CM-UNUSUAL:1"
+          ],
+          "related_refs": [
+            "identity:approval:APP-CREDIT",
+            "policy:POLICY-1",
+            "qbo:Invoice:I-CREDIT"
+          ],
+          "missing_reference": null,
+          "explanation": "150.00 credit exceeds 100.00 by 50.00; valid original and approval."
+        }
+      ],
+      "alerts": [],
+      "not_evaluated": [],
+      "legitimate_cascades": []
+    },
+    "P06": {
+      "findings": [
+        {
+          "finding_id": "C06|qbo:Payment:PAY-EXCESS:1",
+          "check_id": "C06",
+          "severity": "high",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "110.00",
+          "expected": "100.00",
+          "delta": "10.00",
+          "threshold": "0.01",
+          "source_refs": [
+            "qbo:Payment:PAY-EXCESS:1"
+          ],
+          "related_refs": [
+            "ar:snapshot:AR-OPEN",
+            "qbo:Invoice:I-PAY"
+          ],
+          "missing_reference": null,
+          "explanation": "Invoice 100.00 less no prior allocations = 100.00 before payment; 110.00 paid, excess 10.00."
+        },
+        {
+          "finding_id": "C06|qbo:Payment:PAY-UNAPPLIED",
+          "check_id": "C06",
+          "severity": "medium",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "25.00",
+          "expected": "0.00",
+          "delta": "25.00",
+          "threshold": "0.01",
+          "source_refs": [
+            "qbo:Payment:PAY-UNAPPLIED"
+          ],
+          "related_refs": [
+            "ar:snapshot:AR-OPEN"
+          ],
+          "missing_reference": null,
+          "explanation": "25.00 unapplied after grace; no invented invoice link."
+        }
+      ],
+      "alerts": [],
+      "not_evaluated": [],
+      "legitimate_cascades": []
+    },
+    "P07": {
+      "findings": [
+        {
+          "finding_id": "C07|pos:batch:B-SETTLED|qbo:Deposit:DEP-SHORT:1",
+          "check_id": "C07",
+          "severity": "high",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "460.00",
+          "expected": "470.00",
+          "delta": "-10.00",
+          "threshold": "0.01",
+          "source_refs": [
+            "pos:batch:B-SETTLED",
+            "qbo:Deposit:DEP-SHORT:1"
+          ],
+          "related_refs": [
+            "policy:POLICY-1",
+            "pos:POS:T-BATCH:1",
+            "pos:POS:T-REFUND:1",
+            "pos:fee:B-SETTLED:fees",
+            "qbo:Deposit:DEP-SHORT:2",
+            "qbo:Deposit:DEP-SHORT:3",
+            "qbo:Deposit:DEP-SHORT:4",
+            "qbo:RefundReceipt:RR-BATCH",
+            "qbo:SalesReceipt:SR-BATCH"
+          ],
+          "missing_reference": null,
+          "explanation": "500.00 captured - 20.00 refunds - 10.00 fee = 470.00; 460.00 deposit. Batch past two business days."
+        }
+      ],
+      "alerts": [],
+      "not_evaluated": [],
+      "legitimate_cascades": []
+    },
+    "P08": {
+      "findings": [
+        {
+          "finding_id": "C08|cargas:reading:R-CLOSE|cargas:reading:R-OPEN",
+          "check_id": "C08",
+          "severity": "high",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "1020.000",
+          "expected": "1050.000",
+          "delta": "-30.000",
+          "threshold": "6.000",
+          "source_refs": [
+            "cargas:reading:R-CLOSE",
+            "cargas:reading:R-OPEN"
+          ],
+          "related_refs": [
+            "cargas:delivery:D-OUT",
+            "cargas:meter_ticket:MT-D-OUT",
+            "inventory:movement:M-OUT",
+            "inventory:movement:M-PURCHASE",
+            "inventory:movement:M-RETAIL",
+            "policy:POLICY-1",
+            "pos:POS:T-RETAIL:1"
+          ],
+          "missing_reference": null,
+          "explanation": "1000 + 200 - 100 - 50 = 1050; observed 1020; delta -30. Tolerance max(2, .005 * 1200) = 6."
+        }
+      ],
+      "alerts": [],
+      "not_evaluated": [],
+      "legitimate_cascades": []
+    },
+    "P09": {
+      "findings": [
+        {
+          "finding_id": "C08|cargas:reading:R-TRUCK-OPEN|cargas:reading:R-UNCERTAIN",
+          "check_id": "C08",
+          "severity": "medium",
+          "status": "sensor_uncertain",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": null,
+          "expected": null,
+          "delta": null,
+          "threshold": "2.000",
+          "source_refs": [
+            "cargas:reading:R-TRUCK-OPEN",
+            "cargas:reading:R-UNCERTAIN"
+          ],
+          "related_refs": [
+            "inventory:movement:M-TRANSFER-IN",
+            "inventory:movement:M-TRANSFER-OUT",
+            "policy:POLICY-1"
+          ],
+          "missing_reference": null,
+          "explanation": "Uncertain endpoint quality; no shortage/excess verdict for TRUCK-A."
+        }
+      ],
+      "alerts": [],
+      "not_evaluated": [
+        "C08:TRUCK-A"
+      ],
+      "legitimate_cascades": []
+    },
+    "P10": {
+      "findings": [
+        {
+          "finding_id": "C09|manifest:QBO-STALE",
+          "check_id": "C09",
+          "severity": "high",
+          "status": "alert",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "25",
+          "expected": "24",
+          "delta": "1",
+          "threshold": "24",
+          "source_refs": [
+            "manifest:QBO-STALE"
+          ],
+          "related_refs": [
+            "file:qbo.json",
+            "policy:POLICY-1"
+          ],
+          "missing_reference": null,
+          "explanation": "Fresh extraction with 25-hour-old coverage watermark. QBO-dependent conclusions not evaluated."
+        }
+      ],
+      "alerts": [
+        "C09|manifest:QBO-STALE"
+      ],
+      "not_evaluated": [
+        "C01",
+        "C02",
+        "C03:qbo",
+        "C04:qbo",
+        "C05:qbo",
+        "C06",
+        "C07",
+        "C12",
+        "KPI:revenue",
+        "KPI:AR"
+      ],
+      "legitimate_cascades": []
+    },
+    "P11": {
+      "findings": [
+        {
+          "finding_id": "C10|manifest:POS-FAILED",
+          "check_id": "C10",
+          "severity": "critical",
+          "status": "alert",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "CSV_SCHEMA",
+          "expected": null,
+          "delta": null,
+          "threshold": "any failure",
+          "source_refs": [
+            "manifest:POS-FAILED"
+          ],
+          "related_refs": [
+            "file:pos.csv:row:2"
+          ],
+          "missing_reference": null,
+          "explanation": "Malformed POS source; one failure alert. Dependent checks and KPIs unavailable."
+        }
+      ],
+      "alerts": [
+        "C10|manifest:POS-FAILED"
+      ],
+      "not_evaluated": [
+        "C03:pos",
+        "C04:pos",
+        "C05:pos",
+        "C07",
+        "C08:BULK-A",
+        "C08:ISOLATED",
+        "KPI:retail",
+        "KPI:revenue"
+      ],
+      "legitimate_cascades": [
+        "Failed POS suppresses C08:BULK-A and C08:ISOLATED because both have POS-backed movements."
+      ]
+    },
+    "P12": {
+      "findings": [
+        {
+          "finding_id": "C11|cargas:delivery:D-NO-MAPPING",
+          "check_id": "C11",
+          "severity": "high",
+          "status": "not_evaluated",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": null,
+          "expected": null,
+          "delta": null,
+          "threshold": "required",
+          "source_refs": [
+            "cargas:delivery:D-NO-MAPPING"
+          ],
+          "related_refs": [
+            "policy:POLICY-1"
+          ],
+          "missing_reference": {
+            "system": "identity",
+            "type": "customer/item",
+            "lookup_key": "customer:UNKNOWN;item:UNKNOWN"
+          },
+          "explanation": "Unknown explicit customer and item mapping; do not infer missing invoice."
+        },
+        {
+          "finding_id": "C11|cargas:reading:R-NO-READING-OPEN|identity:asset:ASSET-NO-READING",
+          "check_id": "C11",
+          "severity": "high",
+          "status": "not_evaluated",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": null,
+          "expected": null,
+          "delta": null,
+          "threshold": "required",
+          "source_refs": [
+            "cargas:reading:R-NO-READING-OPEN",
+            "identity:asset:ASSET-NO-READING"
+          ],
+          "related_refs": [
+            "policy:POLICY-1"
+          ],
+          "missing_reference": {
+            "system": "cargas",
+            "type": "closing_reading",
+            "lookup_key": "asset:TRUCK-NO-READING;boundary:2026-11-04T07:00:00+00:00"
+          },
+          "explanation": "No closing reading; asset inventory KPI unavailable."
+        }
+      ],
+      "alerts": [],
+      "not_evaluated": [
+        "C01:D-NO-MAPPING",
+        "C08:TRUCK-NO-READING",
+        "KPI:delivered",
+        "KPI:inventory"
+      ],
+      "legitimate_cascades": []
+    },
+    "P13": {
+      "findings": [
+        {
+          "finding_id": "C12|qbo:JournalEntry:JE-UNBALANCED:1|qbo:JournalEntry:JE-UNBALANCED:2",
+          "check_id": "C12",
+          "severity": "high",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "100.00",
+          "expected": "90.00",
+          "delta": "10.00",
+          "threshold": "0.01",
+          "source_refs": [
+            "qbo:JournalEntry:JE-UNBALANCED:1",
+            "qbo:JournalEntry:JE-UNBALANCED:2"
+          ],
+          "related_refs": [
+            "identity:posting:POST-I-PAY",
+            "policy:POLICY-1",
+            "qbo:Invoice:I-PAY",
+            "qbo:account:CLEARING",
+            "qbo:account:REVENUE"
+          ],
+          "missing_reference": null,
+          "explanation": "100.00 debit - 90.00 credit = 10.00 imbalance. Clearing debit still matches operational 100.00."
+        }
+      ],
+      "alerts": [],
+      "not_evaluated": [],
+      "legitimate_cascades": []
+    },
+    "P14": {
+      "findings": [
+        {
+          "finding_id": "C05|qbo:RefundReceipt:RR-NO-ORIGINAL:1",
+          "check_id": "C05",
+          "severity": "high",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "20.00",
+          "expected": null,
+          "delta": null,
+          "threshold": "original required",
+          "source_refs": [
+            "qbo:RefundReceipt:RR-NO-ORIGINAL:1"
+          ],
+          "related_refs": [
+            "identity:approval:APP-REFUND",
+            "policy:POLICY-1"
+          ],
+          "missing_reference": {
+            "system": "qbo",
+            "type": "original_sale",
+            "lookup_key": "refund:RR-NO-ORIGINAL"
+          },
+          "explanation": "Nonzero refund lacks original sale, regardless of being below 100.00."
+        }
+      ],
+      "alerts": [],
+      "not_evaluated": [
+        "KPI:revenue"
+      ],
+      "legitimate_cascades": []
+    },
+    "raw-repeat": {
+      "findings": [
+        {
+          "finding_id": "C03|file:qbo.json#/Invoice/0|file:qbo.json#/Invoice/14",
+          "check_id": "C03",
+          "severity": "high",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "2",
+          "expected": "1",
+          "delta": "1",
+          "threshold": "1",
+          "source_refs": [
+            "file:qbo.json#/Invoice/0",
+            "file:qbo.json#/Invoice/14"
+          ],
+          "related_refs": [
+            "qbo:Invoice:I-PRICE",
+            "qbo:version:I-PRICE:0"
+          ],
+          "missing_reference": null,
+          "explanation": "Exact repeated source ID/version with two raw JSON pointers; normalization must not double count."
+        }
+      ],
+      "alerts": [],
+      "not_evaluated": [],
+      "legitimate_cascades": []
+    },
+    "wrong-clearing": {
+      "findings": [
+        {
+          "finding_id": "C12|qbo:JournalEntry:JE-UNBALANCED:1",
+          "check_id": "C12",
+          "severity": "high",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "90.00",
+          "expected": "100.00",
+          "delta": "-10.00",
+          "threshold": "0.01",
+          "source_refs": [
+            "qbo:JournalEntry:JE-UNBALANCED:1"
+          ],
+          "related_refs": [
+            "identity:posting:POST-I-PAY",
+            "policy:POLICY-1",
+            "qbo:Invoice:I-PAY",
+            "qbo:JournalEntry:JE-UNBALANCED:2",
+            "qbo:account:CLEARING",
+            "qbo:account:REVENUE"
+          ],
+          "missing_reference": null,
+          "explanation": "90.00 debit = 90.00 credit, but configured clearing should be 100.00; delta -10.00."
+        }
+      ],
+      "alerts": [],
+      "not_evaluated": [],
+      "legitimate_cascades": []
+    },
+    "issues": {
+      "findings": [
+        {
+          "finding_id": "C08|cargas:reading:R-TRUCK-OPEN|cargas:reading:R-UNCERTAIN",
+          "check_id": "C08",
+          "severity": "medium",
+          "status": "sensor_uncertain",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": null,
+          "expected": null,
+          "delta": null,
+          "threshold": "2.000",
+          "source_refs": [
+            "cargas:reading:R-TRUCK-OPEN",
+            "cargas:reading:R-UNCERTAIN"
+          ],
+          "related_refs": [
+            "inventory:movement:M-TRANSFER-IN",
+            "inventory:movement:M-TRANSFER-OUT",
+            "policy:POLICY-1"
+          ],
+          "missing_reference": null,
+          "explanation": "Uncertain endpoint quality; no shortage/excess verdict for TRUCK-A."
+        },
+        {
+          "finding_id": "C09|manifest:QBO-STALE",
+          "check_id": "C09",
+          "severity": "high",
+          "status": "alert",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "25",
+          "expected": "24",
+          "delta": "1",
+          "threshold": "24",
+          "source_refs": [
+            "manifest:QBO-STALE"
+          ],
+          "related_refs": [
+            "file:qbo.json",
+            "policy:POLICY-1"
+          ],
+          "missing_reference": null,
+          "explanation": "Fresh extraction with 25-hour-old coverage watermark. QBO-dependent conclusions not evaluated."
+        },
+        {
+          "finding_id": "C10|manifest:POS-FAILED",
+          "check_id": "C10",
+          "severity": "critical",
+          "status": "alert",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "CSV_SCHEMA",
+          "expected": null,
+          "delta": null,
+          "threshold": "any failure",
+          "source_refs": [
+            "manifest:POS-FAILED"
+          ],
+          "related_refs": [
+            "file:pos.csv:row:2"
+          ],
+          "missing_reference": null,
+          "explanation": "Malformed POS source; one failure alert. Dependent checks and KPIs unavailable."
+        },
+        {
+          "finding_id": "C11|cargas:delivery:D-NO-MAPPING",
+          "check_id": "C11",
+          "severity": "high",
+          "status": "not_evaluated",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": null,
+          "expected": null,
+          "delta": null,
+          "threshold": "required",
+          "source_refs": [
+            "cargas:delivery:D-NO-MAPPING"
+          ],
+          "related_refs": [
+            "policy:POLICY-1"
+          ],
+          "missing_reference": {
+            "system": "identity",
+            "type": "customer/item",
+            "lookup_key": "customer:UNKNOWN;item:UNKNOWN"
+          },
+          "explanation": "Unknown explicit customer and item mapping; do not infer missing invoice."
+        },
+        {
+          "finding_id": "C11|cargas:reading:R-NO-READING-OPEN|identity:asset:ASSET-NO-READING",
+          "check_id": "C11",
+          "severity": "high",
+          "status": "not_evaluated",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": null,
+          "expected": null,
+          "delta": null,
+          "threshold": "required",
+          "source_refs": [
+            "cargas:reading:R-NO-READING-OPEN",
+            "identity:asset:ASSET-NO-READING"
+          ],
+          "related_refs": [
+            "policy:POLICY-1"
+          ],
+          "missing_reference": {
+            "system": "cargas",
+            "type": "closing_reading",
+            "lookup_key": "asset:TRUCK-NO-READING;boundary:2026-11-04T07:00:00+00:00"
+          },
+          "explanation": "No closing reading; asset inventory KPI unavailable."
+        }
+      ],
+      "alerts": [
+        "C09|manifest:QBO-STALE",
+        "C10|manifest:POS-FAILED"
+      ],
+      "not_evaluated": [
+        "C01",
+        "C01:D-NO-MAPPING",
+        "C02",
+        "C03:pos",
+        "C03:qbo",
+        "C04:pos",
+        "C04:qbo",
+        "C05:pos",
+        "C05:qbo",
+        "C06",
+        "C07",
+        "C08:BULK-A",
+        "C08:ISOLATED",
+        "C08:TRUCK-A",
+        "C08:TRUCK-NO-READING",
+        "C12",
+        "KPI:AR",
+        "KPI:delivered",
+        "KPI:inventory",
+        "KPI:retail",
+        "KPI:revenue"
+      ],
+      "legitimate_cascades": [
+        "P08 shortage and both C08:BULK-A/C08:ISOLATED verdicts suppressed because POS failed; preserve worksheet inputs, no verdict.",
+        "P09 sensor uncertainty and P12 missing reading remain independent of POS failure.",
+        "QBO stale suppresses P01/P02/P04/P05/P06/P07/P13/P14 verdicts; failed POS suppresses P03."
+      ]
+    }
+  }
+}

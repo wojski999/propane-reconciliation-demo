@@ -1,0 +1,60 @@
+[
+  {
+    "case_id": "PRICE-EXACT",
+    "actual": "20.01",
+    "expected": "20.00",
+    "delta": "0.01",
+    "threshold": "0.01",
+    "verdict": "pass"
+  },
+  {
+    "case_id": "INVENTORY-EXACT",
+    "opening": "1000.000",
+    "expected": "1000.000",
+    "observed": "1005.000",
+    "delta": "5.000",
+    "threshold": "5.000",
+    "verdict": "pass"
+  },
+  {
+    "case_id": "READING-EXACT",
+    "age_minutes": "60",
+    "uncertainty": "5.000",
+    "tolerance": "5.000",
+    "verdict": "pass"
+  },
+  {
+    "case_id": "BILLING-GRACE",
+    "age_hours": "24",
+    "unallocated": "1.000",
+    "verdict": "not_due"
+  },
+  {
+    "case_id": "PAYMENT-GRACE",
+    "age_hours": "24",
+    "unapplied": "25.00",
+    "verdict": "not_due"
+  },
+  {
+    "case_id": "FRESHNESS-EXACT",
+    "age_hours": "24",
+    "future_minutes": "5",
+    "verdict": "pass"
+  },
+  {
+    "case_id": "SETTLEMENT-GRACE",
+    "business_days": "2",
+    "verdict": "not_due"
+  },
+  {
+    "case_id": "ROUND-HALF-UP",
+    "quantity": "0.005",
+    "unit_price": "1.00",
+    "net": "0.01"
+  },
+  {
+    "case_id": "GALLON-PRECISION",
+    "quantity": "0.001",
+    "basis": "net_60F"
+  }
+]
