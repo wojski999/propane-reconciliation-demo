@@ -501,3 +501,18 @@ like RefundReceipt.RevenueEvent, must be a scalar identifier at ingestion.
 Ordered AR capacity failures (`refund_credit_capacity`, `credit_allocation`,
 `credit_capacity`) also gap revenue using the identical lookup and evidence;
 revenue cannot assert complete settlement identity while capacity is unresolved.
+
+
+### PR 15 F1-d: capacity does not depend on opening AR
+
+Revenue invokes the shared ordered replay in QBO-only capacity mode: it does not
+read opening AR, assert an opening balance or publish replayed AR totals. Validated
+CreditMemo, Payment and RefundReceipt events through as-of use the same capacity
+arithmetic and EventAt/stable-ID ordering as AR. Overconsumption retains the exact
+`refund_credit_capacity`, `credit_allocation` or `credit_capacity` lookup and refs.
+Opening AR failure cannot erase those gaps. Below/exact capacity can still produce
+complete revenue when its own QBO/POS/identity sources are eligible. A settling
+credit at/before the opening cutoff additionally produces
+`opening_credit_capacity:<credit-key>`: its original total does not establish an
+opening residual. QBO source failure still blocks revenue before replay; no guessed
+credit or AR value is exposed. AR's existing snapshot eligibility remains unchanged.

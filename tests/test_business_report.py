@@ -752,3 +752,78 @@ def test_raw_shared_refund_identity_policy(credit_day, identity, mode):
         for ref in report.collect_refs(result)
         if ref.startswith("qbo:RefundReceipt:RR-")
     )
+
+
+@pytest.mark.parametrize("opening", ["valid", "invalid", "credit_at_cutoff"])
+@pytest.mark.parametrize("second", ["24.00", "25.00", "26.00"])
+def test_raw_revenue_credit_capacity_independent_of_opening_ar(opening, second):
+    files = generate("clean")
+
+    def mutate(qbo):
+        credit = copy.deepcopy(qbo["CreditMemo"][0])
+        credit.update(
+            Id="CM-X",
+            TotalAmt="40.00",
+            AppliedAmount="0.00",
+            RevenueEvent="EV-X",
+            TxnDate="2026-11-02",
+            EventAt="2026-10-26T07:00:00+00:00"
+            if opening == "credit_at_cutoff"
+            else "2026-11-02T12:00:00+00:00",
+            LinkedTxn=[{"TxnType": "Invoice", "TxnId": "I-PAY"}],
+        )
+        credit["Line"][0]["Amount"] = "40.00"
+        qbo["CreditMemo"].append(credit)
+        for name, amount, when in [
+            ("RR-A", "15.00", "2026-11-03T12:00:00+00:00"),
+            ("RR-B", second, "2026-11-03T13:00:00+00:00"),
+        ]:
+            refund = copy.deepcopy(qbo["RefundReceipt"][0])
+            refund.update(
+                Id=name,
+                TotalAmt=amount,
+                RevenueEvent="EV-X",
+                EventAt=when,
+                LinkedTxn=[{"TxnType": "Invoice", "TxnId": "I-PAY"}],
+            )
+            refund["Line"][0]["Amount"] = amount
+            qbo["RefundReceipt"].append(refund)
+
+    change(files, "qbo.json", mutate, count=True)
+    if opening == "invalid":
+        change(files, "opening_ar.json", lambda data: data.update(as_of="invalid"))
+    result, raw = run(files)
+    revenue = result["kpis"]["revenue"]
+    partial = second == "26.00" or opening == "credit_at_cutoff"
+    assert revenue["status"] == ("partial" if partial else "complete")
+    assert revenue["value"] == (None if partial else "1250.02")
+    assert revenue["known_value"] == "1250.02"
+    if second == "26.00":
+        gaps = [
+            g
+            for g in revenue["gaps"]
+            if g["missing_lookup_key"]
+            == "refund_credit_capacity:qbo:RefundReceipt:RR-B"
+        ]
+        assert gaps == [
+            {
+                "missing_lookup_key": "refund_credit_capacity:qbo:RefundReceipt:RR-B",
+                "source_refs": [
+                    "qbo:CreditMemo:CM-X",
+                    "qbo:RefundReceipt:RR-A",
+                    "qbo:RefundReceipt:RR-B",
+                ],
+            }
+        ]
+    if opening == "credit_at_cutoff":
+        assert any(
+            g["missing_lookup_key"] == "opening_credit_capacity:qbo:CreditMemo:CM-X"
+            for g in revenue["gaps"]
+        )
+    if opening == "invalid":
+        assert result["kpis"]["AR"]["status"] == "unavailable"
+    document = Document(report.render(result, raw))
+    assert all(link[1:] in document.ids for link in document.links)
+    assert all(
+        "raw" in raw[k] for k in report.collect_refs(result) if k.startswith("qbo:")
+    )

@@ -63,6 +63,10 @@ and cash allocations by timestamp/stable ID. Credit application through Payment
 is not new cash. Nonvoid refunds explicitly linked to one known same-customer
 credit consume its available balance through cutoff; they reduce neither AR nor
 unapplied cash. Applied/Payment-linked credit and refunds cannot exceed that credit.
+Revenue checks that shared capacity from QBO records even when opening AR is
+unavailable. Credit at or before the opening cutoff needs explicit residual
+support. Identical refunds sharing one event are flagged for review, even at
+different times: separate native IDs do not prove distinct settlements.
 Reported Invoice.Balance is a comparison, never an added movement.
 
 Demo assumptions: POS item IDs equal QBO Item IDs (an explicit synthetic identity

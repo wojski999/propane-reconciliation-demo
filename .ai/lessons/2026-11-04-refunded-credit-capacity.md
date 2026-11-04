@@ -40,3 +40,14 @@ standalone dedup and legitimate differing partial amounts. Propagate ordered
 capacity gaps into revenue rather than declaring inconsistent complete KPIs.
 Validate optional event identifiers on both adjustment entity types at ingestion;
 a list must isolate the source with C10, never fail in downstream grouping.
+
+
+## F1-d: test invariants across independent source failures
+
+Copying a downstream worksheet's gaps is insufficient when that worksheet can
+return early for an unrelated source failure. Replay QBO credit capacity through
+the shared calculation independently of opening AR, without fabricating balances.
+Regression controls must include below/exact/over capacity, an invalid opening
+source, and credit exactly at opening cutoff. Missing opening credit residuals
+remain explicit even if the original credit total is known. Mutate back to the old
+AR-dependent call to prove that the raw failure-isolation tests detect the defect.

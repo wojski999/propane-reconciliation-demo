@@ -424,18 +424,23 @@ class KPIs:
                 sheet.gap("original_sale:" + key, [key])
                 continue
             self.net_lines(sheet, key, row, -1)
-        for gap in self.ar()["gaps"]:
+        for gap in self.ar(capacity_only=True)["gaps"]:
             if gap["missing_lookup_key"].startswith(
-                ("refund_credit_capacity:", "credit_allocation:", "credit_capacity:")
+                (
+                    "refund_credit_capacity:",
+                    "credit_allocation:",
+                    "credit_capacity:",
+                    "opening_credit_capacity:",
+                )
             ):
                 sheet.gaps.append(gap)
         return sheet.result()
 
-    def ar(self):
+    def ar(self, *, capacity_only=False):
         sheet = Worksheet("USD")
         cash, credit_left = Worksheet("USD"), Worksheet("USD")
         comparisons = []
-        if self.blocked(sheet, "AR"):
+        if not capacity_only and self.blocked(sheet, "AR"):
             cash.gaps = list(sheet.gaps)
             credit_left.gaps = list(sheet.gaps)
             return sheet.result() | {
@@ -443,32 +448,44 @@ class KPIs:
                 "unapplied_credits": credit_left.result(),
                 "reported_balance_comparisons": comparisons,
             }
-        snapshots = self.rows("ar:snapshot:")
-        if len(snapshots) != 1:
-            sheet.gap("opening_ar_snapshot", [self.root])
-            cash.gaps = list(sheet.gaps)
-            credit_left.gaps = list(sheet.gaps)
-            return sheet.result() | {
-                "unapplied_cash": cash.result(),
-                "unapplied_credits": credit_left.result(),
-                "reported_balance_comparisons": comparisons,
+        if capacity_only:
+            # Only QBO customer identity is needed for capacity, not AR coverage.
+            cutoff = stamp(self.p["opening_ar_cutoff"])
+            sk = self.policy
+            customers = {
+                row["CustomerRef"]["value"]
+                for entity in ("Invoice", "CreditMemo", "Payment", "RefundReceipt")
+                for _, row in self.parents(entity)
             }
-        sk, snapshot = snapshots[0]
-        cutoff = stamp(snapshot["as_of"])
-        if cutoff > self.now or snapshot["as_of"] != self.p["opening_ar_cutoff"]:
-            sheet.gap(
-                "opening_ar_cutoff:" + self.p["opening_ar_cutoff"], [sk, self.policy]
-            )
-        customers = {b["customer_id"] for b in snapshot["balances"]}
-        for balance in snapshot["balances"]:
-            sheet.add("opening_AR", balance["amount"], [sk])
+        else:
+            snapshots = self.rows("ar:snapshot:")
+            if len(snapshots) != 1:
+                sheet.gap("opening_ar_snapshot", [self.root])
+                cash.gaps = list(sheet.gaps)
+                credit_left.gaps = list(sheet.gaps)
+                return sheet.result() | {
+                    "unapplied_cash": cash.result(),
+                    "unapplied_credits": credit_left.result(),
+                    "reported_balance_comparisons": comparisons,
+                }
+            sk, snapshot = snapshots[0]
+            cutoff = stamp(snapshot["as_of"])
+            if cutoff > self.now or snapshot["as_of"] != self.p["opening_ar_cutoff"]:
+                sheet.gap(
+                    "opening_ar_cutoff:" + self.p["opening_ar_cutoff"],
+                    [sk, self.policy],
+                )
+            customers = {b["customer_id"] for b in snapshot["balances"]}
+            for balance in snapshot["balances"]:
+                sheet.add("opening_AR", balance["amount"], [sk])
         conflicts = self.adjustment_conflicts()
         balances, credits = {}, {}
         events = sorted(
             (stamp(row["EventAt"]), key, row)
             for entity in ("Invoice", "CreditMemo", "Payment", "RefundReceipt")
             for key, row in self.parents(entity)
-            if cutoff < stamp(row["EventAt"]) <= self.now
+            if (capacity_only or cutoff < stamp(row["EventAt"]))
+            and stamp(row["EventAt"]) <= self.now
         )
         for _, key, row in events:
             if key in conflicts:
@@ -518,6 +535,10 @@ class KPIs:
                     sheet.gap("refund_credit:" + ";".join(targets), [key])
                     continue
                 credit = credits[targets[0]]
+                if capacity_only and stamp(self.r[targets[0]]["EventAt"]) <= cutoff:
+                    sheet.gap(
+                        "opening_credit_capacity:" + targets[0], [key, targets[0]]
+                    )
                 amount = abs(row["TotalAmt"])
                 if self.r[targets[0]]["CustomerRef"] != row["CustomerRef"]:
                     sheet.gap("same_customer_refund_credit:" + key, [key, *targets])
@@ -602,6 +623,8 @@ class KPIs:
                 sheet.gap("credit_capacity:" + key, credit["refs"])
             else:
                 credit_left.add("unapplied_credit", remaining, credit["refs"])
+        if capacity_only:
+            return sheet.result()
         for key, balance in sorted(balances.items()):
             comparisons.append(
                 {
