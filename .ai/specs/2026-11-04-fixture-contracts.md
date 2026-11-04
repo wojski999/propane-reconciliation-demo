@@ -287,3 +287,52 @@ P11 suppresses only the asset-specific inventory checks in the reviewed oracle;
 it does not suppress the whole inventory KPI. Whole-scope identity/inventory/
 readings failures retain whole inventory unavailability. Oracle contents remain
 unchanged and test-only.
+
+## Step-3 pure rule boundary
+
+`rule_inputs.from_database(db, blocked=None)` detaches validated current scaled
+records and immutable occurrence references from the disposable import. The pure
+`rules.reconcile(inputs)` API returns step-3 findings and `not_evaluated` reasons;
+it does not write to SQLite, render, invoke a CLI, read fixtures or use a network.
+The importer remains the validation boundary; direct callers must use that same
+validated representation (integer cents, thousandths of quantities/percentages).
+
+Implemented scope is C01–C07/C12 plus required supporting C11 for those checks.
+C08/C09, inventory C11, alerts/report aggregation and all KPI computation remain
+later steps. `freshness_evaluated` is always false here. The optional `blocked`
+scope mapping accepts future freshness results with their evidence; no staleness
+is inferred or claimed by this step. Import-failure scopes are supplied by the
+adapter, including unavailable source groups, so root C10 failures do not cascade
+into guessed missing-reference verdicts. Per-record C11 reasons mark only the
+calculation that lacks support; other independent comparisons still run.
+
+The oracle tests compare every section-5 field except explanation wording for all
+applicable independent scenarios. P10 and combined `issues` tests explicitly inject
+P10's future blocked scopes; they do not implement/test C09's detection algorithm.
+P12's delivery mapping C11 is applicable; its missing inventory reading is deferred.
+Additional tests directly exercise combined failures without injected freshness.
+
+Money is computed with Decimal HALF_UP at line boundaries, with enough local
+precision for products of validated signed 64-bit scaled values. Comparisons use
+unrounded differences. Percent strings retain small nonzero threshold excesses.
+Taxes are bridged from explicit TotalTax/TaxLine and POS net/tax/gross fields;
+no absent tax rate is invented. Allocation money is checked both against invoice
+net and the proportional delivery billable net, including split/combined billing.
+
+AR replays events after opening snapshot through as-of in timestamp/stable-ID
+order. Opening customer balances establish opening coverage, not invented
+per-invoice residuals: an allocation to an invoice predating the opening snapshot
+needs missing per-invoice support (C11). Reported Invoice.Balance is never used as
+historical prepayment balance. AppliedAmount credits reduce AR once; a Payment
+line cross-referencing that credit does not become additional cash. Ambiguous
+multi-credit, mixed/over-capacity credit or invoice links get C11, without guessed
+allocation. Unlinked cash yields one payment-level unapplied finding with its
+allocation lines as related evidence. Cash refunds do not reduce AR.
+
+Batch grace preserves the settlement's Denver local time while counting Mon–Fri
+business dates; exactly two days passes, the first instant beyond is due. Each
+batch derives expected deposit from its captured/refunded POS lines less explicit
+fees. Deposit totals, line totals, expected transaction links and linked amounts
+are checked separately; pending/void POS and void deposits are excluded.
+Configured journal clearing amounts derive from linked operational records;
+no expected operational amount or manual journal requirement is introduced.

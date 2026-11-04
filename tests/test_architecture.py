@@ -14,6 +14,8 @@ ALLOWED_INTERNAL_IMPORTS = {
     "generator": {"contracts"},
     "validation": {"contracts"},
     "ingestion": {"contracts", "generator", "validation"},
+    "rule_inputs": {"ingestion"},
+    "rules": set(),
 }
 
 
@@ -33,12 +35,22 @@ def check_application_dependency_direction():
                     "Use absolute imports for dependency enforcement"
                 )
                 imports = [node.module or ""]
+            if module == "rules":
+                assert all(
+                    name in {"collections", "datetime", "decimal", "zoneinfo"}
+                    for name in imports
+                ), "Rules must remain pure"
             for imported in imports:
                 if imported == "propane_demo" or imported.startswith("propane_demo."):
                     target = imported.removeprefix("propane_demo.")
                     assert target in ALLOWED_INTERNAL_IMPORTS[module], (
                         f"Forbidden dependency: {module} -> {target}"
                     )
+            if module == "rules" and isinstance(node, ast.Call):
+                assert not (
+                    isinstance(node.func, ast.Name)
+                    and node.func.id in {"open", "exec", "eval", "compile"}
+                ), "Rules must not perform IO or dynamically load code"
             assert not isinstance(node, ast.Call) or not (
                 isinstance(node.func, ast.Name) and node.func.id == "__import__"
             ), "Use static imports"
