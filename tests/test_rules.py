@@ -247,6 +247,7 @@ def test_credit_payment_links_do_not_double_apply():
     ]
     # The full 100 credit is already applied; no new cash or double reduction.
     assert actual(data, "C06") == []
+    assert Engine(data).operational("PAY-APPLIED") == ("qbo:Payment:PAY-APPLIED", 0)
     pay["Line"][0]["LinkedTxn"][1]["TxnId"] = "MISSING"
     assert actual(data, "C11")[0]["missing_reference"]["type"] == "credit_application"
 
@@ -736,3 +737,33 @@ def test_nonzero_opening_customer_ar_is_not_invented_invoice_residual():
         "type": "invoice_balance",
         "lookup_key": "qbo:Invoice:I-PAID",
     }
+
+
+def test_ambiguous_credit_blocks_later_balance_and_clearing_comparisons():
+    data = inputs()
+    r = data["records"]
+    first = r["qbo:Payment:PAY-APPLIED"]
+    first["Line"][0]["Amount"] = 15000
+    first["Line"][0]["LinkedTxn"] = [
+        {"TxnType": "Invoice", "TxnId": "I-CREDIT"},
+        {"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"},
+    ]
+    later = copy.deepcopy(first)
+    later.update(
+        Id="ZZ-LATER",
+        PaymentRefNum="ZZ-LATER",
+        TotalAmt=20000,
+        EventAt="2026-11-03T04:00:00+00:00",
+    )
+    later["Line"][0]["Amount"] = 20000
+    later["Line"][0]["LinkedTxn"] = [{"TxnType": "Invoice", "TxnId": "I-CREDIT"}]
+    r["qbo:Payment:ZZ-LATER"] = later
+    r["identity:posting:POST-I-PAY"]["external_ref"] = "PAY-APPLIED"
+    result = reconcile(data)
+    assert not any(f["check_id"] in {"C06", "C12"} for f in result["findings"])
+    assert "C06:qbo:Payment:ZZ-LATER:1" in result["not_evaluated"]
+    assert any(
+        f["check_id"] == "C11"
+        and f["missing_reference"]["type"] == "configured_posting"
+        for f in result["findings"]
+    )

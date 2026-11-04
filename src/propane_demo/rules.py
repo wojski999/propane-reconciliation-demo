@@ -801,6 +801,7 @@ class Engine:
         start = stamp(snapshot["as_of"])
         opening_customers = {b["customer_id"] for b in snapshot["balances"]}
         balances, history, credits = {}, defaultdict(list), {}
+        uncertain = {}
         events = [
             (stamp(row["EventAt"]), key, row)
             for entity in ("Invoice", "CreditMemo", "Payment")
@@ -834,6 +835,7 @@ class Engine:
                 if not amount:
                     continue
                 if len(targets) != 1 or targets[0] not in balances:
+                    uncertain.update({target: [key] for target in targets})
                     self.missing(
                         [key, snapshot_key],
                         "qbo",
@@ -874,6 +876,7 @@ class Engine:
                 if not targets:
                     continue
                 if len(targets) != 1 or targets[0] not in balances:
+                    uncertain.update({target: [line_key] for target in targets})
                     self.missing(
                         [line_key, snapshot_key],
                         "qbo",
@@ -883,7 +886,17 @@ class Engine:
                     )
                     continue
                 target = targets[0]
+                if target in uncertain:
+                    self.partial["C06:" + line_key] = {
+                        "status": "not_evaluated",
+                        "source_refs": sorted(
+                            [snapshot_key, target, *uncertain[target]]
+                        ),
+                        "reason": "Earlier allocation lacks required support.",
+                    }
+                    continue
                 if any(k not in credits for k in credit_links):
+                    uncertain[target] = [line_key]
                     self.missing(
                         [line_key, snapshot_key],
                         "qbo",
@@ -897,6 +910,7 @@ class Engine:
                 already = 0
                 if credit_links:
                     if len(credit_links) != 1:
+                        uncertain[target] = [line_key]
                         self.missing(
                             [line_key, snapshot_key],
                             "qbo",
@@ -909,6 +923,7 @@ class Engine:
                     if credit["seen"] + line["Amount"] > credit["total"] or credit[
                         "target"
                     ] not in {None, target}:
+                        uncertain[target] = [line_key]
                         self.missing(
                             [line_key, snapshot_key],
                             "qbo",
@@ -1088,6 +1103,16 @@ class Engine:
             return None
         key, row = choices[0]
         if key.startswith("qbo:Payment:"):
+            for line in row["Line"]:
+                credit_links = [
+                    k for k in linked(line) if k.startswith("qbo:CreditMemo:")
+                ]
+                if credit_links and (
+                    len(credit_links) != 1
+                    or credit_links[0] not in self.r
+                    or abs(line["Amount"]) > abs(self.r[credit_links[0]]["TotalAmt"])
+                ):
+                    return None
             # Credit links are noncash. Only explicitly cash allocations plus
             # unapplied cash count toward a payment clearing posting.
             amount = row["UnappliedAmt"] + sum(

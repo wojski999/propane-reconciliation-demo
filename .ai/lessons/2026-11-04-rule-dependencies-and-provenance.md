@@ -17,3 +17,10 @@ Full fixture oracle equality and 100% coverage alone did not expose these paths.
 Retain source-boundary adversarial tests, missing optional tax-line IDs with real
 raw pointers, large Decimal products, fractional percent excesses, multiline POS
 identity and offsetting deposit lines alongside the independent financial oracle.
+
+A late sequence probe showed why missing support must propagate inside a ledger:
+a mixed credit/cash line produced C11, but a later payment still compared against
+a balance that ignored the unknown allocation. Mark that invoice history uncertain
+for subsequent payments, retaining the root evidence. The same ambiguous payment
+cannot supply a guessed operational cash amount for clearing comparisons. Keep a
+test spanning the original missing support, later event and posting calculation.
