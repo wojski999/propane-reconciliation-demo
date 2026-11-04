@@ -354,6 +354,7 @@ def test_refund_with_credit_link_and_matching_event_is_settlement_only():
     r = data["records"]
     credit = r["qbo:CreditMemo:CM-BOUNDARY"]
     credit["RevenueEvent"] = "same-event"
+    credit["AppliedAmount"] = 0
     refund = r["qbo:RefundReceipt:RR-BOUNDARY"]
     refund["RevenueEvent"] = "same-event"
     refund["LinkedTxn"] = [{"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"}]

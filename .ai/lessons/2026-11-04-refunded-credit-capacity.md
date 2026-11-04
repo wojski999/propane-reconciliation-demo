@@ -28,3 +28,15 @@ Raw regressions must assert all affected values, status and evidence closure for
 prior/same-day credits, partial and multiple refunds, payment ordering and gaps.
 Standalone refund event labels with no credit counterpart do not invent a credit;
 known void/future/multiple matches and unknown direct IDs remain missing support.
+
+## F1-c: resolve economic identity before settlement exclusion
+
+Two fresh reviews found that early credit-settlement exclusion bypassed sale-link
+conflicts and duplicate economic payloads. A recognized credit ID does not prove
+that the refund belongs to the same original sale, or that different native IDs
+are different refunds. Reject contradicted sale links and ambiguous identical
+same-event refunds before either revenue exclusion or AR consumption. Preserve
+standalone dedup and legitimate differing partial amounts. Propagate ordered
+capacity gaps into revenue rather than declaring inconsistent complete KPIs.
+Validate optional event identifiers on both adjustment entity types at ingestion;
+a list must isolate the source with C10, never fail in downstream grouping.

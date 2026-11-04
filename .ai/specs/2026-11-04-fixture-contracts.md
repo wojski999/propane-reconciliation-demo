@@ -483,3 +483,21 @@ POS gallon quantities assume the policy net_60F basis; the POS schema has no bas
 measurement and no conversion proves equivalence with delivered gallons. Opening
 AR has customer totals only: it supplies neither pre-opening invoice balances nor
 available credit residuals. Such allocations need explicit missing-support gaps.
+
+### PR 15 F1-c: settlement identity before exclusion
+
+Revenue and AR reject a refund whose explicit Invoice/SalesReceipt links are not
+all among its identified credit's original-sale links. This applies to direct,
+event and combined credit identity. They emit the same
+`consistent_adjustment_event:<refund-key>` with existing refund/credit refs.
+Before credit-settlement exclusion, content-identical active refunds sharing one
+RevenueEvent are ambiguous when any member identifies a credit. Economic content
+means total, sorted original-sale links and sorted item/amount lines; native IDs
+and credit-reference representation do not establish distinct refunds. Every
+ambiguous member gaps revenue and AR and consumes no credit. Distinct partial
+refund amounts remain valid ordered settlements. Without a credit, the existing
+standalone adjustment deduplication remains unchanged. CreditMemo.RevenueEvent,
+like RefundReceipt.RevenueEvent, must be a scalar identifier at ingestion.
+Ordered AR capacity failures (`refund_credit_capacity`, `credit_allocation`,
+`credit_capacity`) also gap revenue using the identical lookup and evidence;
+revenue cannot assert complete settlement identity while capacity is unresolved.

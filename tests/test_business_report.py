@@ -311,8 +311,8 @@ def test_raw_credit_refund_event_crosswalk_full_pipeline():
     assert result["kpis"]["AR"]["gaps"][0]["missing_lookup_key"].startswith(
         "refund_credit_capacity:"
     )
-    # Yesterday's credit recognized once, today's cash refund settles it only.
-    assert result["kpis"]["revenue"]["value"] == "1350.02"
+    # Over-capacity settlement cannot assert complete revenue either.
+    assert result["kpis"]["revenue"]["value"] is None
     assert result["kpis"]["AR"]["value"] is None
     assert result["kpis"]["AR"]["known_value"] == "860.01"
 
@@ -587,7 +587,7 @@ def test_raw_event_refunds_and_payment_share_ordered_capacity(
     )
     # Credit recognized once, cash settlements never recognize new revenue.
     assert result["kpis"]["revenue"]["value"] == (
-        "1250.02" if credit_day == "2026-11-03" else "1350.02"
+        None if excess else "1250.02" if credit_day == "2026-11-03" else "1350.02"
     )
     if excess:
         expected = (
@@ -646,3 +646,109 @@ def test_raw_disagreeing_direct_and_event_credit_identity_is_not_consumed(other_
     assert result["status"] == "incomplete"
     document = Document(report.render(result, raw))
     assert all(link[1:] in document.ids for link in document.links)
+
+
+@pytest.mark.parametrize("credit_day", ["2026-11-02", "2026-11-03"])
+@pytest.mark.parametrize("identity", ["direct", "event", "both"])
+@pytest.mark.parametrize(
+    "mode",
+    [
+        "duplicate40",
+        "duplicate20",
+        "other_invoice",
+        "cash_sale",
+        "distinct",
+        "standalone",
+    ],
+)
+def test_raw_shared_refund_identity_policy(credit_day, identity, mode):
+    files = generate("clean")
+
+    def mutate(qbo):
+        credit = copy.deepcopy(qbo["CreditMemo"][0])
+        credit.update(
+            Id="CM-X",
+            TotalAmt="20.00" if mode == "duplicate20" else "40.00",
+            AppliedAmount="0.00",
+            TxnDate=credit_day,
+            EventAt="2026-11-02T12:00:00+00:00",
+        )
+        credit["Line"][0]["Amount"] = credit["TotalAmt"]
+        credit["LinkedTxn"] = [{"TxnType": "Invoice", "TxnId": "I-PAY"}]
+        if identity != "direct":
+            credit["RevenueEvent"] = "EV-X"
+        if mode != "standalone":
+            qbo["CreditMemo"].append(credit)
+        refund = copy.deepcopy(qbo["RefundReceipt"][0])
+        refund.update(Id="RR-X", TotalAmt="20.00", RevenueEvent="EV-X")
+        refund["Line"][0]["Amount"] = "20.00"
+        refund["LinkedTxn"] = [
+            {
+                "TxnType": "SalesReceipt" if mode == "cash_sale" else "Invoice",
+                "TxnId": "SR-ORIGINAL"
+                if mode == "cash_sale"
+                else "I-OUT"
+                if mode == "other_invoice"
+                else "I-PAY",
+            }
+        ]
+        if identity != "event" and mode != "standalone":
+            refund["LinkedTxn"].append({"TxnType": "CreditMemo", "TxnId": "CM-X"})
+        qbo["RefundReceipt"].append(refund)
+        if mode in {"duplicate40", "duplicate20", "distinct", "standalone"}:
+            other = copy.deepcopy(refund)
+            other["Id"] = "RR-Y"
+            if mode == "distinct":
+                other["TotalAmt"] = other["Line"][0]["Amount"] = "10.00"
+            qbo["RefundReceipt"].append(other)
+        qbo["RefundReceipt"].reverse()
+
+    change(files, "qbo.json", mutate, count=True)
+    result, raw = run(files)
+    revenue, ar = result["kpis"]["revenue"], result["kpis"]["AR"]
+    ambiguous = mode not in {"distinct", "standalone"}
+    assert result["alerts"] == []
+    assert result["status"] == ("incomplete" if ambiguous else "complete")
+    for sheet in [revenue, ar, ar["unapplied_credits"], ar["unapplied_cash"]]:
+        assert sheet["status"] == ("partial" if ambiguous else "complete")
+        assert (sheet["value"] is None) == ambiguous
+    assert ar["known_value"] == "860.01"
+    assert ar["unapplied_cash"]["known_value"] == "25.01"
+    assert ar["unapplied_credits"]["known_value"] == (
+        "20.00"
+        if mode == "duplicate20"
+        else "40.00"
+        if ambiguous
+        else "10.00"
+        if mode == "distinct"
+        else "0.00"
+    )
+    if ambiguous:
+        keys = ["qbo:RefundReceipt:RR-X"] + (
+            ["qbo:RefundReceipt:RR-Y"] if mode.startswith("duplicate") else []
+        )
+        expected = [
+            {
+                "missing_lookup_key": "consistent_adjustment_event:" + key,
+                "source_refs": sorted(["qbo:CreditMemo:CM-X", *keys]),
+            }
+            for key in keys
+        ]
+        assert revenue["gaps"] == expected
+        assert ar["gaps"] == expected
+    else:
+        assert revenue["value"] == (
+            "1230.02"
+            if mode == "standalone"
+            else "1210.02"
+            if credit_day == "2026-11-03"
+            else "1250.02"
+        )
+    document = Document(report.render(result, raw))
+    assert len(document.ids) == len(set(document.ids))
+    assert all(link[1:] in document.ids for link in document.links)
+    assert all(
+        "raw" in raw[ref]
+        for ref in report.collect_refs(result)
+        if ref.startswith("qbo:RefundReceipt:RR-")
+    )

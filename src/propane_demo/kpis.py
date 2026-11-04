@@ -84,7 +84,7 @@ class KPIs:
             direct
             and event
             and (
-                (candidates and direct != candidates)
+                (candidates and set(direct) != set(candidates))
                 or any(
                     self.r.get(k, {}).get("RevenueEvent") not in {None, event}
                     for k in direct
@@ -92,6 +92,50 @@ class KPIs:
             )
         )
         return targets, conflict
+
+    @staticmethod
+    def adjustment_payload(row):
+        """Economic content excludes native IDs and credit-settlement links."""
+        return (
+            row["TotalAmt"],
+            tuple(
+                sorted(k for k in linked(row) if not k.startswith("qbo:CreditMemo:"))
+            ),
+            tuple(
+                sorted(
+                    (line["SalesItemLineDetail"]["ItemRef"]["value"], line["Amount"])
+                    for line in row["Line"]
+                )
+            ),
+        )
+
+    def adjustment_conflicts(self):
+        """Reject ambiguous settlements before either ledger can skip grouping."""
+        conflicts = {}
+        groups = defaultdict(list)
+        for key, row in self.parents("RefundReceipt"):
+            targets, _ = self.refund_credit(row)
+            sales = {
+                k
+                for k in linked(row)
+                if k.startswith(("qbo:Invoice:", "qbo:SalesReceipt:"))
+            }
+            if len(targets) == 1 and targets[0] in self.r:
+                if not sales.issubset(set(linked(self.r[targets[0]]))):
+                    conflicts[key] = [key, targets[0]]
+            if row.get("RevenueEvent"):
+                groups[row["RevenueEvent"]].append((key, row, targets))
+        for group in groups.values():
+            for key, row, targets in group:
+                peers = [
+                    other_key
+                    for other_key, other, _ in group
+                    if other_key != key
+                    and self.adjustment_payload(other) == self.adjustment_payload(row)
+                ]
+                if peers and any(t for _, _, t in group):
+                    conflicts[key] = sorted(set([key, *peers, *targets]))
+        return conflicts
 
     def blocked(self, sheet, scope):
         reason = self.checks["not_evaluated"].get("KPI:" + scope)
@@ -293,6 +337,9 @@ class KPIs:
                     "consistent_pos_qbo_event:" + target,
                     [target, *[key for key, _, _ in rows], *[ek for _, _, ek in rows]],
                 )
+        conflicts = self.adjustment_conflicts()
+        for key, refs in sorted(conflicts.items()):
+            sheet.gap("consistent_adjustment_event:" + key, refs)
         adjustments = self.parents("CreditMemo") + self.parents("RefundReceipt")
         groups = defaultdict(list)
         for key, row in adjustments:
@@ -338,7 +385,11 @@ class KPIs:
             if row["TxnDate"] == self.run["business_date"]:
                 self.net_lines(sheet, key, row, 1)
         for key, row in adjustments:
-            if row["TxnDate"] != self.run["business_date"] or key in excluded:
+            if (
+                row["TxnDate"] != self.run["business_date"]
+                or key in excluded
+                or key in conflicts
+            ):
                 continue
             credit_targets, conflict = (
                 self.refund_credit(row)
@@ -373,6 +424,11 @@ class KPIs:
                 sheet.gap("original_sale:" + key, [key])
                 continue
             self.net_lines(sheet, key, row, -1)
+        for gap in self.ar()["gaps"]:
+            if gap["missing_lookup_key"].startswith(
+                ("refund_credit_capacity:", "credit_allocation:", "credit_capacity:")
+            ):
+                sheet.gaps.append(gap)
         return sheet.result()
 
     def ar(self):
@@ -406,6 +462,7 @@ class KPIs:
         customers = {b["customer_id"] for b in snapshot["balances"]}
         for balance in snapshot["balances"]:
             sheet.add("opening_AR", balance["amount"], [sk])
+        conflicts = self.adjustment_conflicts()
         balances, credits = {}, {}
         events = sorted(
             (stamp(row["EventAt"]), key, row)
@@ -414,6 +471,9 @@ class KPIs:
             if cutoff < stamp(row["EventAt"]) <= self.now
         )
         for _, key, row in events:
+            if key in conflicts:
+                sheet.gap("consistent_adjustment_event:" + key, conflicts[key])
+                continue
             # A sale link alone never establishes credit settlement identity.
             targets, conflict = (
                 self.refund_credit(row)
