@@ -25,8 +25,10 @@ from propane_demo.validation import (
     identifier,
     instant,
     integer,
+    links,
     normalize,
     qbo,
+    ref,
     require,
     scaled,
     timestamps,
@@ -121,7 +123,7 @@ def parse(raw):
         # Duplicate object members are ambiguous; JSON numeric literals are not
         # accepted as financial strings by normalize/scaled.
         return json.loads(raw, object_pairs_hook=unique_members)
-    except (ValueError, UnicodeError):
+    except (ValueError, UnicodeError, RecursionError):
         raise Invalid("JSON_SCHEMA") from None
 
 
@@ -232,7 +234,7 @@ def rows(name, raw):
             reader = csv.DictReader(io.StringIO(raw.decode("utf-8")), strict=True)
             if reader.fieldnames != CSV_FIELDS[name]:
                 raise Invalid("CSV_SCHEMA", ":row:2")
-            return [(f":row:{i}", row) for i, row in enumerate(reader, 2)]
+            return [(f":row:{reader.line_num}", row) for row in reader]
         except (UnicodeError, csv.Error):
             raise Invalid("CSV_SCHEMA") from None
     value = parse(raw)
@@ -267,10 +269,14 @@ def support(name, entries):
     result = []
     if name == "opening_ar.json":
         fields(value, ["snapshot_id", "as_of", "balances"])
+        require(set(value) == {"snapshot_id", "as_of", "balances"})
+        require(isinstance(value["balances"], list))
         identifier(value["snapshot_id"])
         instant(value["as_of"])
         seen = set()
         for row in value["balances"]:
+            fields(row, ["customer_id", "amount"])
+            require(set(row) == {"customer_id", "amount"})
             identifier(row["customer_id"])
             require(row["customer_id"] not in seen, "DUPLICATE_KEY")
             seen.add(row["customer_id"])
@@ -292,29 +298,43 @@ def support(name, entries):
         for collection, required_fields in required.items():
             require(isinstance(value[collection], list))
             for i, row in enumerate(value[collection]):
-                fields(row, required_fields.split())
-                for key in required_fields.split():
-                    if key == "inventory_counted":
-                        require(type(row[key]) is bool)
-                    else:
-                        require(isinstance(row[key], str) and bool(row[key]))
-                        if key not in {"gallons", "net_amount"}:
-                            for component in (
-                                row[key].split(":") if key == "pos_id" else [row[key]]
-                            ):
-                                identifier(component)
-                if collection == "pos_events":
-                    require(row["qbo_entity"] in QBO_ENTITIES, "REFERENCE")
-                entity = {
-                    "allocations": "allocation",
-                    "approvals": "approval",
-                    "posting_map": "posting",
-                }.get(collection, collection[:-1])
-                record_id = row.get("mapping_id", row.get("approval_id"))
-                identifier(record_id)
-                result.append(
-                    (f"#/{collection}/{i}", f"identity:{entity}:{record_id}", row)
-                )
+                try:
+                    fields(row, required_fields.split())
+                    optional = {
+                        "pos_events": {"delivery_id", "payment_id"},
+                        "approvals": {"approved_discount_pct"},
+                    }.get(collection, set())
+                    require(set(row) <= set(required_fields.split()) | optional)
+                    for key in row:
+                        if key == "inventory_counted":
+                            require(type(row[key]) is bool)
+                        else:
+                            require(isinstance(row[key], str) and bool(row[key]))
+                            if key not in {
+                                "gallons",
+                                "net_amount",
+                                "approved_discount_pct",
+                            }:
+                                for component in (
+                                    row[key].split(":")
+                                    if key == "pos_id"
+                                    else [row[key]]
+                                ):
+                                    identifier(component)
+                    if collection == "pos_events":
+                        require(row["qbo_entity"] in QBO_ENTITIES, "REFERENCE")
+                    entity = {
+                        "allocations": "allocation",
+                        "approvals": "approval",
+                        "posting_map": "posting",
+                    }.get(collection, collection[:-1])
+                    record_id = row.get("mapping_id", row.get("approval_id"))
+                    identifier(record_id)
+                    result.append(
+                        (f"#/{collection}/{i}", f"identity:{entity}:{record_id}", row)
+                    )
+                except Invalid as error:
+                    raise Invalid(error.code, f"#/{collection}/{i}") from None
         require(isinstance(value["sku_fill_gallons"], dict))
         for sku, volume in value["sku_fill_gallons"].items():
             identifier(sku)
@@ -333,12 +353,19 @@ def needed(key, row):
     """Syntactically valid missing support survives for C11, never guessed."""
     refs = []
     if "CustomerRef" in row:
+        ref(row["CustomerRef"])
         refs.append("qbo:Customer:" + row["CustomerRef"]["value"])
+    links(row.get("LinkedTxn", []))
     for link in row.get("LinkedTxn", []):
         refs.append(f"qbo:{link['TxnType']}:{link['TxnId']}")
+    require(isinstance(row.get("Line", []), list))
     for line in row.get("Line", []):
+        fields(line, ["Id"])
+        require("Line" not in line)
         refs.extend(needed(key, line))
         if "SalesItemLineDetail" in line:
+            fields(line["SalesItemLineDetail"], ["ItemRef"])
+            ref(line["SalesItemLineDetail"]["ItemRef"])
             refs.append("qbo:Item:" + line["SalesItemLineDetail"]["ItemRef"]["value"])
     if key.startswith("identity:allocation:"):
         refs.extend(
@@ -405,9 +432,12 @@ def import_file(db, name, raw, manifest):
     entries = rows(name, raw)
     require(len(entries) == integer(manifest["row_count"]), "ROW_COUNT")
     if name in {"identity.json", "opening_ar.json"}:
-        records = [
-            (p, key, 0, row, normalize(row)) for p, key, row in support(name, entries)
-        ]
+        records = []
+        for pointer, key, row in support(name, entries):
+            try:
+                records.append((pointer, key, 0, row, normalize(row)))
+            except Invalid as error:
+                raise Invalid(error.code, pointer) from None
     else:
         records = []
         for pointer, row in entries:
@@ -427,16 +457,26 @@ def import_file(db, name, raw, manifest):
                         key += ":" + row["line_id"]
                     version = 0
                 records.append((pointer, key, version, row, normalized))
-            except (Invalid, KeyError, TypeError) as error:
-                code = error.code if isinstance(error, Invalid) else "SCHEMA"
+            except (Invalid, KeyError, TypeError, RecursionError) as error:
+                code = (
+                    error.code
+                    if isinstance(error, Invalid)
+                    else "JSON_SCHEMA"
+                    if isinstance(error, RecursionError)
+                    else "SCHEMA"
+                )
                 raise Invalid(code, pointer) from None
-    seen = set()
+    seen = {}
     intervals = {}
     for pointer, key, version, row, normalized in records:
         try:
             if name not in {"qbo.json", "updates.json"}:
-                require(key not in seen, "DUPLICATE_KEY")
-            seen.add(key)
+                require(
+                    key not in seen or (name in CSV_FIELDS and seen[key] == row),
+                    "DUPLICATE_KEY",
+                )
+            repeated = key in seen
+            seen[key] = row
             for stamp in timestamps(row):
                 require(
                     instant(manifest["expected_window_start"])
@@ -452,7 +492,7 @@ def import_file(db, name, raw, manifest):
                 )
                 last = instant(manifest["expected_window_end"]).astimezone(zone).date()
                 require(first <= day(row["TxnDate"]) < last, "POSTING_WINDOW")
-            if name == "prices.csv":
+            if name == "prices.csv" and not repeated:
                 price_key = tuple(
                     row[k]
                     for k in ("item_id", "customer_class", "unit", "gallon_basis")
@@ -470,7 +510,11 @@ def import_file(db, name, raw, manifest):
                     "DELETE FROM records WHERE substr(record_key,1,?)=?",
                     (len(prefix), prefix),
                 )
-                db.execute("DELETE FROM references_needed WHERE record_key=?", (key,))
+                db.execute(
+                    "DELETE FROM references_needed WHERE record_key=? "
+                    "OR substr(record_key,1,?)=?",
+                    (key, len(prefix), prefix),
+                )
             is_current = current is None or version >= current[0]
             put(
                 db,
@@ -507,6 +551,14 @@ def ingest(read_file):
     """
     run, policy, raw_controls = control(read_file)
     db = sqlite3.connect(":memory:")
+    try:
+        return import_run(db, read_file, run, policy, raw_controls)
+    except (Invalid, sqlite3.Error):
+        db.close()
+        raise
+
+
+def import_run(db, read_file, run, policy, raw_controls):
     db.row_factory = sqlite3.Row
     db.execute("PRAGMA foreign_keys=ON")
     db.executescript(SCHEMA)
@@ -563,7 +615,10 @@ def ingest(read_file):
                 inputs.append((name, raw, manifest))
             except (Invalid, KeyError, TypeError) as error:
                 errors.append(
-                    (name, error if isinstance(error, Invalid) else Invalid("SCHEMA"))
+                    (
+                        name,
+                        error if isinstance(error, Invalid) else Invalid("SCHEMA"),
+                    )
                 )
         db.execute("SAVEPOINT source_import")
         for name, raw, manifest in inputs:
@@ -575,7 +630,10 @@ def ingest(read_file):
                     raise Invalid(manifest["error_code"])
             except (Invalid, KeyError, TypeError) as error:
                 errors.append(
-                    (name, error if isinstance(error, Invalid) else Invalid("SCHEMA"))
+                    (
+                        name,
+                        error if isinstance(error, Invalid) else Invalid("SCHEMA"),
+                    )
                 )
         if errors:
             db.execute("ROLLBACK TO source_import")
@@ -590,7 +648,7 @@ def ingest(read_file):
                     "INSERT INTO manifests VALUES (?,?,?,?,?,?,?)",
                     (
                         name,
-                        m.get("manifest_id", "MISSING-" + name),
+                        m.get("manifest_id", "missing:" + name),
                         group,
                         "failed" if errors else "success",
                         code,
@@ -601,7 +659,7 @@ def ingest(read_file):
         if errors:
             name, error = errors[0]
             m = index.get(name, {})
-            manifest_id = m.get("manifest_id", "MISSING-" + name)
+            manifest_id = m.get("manifest_id", "missing:" + name)
             refs = ["manifest:" + manifest_id]
             related = ["file:" + name + error.pointer]
             db.execute(
@@ -659,18 +717,6 @@ def unavailable(db):
     if {"identity", "inventory", "readings"} & failed.keys():
         dependencies["C08"] = {"identity", "inventory", "readings"}
         dependencies["KPI:inventory"] = {"identity", "inventory", "readings"}
-    elif any(
-        required & failed.keys()
-        for scope, required in dependencies.items()
-        if scope.startswith("C08:")
-    ):
-        dependencies["KPI:inventory"] = set().union(
-            *(
-                required
-                for scope, required in dependencies.items()
-                if scope.startswith("C08:")
-            )
-        )
     return {
         scope: {
             "status": "not_evaluated" if scope.startswith("C") else "unavailable",

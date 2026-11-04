@@ -170,7 +170,6 @@ def test_p11_exact_failure_and_source_dependency_contract():
         "C08:ISOLATED",
         "KPI:retail",
         "KPI:revenue",
-        "KPI:inventory",
     }
     assert all(v["source_refs"] == ["manifest:POS-FAILED"] for v in scopes.values())
     assert scopes["C04:pos"]["status"] == "not_evaluated"
@@ -398,7 +397,9 @@ def test_duplicate_keys_are_rejected(name):
         elif name == "opening_ar.json":
             v["balances"].append(copy.deepcopy(v["balances"][0]))
         else:
-            v.append(copy.deepcopy(v[0]))
+            row = copy.deepcopy(v[0])
+            row["unit_price"] = "99.00"
+            v.append(row)
 
     change(files, name, mutation, count=True)
     failed(files, name, "DUPLICATE_KEY")
@@ -744,3 +745,291 @@ def test_sqlite_financial_values_are_typed_scaled_integers():
         ).fetchone()[0]
         == 0
     )
+
+
+def test_failure_only_oracle_exact_scopes():
+    from pathlib import Path
+
+    oracle = json.loads(Path("tests/fixtures/expected_findings.json").read_text())
+    assert set(unavailable(ingest(generate("P11").__getitem__))) == set(
+        oracle["scenarios"]["P11"]["not_evaluated"]
+    )
+
+
+@pytest.mark.parametrize("entity", ["Customer", "Item"])
+def test_nontransaction_line_shape_isolated(entity):
+    files = generate()
+    change(files, "qbo.json", lambda q: q[entity][0].update(Line=["x"]))
+    assert_source_isolated(files, "qbo.json", "SCHEMA")
+
+
+def assert_source_isolated(files, name, code):
+    db, m = failed(files, name, code)
+    assert db.execute("SELECT count(*) FROM alerts").fetchone()[0] == 1
+    healthy = "qbo" if m["source"] != "qbo" else "pos"
+    assert (
+        db.execute(
+            "SELECT count(*) FROM records WHERE source=?", (healthy,)
+        ).fetchone()[0]
+        > 0
+    )
+    for table in ["versions", "occurrences", "scaled_values", "references_needed"]:
+        assert (
+            db.execute(
+                f"SELECT count(*) FROM {table} WHERE record_key LIKE ?",
+                ("pos:POS:%" if m["source"] == "pos" else m["source"] + ":%",),
+            ).fetchone()[0]
+            == 0
+        )
+    return db, m
+
+
+@pytest.mark.parametrize(
+    "name", ["qbo.json", "identity.json", "opening_ar.json", "updates.json"]
+)
+def test_deep_json_source_isolation(name):
+    files = generate()
+    files[name] = b"[" * 20000 + b"0" + b"]" * 20000
+    assert_source_isolated(files, name, "JSON_SCHEMA")
+
+
+def test_deep_manifest_fails_closed_with_raw_evidence():
+    files = generate()
+    files["manifests.json"] = b"[" * 20000 + b"0" + b"]" * 20000
+    db = ingest(files.__getitem__)
+    assert db.execute("SELECT count(*) FROM alerts").fetchone()[0] == 10
+    assert db.execute("SELECT count(*) FROM records").fetchone()[0] == 0
+    assert (
+        db.execute("SELECT raw FROM files WHERE file_id='manifests.json'").fetchone()[0]
+        == files["manifests.json"]
+    )
+
+
+@pytest.mark.parametrize(
+    "collection",
+    [
+        "customers",
+        "items",
+        "assets",
+        "allocations",
+        "pos_events",
+        "approvals",
+        "posting_map",
+    ],
+)
+@pytest.mark.parametrize("extra", [{"extra": "x"}, {"Line": ["x"]}])
+def test_identity_exact_row_keys(collection, extra):
+    files = generate()
+    change(files, "identity.json", lambda v: v[collection][0].update(extra))
+    assert_source_isolated(files, "identity.json", "SCHEMA")
+
+
+@pytest.mark.parametrize("location", ["root", "row", "balances_type", "row_type"])
+def test_opening_ar_exact_shapes(location):
+    files = generate()
+
+    def mutate(v):
+        if location == "root":
+            v["junk"] = "x"
+        elif location == "row":
+            v["balances"][0]["junk"] = "x"
+        elif location == "balances_type":
+            v["balances"] = "x"
+        else:
+            v["balances"][0] = "x"
+
+    change(files, "opening_ar.json", mutate, count=True)
+    assert_source_isolated(files, "opening_ar.json", "SCHEMA")
+
+
+def test_identity_normalization_error_keeps_pointer():
+    files = generate()
+    change(
+        files, "identity.json", lambda v: v["allocations"][0].update(net_amount="1.001")
+    )
+    db, m = assert_source_isolated(files, "identity.json", "PRECISION")
+    assert m["pointer"] == "#/allocations/0"
+    assert json.loads(db.execute("SELECT related_refs FROM alerts").fetchone()[0]) == [
+        "file:identity.json#/allocations/0"
+    ]
+
+
+@pytest.mark.parametrize("name", list(CSV_FIELDS))
+def test_exact_csv_repeat_is_immutable_duplicate_evidence(name):
+    files = generate()
+    baseline = ingest(files.__getitem__)
+    first = files[name].splitlines(keepends=True)[1]
+    files[name] += first
+    change(
+        files,
+        "manifests.json",
+        lambda ms: next(m for m in ms if m["file_id"] == name).update(
+            row_count=str(
+                int(next(m for m in ms if m["file_id"] == name)["row_count"]) + 1
+            )
+        ),
+    )
+    db = ingest(files.__getitem__)
+    assert db.execute("SELECT status FROM run").fetchone()[0] == "complete"
+    assert db.execute("SELECT count(*) FROM alerts").fetchone()[0] == 0
+    for table in ["records", "versions", "scaled_values"]:
+        assert (
+            db.execute(f"SELECT count(*) FROM {table}").fetchone()[0]
+            == baseline.execute(f"SELECT count(*) FROM {table}").fetchone()[0]
+        )
+    evidence = db.execute(
+        "SELECT record_key,version,count(*) FROM occurrences WHERE file_id=? "
+        "GROUP BY record_key,version HAVING count(*)>1",
+        (name,),
+    ).fetchall()
+    assert len(evidence) == 1 and evidence[0][2] == 2
+    raws = db.execute(
+        "SELECT raw FROM occurrences WHERE record_key=?", (evidence[0][0],)
+    ).fetchall()
+    assert raws[0][0] == raws[1][0]
+    with pytest.raises(sqlite3.IntegrityError, match="immutable"):
+        db.execute("DELETE FROM occurrences WHERE record_key=?", (evidence[0][0],))
+
+
+def test_csv_physical_end_line_from_original_bytes():
+    files = generate()
+    # A quoted optional field spans two physical lines; a blank line separates records.
+    lines = files["deliveries.csv"].splitlines(keepends=True)
+    fields = lines[1].decode().rstrip("\n").split(",")
+    index = CSV_FIELDS["deliveries.csv"].index("meter_ticket_id")
+    fields[index] = '"\n"'
+    files["deliveries.csv"] = (
+        lines[0] + ",".join(fields).encode() + b"\n\n" + b"".join(lines[2:])
+    )
+    # The multiline optional identifier is invalid: error belongs to its END line (3).
+    db, m = failed(files, "deliveries.csv")
+    assert m["pointer"] == ":row:3"
+    assert files["deliveries.csv"].splitlines()[2].startswith(b'"')
+    # A valid quoted field with an embedded newline is not available in this strict
+    # identifier schema; blank-line provenance still resolves directly to raw bytes.
+    files = generate()
+    lines = files["deliveries.csv"].splitlines(keepends=True)
+    files["deliveries.csv"] = lines[0] + lines[1] + b"\n" + b"".join(lines[2:])
+    db = ingest(files.__getitem__)
+    for o in db.execute(
+        "SELECT pointer,raw FROM occurrences WHERE file_id='deliveries.csv'"
+    ):
+        physical = files["deliveries.csv"].splitlines()[
+            int(o["pointer"].split(":")[-1]) - 1
+        ]
+        assert physical.split(b",")[0].decode() == json.loads(o["raw"])["ticket_id"]
+
+
+def test_missing_manifest_namespace_does_not_collide():
+    files = generate()
+
+    def mutate(ms):
+        ms[:] = [m for m in ms if m["file_id"] != "pos.csv"]
+        next(m for m in ms if m["file_id"] == "prices.csv")["manifest_id"] = (
+            "MISSING-pos.csv"
+        )
+
+    change(files, "manifests.json", mutate)
+    db, m = assert_source_isolated(files, "pos.csv", "SCHEMA")
+    assert m["manifest_id"] == "missing:pos.csv"
+    assert (
+        db.execute(
+            "SELECT status FROM manifests WHERE manifest_id='MISSING-pos.csv'"
+        ).fetchone()[0]
+        == "success"
+    )
+
+
+def test_removed_payment_line_references_and_old_replay():
+    files = generate()
+    payment = next(p for p in json.loads(files["qbo.json"])["Payment"] if p["Line"])
+    newer = copy.deepcopy(payment)
+    newer.update(SyncToken="1", Line=[])
+    change(
+        files,
+        "updates.json",
+        lambda v: v.update(entity="Payment", records=[newer, payment]),
+        count=True,
+    )
+    db = ingest(files.__getitem__)
+    assert db.execute("SELECT status FROM run").fetchone()[0] == "complete"
+    key = "qbo:Payment:" + payment["Id"]
+    assert (
+        db.execute("SELECT version FROM records WHERE record_key=?", (key,)).fetchone()[
+            0
+        ]
+        == 1
+    )
+    assert not db.execute(
+        "SELECT 1 FROM records WHERE record_key=?",
+        (key + ":" + payment["Line"][0]["Id"],),
+    ).fetchone()
+    assert not db.execute(
+        "SELECT 1 FROM references_needed WHERE record_key=?",
+        (key + ":" + payment["Line"][0]["Id"],),
+    ).fetchone()
+
+
+@pytest.mark.parametrize(
+    "error",
+    [Invalid("STORAGE_BOUNDARY"), sqlite3.OperationalError("synthetic failure")],
+)
+def test_fatal_import_boundary_closes_connection(monkeypatch, error):
+    import propane_demo.ingestion as module
+
+    db = sqlite3.connect(":memory:")
+    monkeypatch.setattr(module.sqlite3, "connect", lambda _: db)
+
+    def fail(*args):
+        raise error
+
+    monkeypatch.setattr(module, "import_run", fail)
+    with pytest.raises(type(error)):
+        module.ingest(generate().__getitem__)
+    with pytest.raises(sqlite3.ProgrammingError, match="closed"):
+        db.execute("SELECT 1")
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("CustomerRef", "x"),
+        ("LinkedTxn", ["x"]),
+        ("Line", ["x"]),
+        ("SalesItemLineDetail", "x"),
+    ],
+)
+def test_optional_line_reference_shapes_do_not_crash(field, value):
+    files = generate()
+    change(
+        files, "qbo.json", lambda q: q["Payment"][0]["Line"][0].update({field: value})
+    )
+    assert_source_isolated(files, "qbo.json", "SCHEMA")
+
+
+def test_identity_float_error_keeps_pointer():
+    files = generate()
+    change(files, "identity.json", lambda v: v["customers"][0].update(qbo=1.2))
+    _, m = assert_source_isolated(files, "identity.json", "SCHEMA")
+    assert m["pointer"] == "#/customers/0"
+
+
+def test_recursive_normalization_is_safe_source_failure():
+    files = generate()
+    # Legal JSON below the decoder limit can still exceed recursive normalization.
+    # Keep the raw construction independent of Python json.dumps recursion.
+    base = files["qbo.json"]
+    customer = json.loads(base)["Customer"][0]
+    # Inject a nested extension immediately after the first Customer Id.
+    marker = json.dumps(customer["Id"]).encode()
+    offset = base.index(marker, base.index(b'"Customer"')) + len(marker)
+    files["qbo.json"] = (
+        base[:offset]
+        + b', "extension": '
+        + b"[" * 2900
+        + b'"x"'
+        + b"]" * 2900
+        + base[offset:]
+    )
+    assert isinstance(json.loads(files["qbo.json"]), dict)
+    assert_source_isolated(files, "qbo.json", "JSON_SCHEMA")

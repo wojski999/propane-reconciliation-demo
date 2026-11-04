@@ -142,6 +142,7 @@ def qbo(entity, row):
     fields(row["MetaData"], ["LastUpdatedTime"])
     instant(row["MetaData"]["LastUpdatedTime"])
     if entity in {"Customer", "Item"}:
+        require("Line" not in row)
         for key in (
             ("DisplayName", "CustomerClass")
             if entity == "Customer"

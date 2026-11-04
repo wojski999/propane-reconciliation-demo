@@ -79,7 +79,8 @@ applied credits and allocated payments are replayed after that snapshot. Invoice
 Balance is only a reference. Unapplied money and cash refunds do not reduce AR.
 
 Each manifest retains manifest_id in addition to the section-4 required fields.
-row_count is physical CSV rows / JSON array records; QBO sums entity arrays;
+row_count is logical CSV data records (including exact repeats, excluding blank
+lines) / JSON array records; QBO sums entity arrays;
 identity and opening-AR JSON count top-level members (not normalized rows).
 Updates are distinct source versions; the UPDATES-OK manifest counts records, not wrapper members. Raw-repeat preserves both physical pointers.
 P11 deliberately emits a short malformed POS row and a failed CSV_SCHEMA manifest;
@@ -254,3 +255,35 @@ Synthetic demo severity clarification: an unavailable asset inventory quantity i
 a core inventory KPI under the existing C11 policy, hence P12 missing boundary
 readings have high severity. This documents the already approved fixture/oracle
 interpretation; it creates no new client policy or inventory calculation.
+
+
+## Step-2 review corrections (PR #11)
+
+CSV occurrence pointers use the physical **ending line** of each data record,
+from `csv.DictReader.line_num`; blank lines consume physical line numbers but do
+not add records. A quoted multiline record points to its closing line. Invalid
+multiline identifier fields fail at that same ending line. Raw file bytes remain
+the authoritative evidence. Exact repeated CSV records retain separate immutable
+occurrences under one version/current record; repeated price rows do not create
+an overlapping interval. Differing content at the same CSV key is a source failure.
+The occurrences grouped by record_key/version expose duplicate evidence for future
+C03; this importer does not evaluate C03.
+
+Identity collections reject unknown row keys. Required keys remain as documented
+above; only pos_events.delivery_id/payment_id and approvals.approved_discount_pct
+are optional. Opening AR accepts exactly snapshot_id/as_of/balances, with exactly
+customer_id/amount in each balance. Customer/Item cannot carry transaction Line.
+Source parsing recursion failures are safe JSON_SCHEMA failures; unusable manifest
+indexes fail closed for all groups while raw bytes and failure manifests survive.
+Invalid control metadata remains fatal. A fatal expected import/storage boundary
+closes the allocated connection before propagating the error.
+
+Synthetic absent-manifest IDs use `missing:<file>`, a namespace impossible for
+validated real manifest identifiers. A higher QBO parent version clears current
+child records **and their reference requirements**; older replay preserves raw
+history without restoring deleted current records/references.
+
+P11 suppresses only the asset-specific inventory checks in the reviewed oracle;
+it does not suppress the whole inventory KPI. Whole-scope identity/inventory/
+readings failures retain whole inventory unavailability. Oracle contents remain
+unchanged and test-only.
