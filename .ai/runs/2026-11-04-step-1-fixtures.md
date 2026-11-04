@@ -32,3 +32,13 @@ parent. No ingestion, business checks, KPIs or business report are implemented.
 Implementation ready for PR delivery and current-head CI. Parent owns fresh
 independent reviews including high-risk second reviewer, artifact QA and merge.
 The business spec remains active; issues #5–#9 were not implemented.
+
+## Delivery
+
+PR #10: https://github.com/wojski999/propane-reconciliation-demo/pull/10
+Initial implementation head d49b3d66d04f39203b1ff06b6d05ae2e37d3a504 passed
+workflow 41850789568; check job 126646205947. Downloaded foundation-smoke-report
+still states no audit was evaluated. Final-head CI evidence is posted on the PR
+rather than creating recursive evidence-only commits. All labels were read back;
+label pagination lesson recorded. Source snapshots exported to the VPS preview
+inbox; iCloud upload cannot be confirmed from this worker.
