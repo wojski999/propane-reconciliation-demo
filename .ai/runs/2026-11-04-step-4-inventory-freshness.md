@@ -88,3 +88,41 @@ is followed by a final-head CI check; its exact SHA/workflow are reported in the
 PR comment and Cezar report to avoid a self-referential hash in this document.
 Parent owns two independent Claude reviews, current-head artifact QA and merge.
 No self-approval, merge, main push, or real integration was performed.
+
+## Two independent review corrections (PR 14)
+
+Both comments 6639421278 (M1) and 6639435306 (F1) identify the same silent
+status-conflict defect. A present M-OUT/D-OUT or M-RETAIL/T-RETAIL pair now emits
+one precise high C11 movement_source_status root, with both refs and an expected
+completed/captured lookup. BULK-A keeps known signed ledger inputs, but claims no
+expected stock or delta; consolidation and KPI:inventory are unavailable. Other
+assets still evaluate. Status-only raw-ingestion tests preserve the 100/50-gallon
+ledger amounts; no false -100/-50 high inventory shortage survives.
+
+Comment 6639435306 F2: differing present reading bases now yield C08 medium
+sensor_uncertain with both endpoints and no conversion or quantitative verdict.
+Because no common measurement basis is established, threshold/tolerance are null.
+Absent endpoint basis remains high C11, and ledger/readings basis conflict still
+uses C11. Distinct raw tests pin exact evidence, severity, unavailable scope and
+null actual/expected/delta/threshold. The approved C08/C11 rules are unchanged;
+no business oracle values, prior transfer/freshness boundary rules, CLI or CI
+configuration changed. Parent must obtain both independent fresh-head reviews;
+this author grants no review or QA approval and does not merge.
+
+Step 5 must handle blank-basis unmeasured deliveries as partial delivered-volume
+inputs, and format exact subsecond C09 Decimal durations for human-readable HTML.
+Only the handoff and precision contract are documented here, not KPI/rendering
+features. Initial full validation: 557 tests passed, but exact coverage caught an
+unexercised ledger-basis branch; a direct raw purchase-basis regression was added
+before repeating the full gate. Final verification and mutation evidence follow.
+
+Final fresh task-owned Python 3.12.3 gate: `timeout 300 make check`, Ruff clean,
+558 passed in 75.56 seconds, exact 1423/1423 application lines and 656/656 branches.
+No exclusions or coverage configuration changes. Old-status mutation (both bare
+continues restored) fails both cancelled/void regressions; old-endpoint mutation
+(restored combined basis rejection) fails the present-mismatch regression while
+the absent-basis case still passes. Rules restored byte-for-byte (SHA-256
+bc61c0e80439f0c792c40ac34936c504979e7a5506e0e342103ed521091b5e64).
+Post-restore targeted suite passes. Separate raw combined P04 probes preserve all
+independent C04 findings for both cancelled delivery and void POS mutations.
+Current-head CI evidence is recorded on the same PR after this commit.

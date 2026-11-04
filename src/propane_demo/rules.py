@@ -1554,7 +1554,40 @@ class Engine:
         bases = {r["gallon_basis"] for _, r, _ in endpoints} | {
             m["gallon_basis"] for _, m in movements
         }
-        if not basis or bases != {basis}:
+        if not basis or "" in bases:
+            self.inventory_missing(
+                [*refs, *[k for k, _ in movements]],
+                "gallon_basis",
+                "asset:" + asset + ";consistent_gallon_basis",
+                asset,
+            )
+            return
+        if opening["gallon_basis"] != closing["gallon_basis"]:
+            reason = "Endpoint gallon bases do not match. No shortage/excess verdict."
+            self.emit(
+                "C08",
+                refs,
+                None,
+                None,
+                None,
+                [self.policy_ref],
+                "medium",
+                status="sensor_uncertain",
+                explanation=reason,
+            )
+            self.partial[scope] = {
+                "status": "not_evaluated",
+                "source_refs": sorted(refs),
+                "reason": reason,
+            }
+            self.partial["KPI:inventory"] = {
+                "status": "unavailable",
+                "source_refs": sorted(refs),
+                "reason": reason,
+            }
+            sheet["status"] = "sensor_uncertain"
+            return
+        if bases != {basis}:
             self.inventory_missing(
                 [*refs, *[k for k, _ in movements]],
                 "gallon_basis",
@@ -1630,12 +1663,26 @@ class Engine:
                     continue
                 if kind == "customer_delivery":
                     if row["status"] != "completed":
+                        self.inventory_missing(
+                            evidence,
+                            "movement_source_status",
+                            source_ref + ";expected_status:completed",
+                            asset,
+                        )
+                        support_ok = False
                         continue
                     if row["meter_ticket_id"]:
                         evidence.append("cargas:meter_ticket:" + row["meter_ticket_id"])
                     measured, source_basis = row["gallons"], row["gallon_basis"]
                 else:
                     if row["status"] != "captured":
+                        self.inventory_missing(
+                            evidence,
+                            "movement_source_status",
+                            source_ref + ";expected_status:captured",
+                            asset,
+                        )
+                        support_ok = False
                         continue
                     events = [
                         (k, e)

@@ -257,10 +257,12 @@ def test_each_isolated_failure_has_one_c10_root(source):
 def test_inventory_missing_support_through_real_import(mutation, kind):
     data = exports()
     movements = data["movements.csv"]
-    if mutation in {"basis", "missing_basis"}:
-        data["readings.csv"][1]["gallon_basis"] = (
-            "observed" if mutation == "basis" else ""
-        )
+    if mutation == "basis":
+        next(m for m in movements if m["movement_type"] == "purchase")[
+            "gallon_basis"
+        ] = "observed"
+    elif mutation == "missing_basis":
+        data["readings.csv"][1]["gallon_basis"] = ""
     elif mutation == "unknown_fill":
         data["identity.json"]["sku_fill_gallons"] = {}
     elif mutation == "missing_pos":
@@ -398,7 +400,7 @@ def test_additional_raw_support_gaps_have_no_guessed_inventory(mutation, kind):
 
 
 @pytest.mark.parametrize("source", ["delivery", "pos"])
-def test_cancelled_void_source_is_not_an_inventory_outflow(source):
+def test_cancelled_void_source_conflicts_with_present_ledger_outflow(source):
     data = exports()
     if source == "delivery":
         next(r for r in data["deliveries.csv"] if r["ticket_id"] == "D-OUT")[
@@ -410,8 +412,30 @@ def test_cancelled_void_source_is_not_an_inventory_outflow(source):
         ] = "void"
     result = compute(data)
     sheet = result["inventory"]["BULK-A"]
-    assert sheet["expected"] == ("1150.000" if source == "delivery" else "1100.000")
-    assert sheet["status"] == "evaluated"
+    assert sheet["expected"] is None and sheet["delta"] is None
+    assert sheet["status"] == "not_evaluated"
+    movement, record, status = (
+        ("inventory:movement:M-OUT", "cargas:delivery:D-OUT", "completed")
+        if source == "delivery"
+        else ("inventory:movement:M-RETAIL", "pos:POS:T-RETAIL:1", "captured")
+    )
+    roots = [
+        f
+        for f in findings(result, "C11")
+        if f["missing_reference"]["type"] == "movement_source_status"
+    ]
+    assert len(roots) == 1
+    assert roots[0]["source_refs"] == sorted([movement, record])
+    assert (
+        roots[0]["missing_reference"]["lookup_key"]
+        == record + ";expected_status:" + status
+    )
+    assert not findings(result, "C08")
+    assert result["consolidation"]["status"] == "unavailable"
+    assert result["not_evaluated"]["KPI:inventory"]["status"] == "unavailable"
+    assert result["inventory"]["TRUCK-A"]["status"] == "evaluated"
+    assert result["inventory"]["DEPOT"]["status"] == "evaluated"
+    assert any(movement in c["source_refs"] for c in sheet["ledger_inputs"])
 
 
 def test_observed_basis_has_no_invented_temperature_conversion():
@@ -567,3 +591,49 @@ def test_combined_missing_customer_item_and_asset_are_distinct_root_evidence():
     )
     assert asset["source_refs"] == ["cargas:delivery:D-OUT", "manifest:IDENTITY-OK"]
     assert not findings(result, "C02")
+
+
+@pytest.mark.parametrize("basis", ["observed", ""])
+def test_endpoint_mismatch_and_absent_basis_have_distinct_evidence(basis):
+    data = exports()
+    next(r for r in data["readings.csv"] if r["reading_id"] == "R-CLOSE")[
+        "gallon_basis"
+    ] = basis
+    result = compute(data)
+    refs = ["cargas:reading:R-CLOSE", "cargas:reading:R-OPEN"]
+    sheet = result["inventory"]["BULK-A"]
+    assert all(sheet[k] is None for k in ["expected", "observed", "delta", "tolerance"])
+    assert sheet["gallon_basis"] is None
+    assert result["consolidation"]["status"] == "unavailable"
+    assert "C08:BULK-A" in result["not_evaluated"]
+    assert result["not_evaluated"]["KPI:inventory"]["status"] == "unavailable"
+    assert result["inventory"]["TRUCK-A"]["status"] == "evaluated"
+    if basis:
+        assert not findings(result, "C11")
+        f = findings(result, "C08")[0]
+        assert len(findings(result, "C08")) == 1
+        assert f["status"] == sheet["status"] == "sensor_uncertain"
+        assert f["severity"] == "medium"
+        assert f["source_refs"] == refs
+        assert f["related_refs"] == ["policy:POLICY-1"]
+        assert f["missing_reference"] is None
+        assert all(f[k] is None for k in ["actual", "expected", "delta", "threshold"])
+        assert "bases do not match" in f["explanation"]
+    else:
+        assert not findings(result, "C08")
+        f = findings(result, "C11")[0]
+        assert f["status"] == sheet["status"] == "not_evaluated"
+        assert f["severity"] == "high"
+        assert f["missing_reference"] == {
+            "system": "inventory",
+            "type": "gallon_basis",
+            "lookup_key": "asset:BULK-A;consistent_gallon_basis",
+        }
+        assert f["source_refs"] == sorted(
+            refs
+            + [
+                "inventory:movement:M-OUT",
+                "inventory:movement:M-PURCHASE",
+                "inventory:movement:M-RETAIL",
+            ]
+        )

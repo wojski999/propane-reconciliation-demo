@@ -20,3 +20,11 @@ the existing identity manifest in primary evidence so both independent omissions
 survive with distinct IDs. Keep a real-ingestion regression with both omissions;
 an exception collision guard is useful only if ordinary incomplete data cannot
 trigger it. Never manufacture a missing counterpart to distinguish the findings.
+
+Two independent PR 14 reviews found a second evidence boundary: a present ledger
+outflow cannot be silently dropped when its source is cancelled/void. That is
+conflicting support, with both record refs and the expected source status in C11,
+not a shortage. Test status-only raw mutations with the same ledger amounts.
+Keep present incompatible sensor endpoints distinct from absent measurement
+basis: approved C08 requires medium sensor uncertainty for the former, C11 for
+the latter. Do not let a local fixture contract override the approved rule.

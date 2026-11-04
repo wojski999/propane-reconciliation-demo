@@ -422,7 +422,7 @@ arithmetic only; revenue, AR and sales-volume KPI arithmetic remains step 5.
 
 Blank CSV gallon_basis is a missing-support value retained for C11. An unknown
 nonblank basis remains a C10 schema failure. Missing or ambiguous endpoints,
-unknown SKU fill, incompatible bases, incomplete transfer pairs and inconsistent
+unknown SKU fill, incompatible ledger bases, incomplete transfer pairs and inconsistent
 ledger/source evidence use exact existing refs and lookup keys, never guessed
 volume. Transfers are validated before either endpoint asset is compared.
 
@@ -434,3 +434,23 @@ C05:pos:POS:T-REFUND:1 (QBO approval), dependencies already established by the
 step-3 source-failure tests. In combined issues, the whole failed C05:pos scope
 subsumes that per-refund scope. No business expected values or planted findings
 change. Future KPI unavailable scopes are eligibility, not computed KPI results.
+
+
+### PR 14 review corrections
+
+A ledger outflow linked to a non-completed delivery or non-captured POS line is
+conflicting support: C11 `movement_source_status` includes both existing movement
+and source refs, and a source lookup with `expected_status:completed` or
+`expected_status:captured`. The asset and inventory KPI remain unavailable; signed
+known ledger inputs remain visible. No shortage/excess total is inferred.
+Present endpoint bases that differ follow approved C08: medium sensor uncertainty,
+with both readings, no conversion, no expected/observed/delta/tolerance claimed.
+A missing endpoint basis remains high C11; a ledger basis conflict remains C11.
+
+Step 5 handoff: blank basis on an unmeasured-asset delivery currently has no C11
+from inventory. Delivered-volume KPI must mark that input partial rather than
+silently including or excluding it. This step implements no KPI arithmetic.
+C09 gap durations retain Decimal precision (80-digit working context), including
+subsecond watermark differences. Future HTML must format durations for people
+without changing exact threshold comparisons or source evidence. No new renderer
+or formatting option is introduced here.
