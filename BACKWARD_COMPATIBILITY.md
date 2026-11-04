@@ -17,3 +17,10 @@ introduced. Do not invent backward compatibility with the planned business CLI.
 document changes together. Never weaken line/branch gates as a compatibility fix.
 Skills are vendored with lock hashes and relative Claude symlinks; preserve them
 when updating the collection. Local customizations belong under `.ai/skills/`.
+
+
+Step 2 adds an internal `ingest(read_file)` Python API and disposable in-memory
+SQLite source-import tables. Every call starts empty and returns a connection
+owned by its caller. It introduces no persistent schema or migration obligation.
+The smoke CLI, its errors and artifact, and `make check` remain unchanged. Future
+persistence still requires versioned migration and rollback tests before use.
