@@ -547,3 +547,16 @@ policy. Independent credits retain their own known residuals.
 Payment allocation is normalized exclusively from Payment.Line.LinkedTxn.
 Payment header LinkedTxn is retained as source evidence but is unsupported as an
 allocation source; it does not apply a credit or change cash allocation.
+
+### PR 15 F1-g: rejected refunds preserve uncertainty
+
+Every rejected active credit-linked RefundReceipt records persistent uncertainty
+for every explicit credit key and every actual event-matched credit candidate,
+before any replay skip. This includes adjustment-event conflicts, missing customer
+coverage, ambiguous identity, unknown/not-yet-replayed credits, foreign customers
+and capacity rejection. No rejected amount consumes a guessed residual. A later
+credit, valid-looking refund or Payment cannot clear the registry. The shared
+QBO-only replay propagates refund_credit_capacity and credit_capacity to revenue
+independently of opening AR eligibility. Gap evidence retains the rejected refund,
+credit keys and subsequent settlement refs. Unknown identities are never invented;
+standalone and void refunds do not poison unrelated credit capacity.

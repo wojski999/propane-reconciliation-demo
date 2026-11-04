@@ -71,3 +71,14 @@ Both negative and over-total application failures leave capacity unknown before
 refund or residual evaluation. Preserve the original AR gap, propagate existing
 capacity gaps to revenue, and prove later valid payments cannot clear the state.
 Keep zero/positive cent boundaries and independent healthy credits as controls.
+
+## F1-g: rejection must survive sequence composition
+
+An earlier rejected RefundReceipt consumed nothing but left no uncertainty marker.
+A later refund could therefore fit an invented residual and restore complete
+revenue. Route every credit-linked refund rejection through one helper, including
+conflict skips before normal identity resolution, and retain all explicit and
+actual event-candidate keys. Do not infer consumption. Check rejection followed
+by otherwise-valid refund and Payment replay, in both opening-AR modes, alongside
+exact-capacity, independent-credit and void controls. Single-record branch tests
+and full coverage do not establish this sequence invariant.

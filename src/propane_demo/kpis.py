@@ -488,6 +488,16 @@ class KPIs:
                 for target in credit_links:
                     unresolved.setdefault(target, []).append(lk)
 
+        def reject_refund(key, targets):
+            # Preserve uncertainty even before a named credit enters replay.
+            if targets:
+                refs = [key, *targets]
+                for target in targets:
+                    refs.extend(credits.get(target, {}).get("refs", []))
+                    refs.extend(unresolved.get(target, []))
+                    unresolved.setdefault(target, []).append(key)
+                sheet.gap("refund_credit_capacity:" + key, refs)
+
         events = sorted(
             (stamp(row["EventAt"]), key, row)
             for entity in ("Invoice", "CreditMemo", "Payment", "RefundReceipt")
@@ -496,19 +506,21 @@ class KPIs:
             and stamp(row["EventAt"]) <= self.now
         )
         for _, key, row in events:
-            if key in conflicts:
-                sheet.gap("consistent_adjustment_event:" + key, conflicts[key])
-                continue
             # A sale link alone never establishes credit settlement identity.
             targets, conflict = (
                 self.refund_credit(row)
                 if key.startswith("qbo:RefundReceipt:")
                 else ([], False)
             )
+            if key in conflicts:
+                sheet.gap("consistent_adjustment_event:" + key, conflicts[key])
+                reject_refund(key, targets)
+                continue
             if key.startswith("qbo:RefundReceipt:") and not targets:
                 continue
             if row["CustomerRef"]["value"] not in customers:
                 sheet.gap("opening_customer:" + row["CustomerRef"]["value"], [key, sk])
+                reject_refund(key, targets)
                 if key.startswith("qbo:Payment:"):
                     for line in row["Line"]:
                         reject_credit_line(
@@ -553,6 +565,7 @@ class KPIs:
             if key.startswith("qbo:RefundReceipt:"):
                 if conflict or len(targets) != 1 or targets[0] not in credits:
                     sheet.gap("refund_credit:" + ";".join(targets), [key])
+                    reject_refund(key, targets)
                     continue
                 credit = credits[targets[0]]
                 if capacity_only and stamp(self.r[targets[0]]["EventAt"]) <= cutoff:
@@ -562,16 +575,14 @@ class KPIs:
                 amount = abs(row["TotalAmt"])
                 if self.r[targets[0]]["CustomerRef"] != row["CustomerRef"]:
                     sheet.gap("same_customer_refund_credit:" + key, [key, *targets])
+                    reject_refund(key, targets)
                 elif targets[0] in unresolved:
-                    sheet.gap(
-                        "refund_credit_capacity:" + key,
-                        [key, *credit["refs"], *unresolved[targets[0]]],
-                    )
+                    reject_refund(key, targets)
                 elif (
                     max(credit["applied"], credit["seen"]) + credit["refunded"] + amount
                     > credit["total"]
                 ):
-                    sheet.gap("refund_credit_capacity:" + key, [key, *credit["refs"]])
+                    reject_refund(key, targets)
                 else:
                     credit["refunded"] += amount
                     credit["refs"].append(key)

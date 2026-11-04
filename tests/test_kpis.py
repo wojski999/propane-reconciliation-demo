@@ -627,3 +627,55 @@ def test_invalid_numeric_credit_keeps_residual_unknown_and_healthy_credit_known(
         for c in residuals
     )
     assert not any("qbo:CreditMemo:CM-BOUNDARY" in c["source_refs"] for c in residuals)
+
+
+@pytest.mark.parametrize("capacity_only", [False, True])
+def test_rejected_refund_cannot_be_repaired_by_payment_or_valid_refund(capacity_only):
+    data = inputs()
+    records = data["records"]
+    credit = records["qbo:CreditMemo:CM-BOUNDARY"]
+    credit["AppliedAmount"] = 0
+    credit["RevenueEvent"] = "EV-CREDIT"
+    refund = records["qbo:RefundReceipt:RR-BOUNDARY"]
+    refund["TotalAmt"] = 1
+    refund["LinkedTxn"] = [{"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"}]
+    refund["RevenueEvent"] = "CONFLICT"
+    second = copy.deepcopy(refund)
+    second.update(
+        Id="RR-LATER",
+        RevenueEvent=credit["RevenueEvent"],
+        EventAt="2026-11-04T06:00:00+00:00",
+        TotalAmt=10000,
+    )
+    records["qbo:RefundReceipt:RR-LATER"] = second
+    payment = records["qbo:Payment:PAY-APPLIED"]
+    payment["EventAt"] = "2026-11-04T05:00:00+00:00"
+    payment["Line"][0]["Amount"] = 100
+    payment["Line"][0]["LinkedTxn"] = [
+        {"TxnType": "Invoice", "TxnId": "I-CREDIT"},
+        {"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"},
+    ]
+    ar = isolated(data).ar(capacity_only=capacity_only)
+    gaps = {g["missing_lookup_key"]: g["source_refs"] for g in ar["gaps"]}
+    assert "credit_allocation:qbo:Payment:PAY-APPLIED:1" in gaps
+    assert {"qbo:RefundReceipt:RR-BOUNDARY", "qbo:RefundReceipt:RR-LATER"} <= set(
+        gaps["credit_capacity:qbo:CreditMemo:CM-BOUNDARY"]
+    )
+    if not capacity_only:
+        assert ar["unapplied_credits"]["contributions"] == []
+
+
+def test_refund_missing_opening_customer_keeps_credit_unknown():
+    data = inputs()
+    records = data["records"]
+    credit = records["qbo:CreditMemo:CM-BOUNDARY"]
+    credit["AppliedAmount"] = 0
+    refund = records["qbo:RefundReceipt:RR-BOUNDARY"]
+    refund["CustomerRef"] = {"value": "OTHER"}
+    refund["LinkedTxn"] = [{"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"}]
+    ar = isolated(data).ar()
+    assert any(
+        g["missing_lookup_key"] == "credit_capacity:qbo:CreditMemo:CM-BOUNDARY"
+        for g in ar["gaps"]
+    )
+    assert ar["unapplied_credits"]["contributions"] == []

@@ -308,8 +308,9 @@ def test_raw_credit_refund_event_crosswalk_full_pipeline():
     assert result["checks"]["findings"] == []
     # Yesterday's fully applied credit has no remaining capacity for a refund.
     assert result["kpis"]["AR"]["unapplied_credits"]["value"] is None
-    assert result["kpis"]["AR"]["gaps"][0]["missing_lookup_key"].startswith(
-        "refund_credit_capacity:"
+    assert any(
+        g["missing_lookup_key"].startswith("refund_credit_capacity:")
+        for g in result["kpis"]["AR"]["gaps"]
     )
     # Over-capacity settlement cannot assert complete revenue either.
     assert result["kpis"]["revenue"]["value"] is None
@@ -636,9 +637,8 @@ def test_raw_disagreeing_direct_and_event_credit_identity_is_not_consumed(other_
     ar = result["kpis"]["AR"]
     assert ar["status"] == "partial"
     assert ar["unapplied_credits"]["value"] is None
-    assert ar["unapplied_credits"]["known_value"] == (
-        "200.00" if other_credit else "100.00"
-    )
+    assert ar["unapplied_credits"]["known_value"] == "0.00"
+    assert ar["unapplied_credits"]["contributions"] == []
     assert ar["known_value"] == "960.01"
     assert ar["unapplied_cash"]["known_value"] == "25.01"
     assert result["kpis"]["revenue"]["value"] is None
@@ -715,13 +715,7 @@ def test_raw_shared_refund_identity_policy(credit_day, identity, mode):
     assert ar["known_value"] == "860.01"
     assert ar["unapplied_cash"]["known_value"] == "25.01"
     assert ar["unapplied_credits"]["known_value"] == (
-        "20.00"
-        if mode == "duplicate20"
-        else "40.00"
-        if ambiguous
-        else "10.00"
-        if mode == "distinct"
-        else "0.00"
+        "0.00" if ambiguous else "10.00" if mode == "distinct" else "0.00"
     )
     if ambiguous:
         keys = ["qbo:RefundReceipt:RR-X"] + (
@@ -734,8 +728,26 @@ def test_raw_shared_refund_identity_policy(credit_day, identity, mode):
             }
             for key in keys
         ]
-        assert revenue["gaps"] == expected
-        assert ar["gaps"] == expected
+        for sheet in (revenue, ar):
+            assert [
+                g
+                for g in sheet["gaps"]
+                if g["missing_lookup_key"].startswith("consistent_adjustment_event:")
+            ] == expected
+            assert "credit_capacity:qbo:CreditMemo:CM-X" in {
+                g["missing_lookup_key"] for g in sheet["gaps"]
+            }
+            assert all(
+                any(
+                    g["missing_lookup_key"] == "refund_credit_capacity:" + key
+                    for g in sheet["gaps"]
+                )
+                for key in keys
+            )
+        assert not any(
+            "qbo:CreditMemo:CM-X" in c["source_refs"]
+            for c in ar["unapplied_credits"]["contributions"]
+        )
     else:
         assert revenue["value"] == (
             "1230.02"
@@ -1081,5 +1093,128 @@ def test_raw_credit_applied_numeric_capacity(
         ), result["kpis"]["AR"]
         if Decimal(applied) < 0:
             assert not any("qbo:CreditMemo:CM-X" in c["source_refs"] for c in credits)
+    document = Document(report.render(result, raw))
+    assert all(link[1:] in document.ids for link in document.links)
+
+
+@pytest.mark.parametrize("opening", ["valid", "invalid"])
+@pytest.mark.parametrize(
+    "reason,prior,today",
+    [
+        ("conflict", "30.00", "15.00"),
+        ("before", "30.00", "15.00"),
+        ("customer", "30.00", "15.00"),
+        ("multiple", "30.00", "15.00"),
+        ("sale", "30.00", "15.00"),
+        ("duplicate", "30.00", "15.00"),
+        ("event_candidate", "30.00", "15.00"),
+        ("conflict", "0.01", "40.00"),
+        ("valid", "25.00", "15.00"),
+        ("valid", "30.00", "15.00"),
+        ("void", "30.00", "15.00"),
+    ],
+)
+def test_raw_rejected_refund_then_valid_replay(reason, prior, today, opening):
+    files = generate("clean")
+
+    def mutate(qbo):
+        credit = copy.deepcopy(qbo["CreditMemo"][0])
+        credit.update(
+            Id="CM-X",
+            TotalAmt="40.00",
+            AppliedAmount="0.00",
+            RevenueEvent="EV-X",
+            TxnDate="2026-11-02",
+            EventAt="2026-11-02T20:00:00+00:00",
+            LinkedTxn=[{"TxnType": "Invoice", "TxnId": "I-PAY"}],
+        )
+        credit["Line"][0]["Amount"] = "40.00"
+        credit["CustomerRef"] = copy.deepcopy(qbo["Payment"][0]["CustomerRef"])
+        healthy = copy.deepcopy(credit)
+        healthy.update(Id="CM-H", RevenueEvent="EV-H", TotalAmt="7.00")
+        healthy["Line"][0]["Amount"] = "7.00"
+        qbo["CreditMemo"].extend([credit, healthy])
+        first = copy.deepcopy(qbo["RefundReceipt"][0])
+        first.update(
+            Id="RR-P",
+            TotalAmt=prior,
+            RevenueEvent="EV-X",
+            TxnDate="2026-11-02",
+            EventAt="2026-11-02T21:00:00+00:00",
+            CustomerRef=copy.deepcopy(credit["CustomerRef"]),
+            LinkedTxn=[
+                {"TxnType": "CreditMemo", "TxnId": "CM-X"},
+                {"TxnType": "Invoice", "TxnId": "I-PAY"},
+            ],
+        )
+        first["Line"][0]["Amount"] = prior
+        second = copy.deepcopy(first)
+        second.update(
+            Id="RR-X",
+            TotalAmt=today,
+            TxnDate="2026-11-03",
+            EventAt="2026-11-03T12:00:00+00:00",
+        )
+        second["Line"][0]["Amount"] = today
+        if reason == "conflict":
+            first["RevenueEvent"] = "EV-P"
+        elif reason == "before":
+            first["EventAt"] = "2026-11-02T19:30:00+00:00"
+        elif reason == "customer":
+            first["CustomerRef"] = {"value": "C-RETAIL"}
+        elif reason == "multiple":
+            first["LinkedTxn"].append({"TxnType": "CreditMemo", "TxnId": "CM-H"})
+        elif reason == "sale":
+            first["LinkedTxn"].append(
+                {"TxnType": "SalesReceipt", "TxnId": "SR-ORIGINAL"}
+            )
+        elif reason == "duplicate":
+            peer = copy.deepcopy(first)
+            peer["Id"] = "RR-PEER"
+            qbo["RefundReceipt"].append(peer)
+        elif reason == "event_candidate":
+            first["LinkedTxn"] = [
+                {"TxnType": "CreditMemo", "TxnId": "CM-H"},
+                {"TxnType": "Invoice", "TxnId": "I-PAY"},
+            ]
+        elif reason == "unknown":
+            first["LinkedTxn"] = [{"TxnType": "CreditMemo", "TxnId": "CM-NOPE"}]
+        elif reason == "void":
+            first["status"] = "void"
+        qbo["RefundReceipt"].extend([first, second])
+
+    change(files, "qbo.json", mutate, count=True)
+    if opening == "invalid":
+        change(files, "opening_ar.json", lambda data: data.update(as_of="invalid"))
+    result, raw = run(files)
+    revenue = result["kpis"]["revenue"]
+    rejected = reason not in {"valid", "void"}
+    partial = rejected or (reason == "valid" and prior == "30.00")
+    assert revenue["status"] == ("partial" if partial else "complete")
+    assert revenue["value"] == (None if partial else "1250.02")
+    if rejected:
+        for lookup in (
+            "credit_capacity:qbo:CreditMemo:CM-X",
+            "refund_credit_capacity:qbo:RefundReceipt:RR-X",
+        ):
+            gap = next(g for g in revenue["gaps"] if g["missing_lookup_key"] == lookup)
+            assert {
+                "qbo:CreditMemo:CM-X",
+                "qbo:RefundReceipt:RR-P",
+                "qbo:RefundReceipt:RR-X",
+            } <= set(gap["source_refs"])
+    if opening == "valid":
+        residuals = result["kpis"]["AR"]["unapplied_credits"]["contributions"]
+        if reason not in {"multiple", "event_candidate"}:
+            assert any(
+                c["amount"] == "7.00" and c["source_refs"] == ["qbo:CreditMemo:CM-H"]
+                for c in residuals
+            )
+        else:
+            assert not any("qbo:CreditMemo:CM-H" in c["source_refs"] for c in residuals)
+        if rejected:
+            assert not any("qbo:CreditMemo:CM-X" in c["source_refs"] for c in residuals)
+    else:
+        assert result["kpis"]["AR"]["status"] == "unavailable"
     document = Document(report.render(result, raw))
     assert all(link[1:] in document.ids for link in document.links)
