@@ -33,7 +33,7 @@ already reviewed C12 posting mapping primary refs; business values remain fixed.
 
 - [x] 2.1 Full exact 18-scenario oracle and adversarial raw-ingestion tests.
 - [x] 2.2 Fresh Python 3.12 make check with 100% line/branch coverage.
-- [ ] 2.3 Publish one PR via om-open-pr and verify current-head CI.
+- [x] 2.3 Publish one PR via om-open-pr and verify current-head CI.
 
 ## Verification notes
 
@@ -75,3 +75,16 @@ A combined customer/item plus asset-mapping omission probe exposed another C11
 identity collision. The asset-mapping root now includes its existing identity
 manifest, retaining both precise lookup failures without a fabricated record.
 Current-head CI and parent-owned independent reviews/QA remain publication gates.
+
+## Publication
+
+[PR #14](https://github.com/wojski999/propane-reconciliation-demo/pull/14) is ready,
+Closes #7, with review/feature/needs-qa/priority-medium/risk-high labels; issue
+implementation lock is released. Initial implementation SHA
+118e6fa62792f7971d9e8244fb2d0bbdf6da84b2 passed the
+[Check workflow](https://github.com/wojski999/propane-reconciliation-demo/actions/runs/41891002243),
+including the foundation-smoke-report artifact. This delivery-record-only commit
+is followed by a final-head CI check; its exact SHA/workflow are reported in the
+PR comment and Cezar report to avoid a self-referential hash in this document.
+Parent owns two independent Claude reviews, current-head artifact QA and merge.
+No self-approval, merge, main push, or real integration was performed.
