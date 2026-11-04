@@ -287,3 +287,109 @@ P11 suppresses only the asset-specific inventory checks in the reviewed oracle;
 it does not suppress the whole inventory KPI. Whole-scope identity/inventory/
 readings failures retain whole inventory unavailability. Oracle contents remain
 unchanged and test-only.
+
+## Step-3 pure rule boundary
+
+`rule_inputs.from_database(db, blocked=None)` detaches validated current scaled
+records and immutable occurrence references from the disposable import. The pure
+`rules.reconcile(inputs)` API returns step-3 findings and `not_evaluated` reasons;
+it does not write to SQLite, render, invoke a CLI, read fixtures or use a network.
+The importer remains the validation boundary; direct callers must use that same
+validated representation (integer cents, thousandths of quantities/percentages).
+
+Implemented scope is C01–C07/C12 plus required supporting C11 for those checks.
+C08/C09, inventory C11, alerts/report aggregation and all KPI computation remain
+later steps. `freshness_evaluated` is always false here. The optional `blocked`
+scope mapping accepts future freshness results with their evidence; no staleness
+is inferred or claimed by this step. Import-failure scopes are supplied by the
+adapter, including unavailable source groups, so root C10 failures do not cascade
+into guessed missing-reference verdicts. Per-record C11 reasons mark only the
+calculation that lacks support; other independent comparisons still run.
+
+The oracle tests compare every section-5 field except explanation wording for all
+applicable independent scenarios. P10 and combined `issues` tests explicitly inject
+P10's future blocked scopes; they do not implement/test C09's detection algorithm.
+P12's delivery mapping C11 is applicable; its missing inventory reading is deferred.
+Additional tests directly exercise combined failures without injected freshness.
+
+Money is computed with Decimal HALF_UP at line boundaries, with enough local
+precision for products of validated signed 64-bit scaled values. Comparisons use
+unrounded differences. Percent strings retain small nonzero threshold excesses.
+Taxes are bridged from explicit TotalTax/TaxLine and POS net/tax/gross fields;
+no absent tax rate is invented. Allocation money is checked both against invoice
+net and the proportional delivery billable net, including split/combined billing.
+
+AR replays events after opening snapshot through as-of in timestamp/stable-ID
+order. Opening customer balances establish opening coverage, not invented
+per-invoice residuals: an allocation to an invoice predating the opening snapshot
+needs missing per-invoice support (C11). Reported Invoice.Balance is never used as
+historical prepayment balance. AppliedAmount credits reduce AR once; a Payment
+line cross-referencing that credit does not become additional cash. Ambiguous
+multi-credit, mixed/over-capacity credit or invoice links get C11, without guessed
+allocation. Unlinked cash yields one payment-level unapplied finding with its
+allocation lines as related evidence. Cash refunds do not reduce AR.
+
+Batch grace preserves the settlement's Denver local time while counting Mon–Fri
+business dates; exactly two days passes, the first instant beyond is due. Each
+batch derives expected deposit from its captured/refunded POS lines less explicit
+fees. Deposit totals, line totals, expected transaction links and linked amounts
+are checked separately; pending/void POS and void deposits are excluded.
+Configured journal clearing amounts derive from linked operational records;
+no expected operational amount or manual journal requirement is introduced.
+
+## Step-3 review clarifications
+
+C02 distinguishes absent/inactive deliveries from existing completed deliveries
+whose identity mapping is unavailable. The latter reuse the delivery's C11 root
+and mark each allocated invoice line not evaluated, including split billing.
+An ambiguous item measurement basis likewise produces C11 rather than selecting
+an arbitrary first mapping.
+
+C04 limits the eligible discount to the lesser of explicit approval and price
+policy. An existing approval that is exceeded still supplies a computable price:
+compare actual net with quantity times effective price less the approved discount.
+Missing approval remains C11. Tax and gross bridges are independent findings.
+The tax primary ref is the current parent's immutable file/JSON pointer followed
+by `/TxnTaxDetail/TotalTax`; tax-line pointers and the parent are related evidence.
+Gross uses the existing parent record. These refs resolve inside retained raw JSON,
+without invented source records or a new evidence registry. Tax lines need no Id.
+
+C07 amount comparisons do not require successful transaction-link comparison.
+Absent targets produce C11 for that link scope; existing unexpected/foreign or
+omitted expected links produce high C07 with the existing batch, deposit and
+immutable deposit `/Line` pointer as primary evidence. Linked record amounts,
+deposit total/line sum, batch gross/refund/net and expected settlement amount
+remain separate comparisons, never cross-batch netting. Existing derived
+`pos:component:<batch>:gross|refunds|net` refs resolve to the corresponding fields
+of `pos:batch:<batch>` and its immutable occurrence; fee refs resolve to its fees.
+All related native transaction refs name existing records; absent IDs belong in
+missing_reference, not fabricated anchors. A conflicting finding ID raises an
+explicit deterministic ValueError; only identical full findings deduplicate.
+
+C06 reports incremental excess against max(prior signed balance, zero); it keeps
+the signed replay balance and event history, and a new allocation of at most one
+cent cannot create another excess finding. Unapplied cash does not depend on an
+opening customer balance; missing customer coverage still blocks AR replay.
+C06 and C12 share cash computation: linked non-credit cash plus unapplied cash.
+Unlinked lines and UnappliedAmt can describe the same unapplied amount, so use
+the maximum (also TotalAmt when there are no links), never add those twice.
+Credit cross-references remain noncash and cannot reduce AR a second time.
+
+The synthetic configured clearing account is **debit-positive**: debit amounts
+are positive and credit amounts negative. Operational amounts use the same sign.
+This is an explicit demo posting assumption, not a configurable client policy.
+
+## Shared evidence identity (PR 12 re-review)
+
+Clearing C12 primary refs include the explicit `identity:posting:<mapping_id>`
+and clearing journal line keys. Several posting mappings may share one journal
+and account without merging their independent operational comparisons. This
+refines the internal step-3 finding identity; the independent oracle file remains
+unchanged, with the test explicitly adapting this primary/related ref promotion.
+C07 linked-line comparisons include `pos:batch:<batch_id>` alongside deposit line
+and linked transaction keys. A combined deposit is still checked independently
+against each mapped batch; no cross-batch allocation or netting is inferred.
+Absent native links mark only `C07:<batch-key>:links` not evaluated: amount checks
+that have sufficient evidence still run. Conflicting full findings with identical
+IDs remain an engine error, never an overwrite. C04 bridge eligibility uses the
+configured `price_tolerance`, including when it differs from the demo cent default.
