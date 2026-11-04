@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "propane-reconciliation-demo"
 version = "0.1.0"
-description = "Synthetic propane audit demonstration (foundation only)"
+description = "Offline synthetic propane reconciliation and evidence report"
 requires-python = ">=3.12,<3.13"
 dependencies = []
 

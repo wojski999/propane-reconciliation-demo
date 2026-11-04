@@ -18,9 +18,16 @@ jobs:
       - run: make check
         env:
           SMOKE_ARTIFACT: artifacts/smoke.html
+          BUSINESS_ARTIFACT: artifacts/business-report.html
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: foundation-smoke-report
           path: artifacts/smoke.html
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: business-evidence-report
+          path: artifacts/business-report.html
           if-no-files-found: error

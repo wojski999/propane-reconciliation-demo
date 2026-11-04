@@ -695,6 +695,8 @@ def test_unknown_sku_fill_is_preserved_without_invented_gallons():
     "entity,mutate",
     [
         ("CreditMemo", lambda r: r.pop("AppliedAmount")),
+        ("CreditMemo", lambda r: r.update(RevenueEvent=["EV-X"])),
+        ("CreditMemo", lambda r: r.update(RevenueEvent="bad:id")),
         ("RefundReceipt", lambda r: r.update(RevenueEvent="bad:id")),
         ("Invoice", lambda r: r.update(TxnTaxDetail={})),
         ("Invoice", lambda r: r.update(TxnDate="2026-11-04")),

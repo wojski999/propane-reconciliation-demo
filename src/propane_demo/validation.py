@@ -163,7 +163,7 @@ def qbo(entity, row):
             scaled(row["UnappliedAmt"], 2)
         if entity == "CreditMemo":
             scaled(row["AppliedAmount"], 2)
-        if entity == "RefundReceipt" and "RevenueEvent" in row:
+        if entity in {"CreditMemo", "RefundReceipt"} and "RevenueEvent" in row:
             identifier(row["RevenueEvent"])
         if "TxnTaxDetail" in row:
             fields(row["TxnTaxDetail"], ["TotalTax", "TaxLine"])
