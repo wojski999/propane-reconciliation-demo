@@ -33,9 +33,18 @@ approval is recorded in the spec. Engineering choices are reviewable in this PR.
 - Reviewed copied tracker descriptor and removed its branch-protection bypass
   example; this project never uses admin bypass. Installed upstream skills remain intact.
 
+## Delivery evidence
+
+PR #2: https://github.com/wojski999/propane-reconciliation-demo/pull/2
+Baseline head `a78aba0213c0d1aef3b275a056b13640ff58f183` passed workflow
+41845784755 and check job 126628784033. Artifact `foundation-smoke-report`
+(id 13331945804) downloaded and inspected: 268-byte HTML matches local generation,
+contains the synthetic marker and no-audit disclaimer, with no remote assets.
+Final documentation update triggers the same CI gate; final-head evidence is
+recorded in the PR follow-up to avoid recursive evidence-only commits.
+
 ## Resume notes
 
-Foundation implementation complete locally. Fresh committed checkout verified.
-Open Phase A PR with om-open-pr, wait for current-head green CI and inspect the
-HTML artifact. Final independent review and merge are separate responsibilities.
+Phase A delivered as PR #2; final-head CI follow-up is recorded on the PR.
+Independent review, QA sign-off and any merge remain separate responsibilities.
 No business implementation step is complete or claimed by this run.

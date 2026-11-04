@@ -51,8 +51,8 @@ is corrected in this PR from the owner's explicit implementation authorization.
 | 2.14 | PR CI | 1:1 process; choice tools | done | CI invokes make check; pinned actions; temporary SQLite and installed CLI E2E. |
 | 2.15 | Coverage | 1:1; choice gate | done | All src discovered; separate exact 100% line/branch gates; negative gate tests. |
 | 2.16 | Merge gate | 1:1; choice ruleset | done | Green current-head CI plus independent approval policy; no ruleset changes. |
-| 2.17 | Safety-net evidence | 1:1 | todo | Local gate passed; PR CI and artifact verification pending. |
-| 2.18 | Commit and merge | 1:1 | todo | Commit/PR in Phase A; independent review and merge owned separately. |
+| 2.17 | Safety-net evidence | 1:1 | done | PR #2 run 41845784755 green; downloaded HTML matches local artifact. |
+| 2.18 | Commit and merge | 1:1 | todo | Commits and PR #2 delivered; independent review and merge remain separate. |
 | 3.1 | Pipeline prerequisites | 1:1 | deviation | Static HTML pytest E2E replaces browser automation by owner decision. |
 | 3.2 | Skill roles | 1:1 | done | Read installed pipeline/open-PR instructions and references; author/reviewer/maintainer roles. |
 | 3.3 | Project skill install | 1:1 | done | All open-mercato skills, Codex and Claude project scope, relative symlinks. |
@@ -62,7 +62,7 @@ is corrected in this PR from the owner's explicit implementation authorization.
 | 3.7 | Pipeline configuration | 1:1 process; choice answers | approved 2026-11-04 | Owner delegated make check, GitHub, no browser, default labels, QA and docs. |
 | 3.8 | Local equals CI | 1:1 | done | Both run make check; CI supplies only HTML artifact destination. |
 | 3.9 | Generated file review | 1:1 | done | Static HTML QA adaptation; existing AGENTS preserved and extended in foundation step. |
-| 3.10 | Open setup PR | 1:1 | todo | Use om-open-pr; review and merge remain separate. |
+| 3.10 | Open setup PR | 1:1 | done | PR #2 opened with om-open-pr; review and merge remain separate. |
 | 3.11 | Local skill overrides | 1:1 | done | SDLC records .ai/skills/<exact-name>/SKILL.md convention; no speculative override. |
 | 3.12 | First business issue | 1:1 process; choice task | out of scope | Phase B belongs to parent assignment. |
 | 3.13 | Implement issue | 1:1 | out of scope | Phase C; no business code in foundation. |
@@ -111,7 +111,7 @@ claimed as completed. Steps 3.12-3.14 continue through parent-owned phases/revie
 - [x] Automated dependency-direction enforcement; no bypass exclusions.
 - [x] Project skills, lock and relative symlinks; pipeline docs and tracker descriptor.
 - [x] Fresh committed checkout passes installation and full validation.
-- [ ] PR current-head CI green and uploaded HTML artifact inspected.
+- [x] PR CI green and uploaded HTML artifact inspected (run 41845784755; final head follow-up on PR).
 - [ ] Independent approved review and merge (separate responsibility).
 
 The smoke path generates only a synthetic marker through SQLite and writes an
