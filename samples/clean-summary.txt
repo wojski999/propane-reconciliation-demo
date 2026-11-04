@@ -1,0 +1,1 @@
+Complete synthetic run. 0 findings; 0 source alerts. 20 check scopes evaluated; 0 not evaluated. Review critical and high exceptions first, then inspect their source evidence. Offline computed summary; no AI or network was used.
