@@ -454,3 +454,32 @@ C09 gap durations retain Decimal precision (80-digit working context), including
 subsecond watermark differences. Future HTML must format durations for people
 without changing exact threshold comparisons or source evidence. No new renderer
 or formatting option is introduced here.
+
+
+## Step-5 credit refund disclosure clarification
+
+KPI AR includes nonvoid RefundReceipt events in `(opening cutoff, as_of]` in
+EventAt/stable-ID order. A shared resolver for revenue and AR recognizes explicit
+LinkedTxn credit references or RevenueEvent identity with exactly one CreditMemo.
+The credit must be nonvoid, already replayed and belong to the same customer to
+consume available credit. Direct and event identities must agree when both name
+credits; disagreement never chooses one identity or consumes twice. Available
+credit is total minus max(AppliedAmount, Payment-linked applications) minus prior
+cash refunds. A refund does not subtract AR or unapplied cash, nor recognize the
+credit's revenue adjustment again. Missing/ambiguous links, unsupported opening
+credit residuals, customer conflicts or over-capacity settlements make the affected
+worksheet partial, with exact lookup/event evidence and no negative credit asserted.
+A refund's RevenueEvent also labels standalone cash adjustments: without a matching
+CreditMemo or a direct credit link it remains standalone, rather than inventing a
+missing credit. This preserves the explicit standalone REFUND-BOUNDARY/REFUND-BATCH
+fixture events. Unknown direct credit IDs and event matches to void, future,
+pre-opening, multiple or wrong-customer credits produce explicit gaps. A sale link
+alone never identifies a credit. Partial/multiple refunds sharing an identified
+credit consume its one ordered capacity even when their amounts differ; they do
+not require equal refund/credit amounts to prove identity.
+
+Synthetic POS item_id equals QBO Item.Id for item classification and fill mappings.
+POS gallon quantities assume the policy net_60F basis; the POS schema has no basis
+measurement and no conversion proves equivalence with delivered gallons. Opening
+AR has customer totals only: it supplies neither pre-opening invoice balances nor
+available credit residuals. Such allocations need explicit missing-support gaps.
