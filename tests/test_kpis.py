@@ -149,6 +149,7 @@ def test_adjustment_event_dedup_and_cash_refund_of_prior_credit():
     data = inputs()
     r = data["records"]
     credit = r["qbo:CreditMemo:CM-BOUNDARY"]
+    credit["AppliedAmount"] = 0
     refund = copy.deepcopy(credit)
     credit.update(TxnDate="2026-11-03", RevenueEvent="same")
     refund.update(Id="RR-OTHER", RevenueEvent="same", TxnDate="2026-11-03")
@@ -159,7 +160,16 @@ def test_adjustment_event_dedup_and_cash_refund_of_prior_credit():
     assert isolated(data).revenue()["value"] == "1250.02"
     refund["LinkedTxn"] = [{"TxnId": "CM-BOUNDARY", "TxnType": "CreditMemo"}]
     refund.pop("RevenueEvent")
-    assert isolated(data).revenue()["value"] == "1250.02"
+    k = calculate(data, {"not_evaluated": {}})
+    assert k["revenue"]["value"] == "1250.02"
+    assert all(sheet["status"] == "complete" for sheet in k.values())
+    assert k["AR"]["value"] == "960.01"  # Credit is refunded, not applied to AR.
+    assert k["AR"]["unapplied_cash"]["value"] == "25.01"
+    assert k["AR"]["unapplied_credits"]["value"] == "0.00"
+    assert k["AR"]["unapplied_credits"]["contributions"][0]["source_refs"] == [
+        "qbo:CreditMemo:CM-BOUNDARY",
+        "qbo:RefundReceipt:RR-OTHER",
+    ]
     refund["LinkedTxn"][0]["TxnId"] = "MISSING"
     assert isolated(data).revenue()["value"] is None
 
@@ -420,3 +430,126 @@ def test_payment_without_invoice_link_is_unapplied_even_with_other_reference():
     result = isolated(data).ar()
     assert result["value"] == "960.01"
     assert result["unapplied_cash"]["value"] == "125.01"
+
+
+@pytest.mark.parametrize(
+    "mode,gap",
+    [
+        ("unknown", "refund_credit:"),
+        ("ambiguous", "refund_credit:"),
+        ("cross_customer", "same_customer_refund_credit:"),
+        ("credit_future", "refund_credit:"),
+        ("credit_void", "refund_credit:"),
+        ("credit_at_opening", "refund_credit:"),
+        ("void", None),
+        ("after_asof", None),
+        ("at_opening", None),
+        ("at_asof", None),
+    ],
+)
+def test_credit_refund_cutoffs_and_explicit_identity(mode, gap):
+    data = inputs()
+    r = data["records"]
+    credit = r["qbo:CreditMemo:CM-BOUNDARY"]
+    credit["AppliedAmount"] = 0
+    refund = r["qbo:RefundReceipt:RR-BOUNDARY"]
+    refund["LinkedTxn"] = [{"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"}]
+    expected = "0.00"
+    if mode == "unknown":
+        refund["LinkedTxn"][0]["TxnId"] = "UNKNOWN"
+    elif mode == "ambiguous":
+        refund["LinkedTxn"].append({"TxnType": "CreditMemo", "TxnId": "OTHER"})
+    elif mode == "cross_customer":
+        r["ar:snapshot:AR-OPEN"]["balances"].append(
+            {"customer_id": "OTHER", "amount": 0}
+        )
+        refund["CustomerRef"] = {"value": "OTHER"}
+    elif mode == "credit_future":
+        credit["EventAt"] = data["run"]["as_of"]
+    elif mode == "credit_void":
+        credit["status"] = "void"
+    elif mode == "credit_at_opening":
+        credit["EventAt"] = r["ar:snapshot:AR-OPEN"]["as_of"]
+    elif mode == "void":
+        refund["status"] = "void"
+        expected = "100.00"
+    elif mode == "after_asof":
+        refund["EventAt"] = "2026-11-04T07:00:00.000001+00:00"
+        expected = "100.00"
+    elif mode == "at_opening":
+        refund["EventAt"] = r["ar:snapshot:AR-OPEN"]["as_of"]
+        expected = "100.00"
+    else:
+        refund["EventAt"] = data["run"]["as_of"]
+    ar = isolated(data).ar()
+    assert ar["unapplied_credits"]["value"] == (None if gap else expected)
+    assert ar["status"] == ("partial" if gap else "complete")
+    assert ar["known_value"] == "960.01"
+    assert ar["unapplied_cash"]["known_value"] == "25.01"
+    if gap:
+        assert any(g["missing_lookup_key"].startswith(gap) for g in ar["gaps"])
+
+
+def test_credit_refund_then_payment_cannot_reuse_consumed_credit():
+    data = inputs()
+    r = data["records"]
+    r["qbo:CreditMemo:CM-BOUNDARY"]["AppliedAmount"] = 0
+    refund = r["qbo:RefundReceipt:RR-BOUNDARY"]
+    refund["LinkedTxn"] = [{"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"}]
+    payment = r["qbo:Payment:PAY-APPLIED"]
+    payment["EventAt"] = data["run"]["as_of"]
+    payment["Line"][0]["LinkedTxn"] = [
+        {"TxnType": "Invoice", "TxnId": "I-PAID"},
+        {"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"},
+    ]
+    ar = isolated(data).ar()
+    assert ar["value"] is None
+    assert any(
+        g["missing_lookup_key"].startswith("credit_allocation:") for g in ar["gaps"]
+    )
+    assert ar["unapplied_credits"]["known_value"] == "0.00"
+
+
+@pytest.mark.parametrize("payment_first", [True, False])
+def test_multiple_refunds_and_payment_share_one_credit_capacity(payment_first):
+    data = inputs()
+    r = data["records"]
+    credit = r["qbo:CreditMemo:CM-BOUNDARY"]
+    credit["AppliedAmount"] = 0
+    refund = r["qbo:RefundReceipt:RR-BOUNDARY"]
+    refund["TotalAmt"] = 3000
+    refund["LinkedTxn"] = [{"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"}]
+    other = copy.deepcopy(refund)
+    other.update(Id="RR-SECOND", EventAt="2026-11-04T06:00:00+00:00", TotalAmt=2000)
+    r["qbo:RefundReceipt:RR-SECOND"] = other
+    pay = r["qbo:Payment:PAY-APPLIED"]
+    pay["EventAt"] = (
+        "2026-11-03T08:00:00+00:00" if payment_first else data["run"]["as_of"]
+    )
+    pay["Line"][0]["Amount"] = 5000
+    pay["Line"][0]["LinkedTxn"] = [
+        {"TxnType": "Invoice", "TxnId": "I-CREDIT"},
+        {"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"},
+    ]
+    ar = isolated(data).ar()
+    assert ar["status"] == "complete"
+    assert ar["value"] == "1010.01"  # No PAY-APPLIED cash; $50 credit applied instead.
+    assert ar["unapplied_cash"]["value"] == "25.01"
+    assert ar["unapplied_credits"]["value"] == "0.00"
+    refs = ar["unapplied_credits"]["contributions"][0]["source_refs"]
+    assert refs == [
+        "qbo:CreditMemo:CM-BOUNDARY",
+        "qbo:Payment:PAY-APPLIED:1",
+        "qbo:RefundReceipt:RR-BOUNDARY",
+        "qbo:RefundReceipt:RR-SECOND",
+    ]
+
+
+def test_standalone_cash_refund_does_not_require_opening_customer_ar():
+    data = inputs()
+    data["records"]["qbo:RefundReceipt:RR-BOUNDARY"]["CustomerRef"] = {"value": "OTHER"}
+    ar = isolated(data).ar()
+    assert ar["status"] == "complete"
+    assert ar["value"] == "860.01"
+    assert ar["unapplied_cash"]["value"] == "25.01"
+    assert ar["unapplied_credits"]["value"] == "0.00"

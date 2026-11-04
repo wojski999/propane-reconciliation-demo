@@ -377,11 +377,17 @@ class KPIs:
         balances, credits = {}, {}
         events = sorted(
             (stamp(row["EventAt"]), key, row)
-            for entity in ("Invoice", "CreditMemo", "Payment")
+            for entity in ("Invoice", "CreditMemo", "Payment", "RefundReceipt")
             for key, row in self.parents(entity)
             if cutoff < stamp(row["EventAt"]) <= self.now
         )
         for _, key, row in events:
+            # Standalone cash refunds have no AR/credit movement and need no
+            # opening customer support. Never infer a credit from sale links.
+            if key.startswith("qbo:RefundReceipt:") and not any(
+                target.startswith("qbo:CreditMemo:") for target in linked(row)
+            ):
+                continue
             if row["CustomerRef"]["value"] not in customers:
                 sheet.gap("opening_customer:" + row["CustomerRef"]["value"], [key, sk])
                 continue
@@ -395,6 +401,8 @@ class KPIs:
                 credits[key] = {
                     "applied": applied,
                     "seen": 0,
+                    "refunded": 0,
+                    "refs": [key],
                     "total": abs(row["TotalAmt"]),
                     "target": targets[0] if len(targets) == 1 else None,
                 }
@@ -410,6 +418,24 @@ class KPIs:
                     else:
                         balances[targets[0]] -= applied
                         sheet.add("applied_credit", -applied, [key, targets[0]])
+                continue
+            if key.startswith("qbo:RefundReceipt:"):
+                targets = [k for k in linked(row) if k.startswith("qbo:CreditMemo:")]
+                if len(targets) != 1 or targets[0] not in credits:
+                    sheet.gap("refund_credit:" + ";".join(targets), [key])
+                    continue
+                credit = credits[targets[0]]
+                amount = abs(row["TotalAmt"])
+                if self.r[targets[0]]["CustomerRef"] != row["CustomerRef"]:
+                    sheet.gap("same_customer_refund_credit:" + key, [key, *targets])
+                elif (
+                    max(credit["applied"], credit["seen"]) + credit["refunded"] + amount
+                    > credit["total"]
+                ):
+                    sheet.gap("refund_credit_capacity:" + key, [key, *credit["refs"]])
+                else:
+                    credit["refunded"] += amount
+                    credit["refs"].append(key)
                 continue
             unapplied, _ = payment_cash(row)
             # Any cash line without an Invoice or CreditMemo allocation remains
@@ -457,12 +483,15 @@ class KPIs:
                     if (
                         credit["target"] not in {None, targets[0]}
                         or self.r[credit_links[0]]["CustomerRef"] != row["CustomerRef"]
-                        or credit["seen"] + amount > credit["total"]
+                        or max(credit["applied"], credit["seen"] + amount)
+                        + credit["refunded"]
+                        > credit["total"]
                     ):
                         sheet.gap("credit_allocation:" + lk, [lk, *credit_links])
                         continue
                     already = min(amount, max(0, credit["applied"] - credit["seen"]))
                     credit["seen"] += amount
+                    credit["refs"].append(lk)
                     amount -= already
                 balances[targets[0]] -= amount
                 sheet.add(
@@ -471,11 +500,15 @@ class KPIs:
                     [lk, targets[0], *credit_links],
                 )
         for key, credit in sorted(credits.items()):
-            credit_left.add(
-                "unapplied_credit",
-                credit["total"] - max(credit["applied"], credit["seen"]),
-                [key],
+            remaining = (
+                credit["total"]
+                - max(credit["applied"], credit["seen"])
+                - credit["refunded"]
             )
+            if remaining < 0:
+                sheet.gap("credit_capacity:" + key, credit["refs"])
+            else:
+                credit_left.add("unapplied_credit", remaining, credit["refs"])
         for key, balance in sorted(balances.items()):
             comparisons.append(
                 {

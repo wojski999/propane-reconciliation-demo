@@ -304,11 +304,17 @@ def test_raw_credit_refund_event_crosswalk_full_pipeline():
 
     change(files, "qbo.json", crosswalk)
     result, _ = run(files)
-    assert result["status"] == "complete"
+    assert result["status"] == "incomplete"
     assert result["checks"]["findings"] == []
+    # Yesterday's fully applied credit has no remaining capacity for a refund.
+    assert result["kpis"]["AR"]["unapplied_credits"]["value"] is None
+    assert result["kpis"]["AR"]["gaps"][0]["missing_lookup_key"].startswith(
+        "refund_credit_capacity:"
+    )
     # Yesterday's credit recognized once, today's cash refund settles it only.
     assert result["kpis"]["revenue"]["value"] == "1350.02"
-    assert result["kpis"]["AR"]["value"] == "860.01"
+    assert result["kpis"]["AR"]["value"] is None
+    assert result["kpis"]["AR"]["known_value"] == "860.01"
 
 
 def test_partial_html_write_removed_and_results_preserved(tmp_path, monkeypatch):
@@ -382,3 +388,133 @@ def test_dangling_current_pos_crosswalk_is_partial_never_zero(state):
         == "active_pos_event:pos:POS:T-CYLINDER:1"
     )
     assert "identity:pos_event:EVENT-T-CYLINDER" in raw
+
+
+@pytest.mark.parametrize(
+    "refund_amount,applied,left,gap",
+    [
+        ("20.00", "0.00", "0.00", None),
+        ("5.00", "0.00", "15.00", None),
+        ("8.00", "12.00", "0.00", None),
+        ("9.00", "12.00", None, "refund_credit_capacity:qbo:RefundReceipt:RR-X"),
+        ("21.00", "0.00", None, "refund_credit_capacity:qbo:RefundReceipt:RR-X"),
+    ],
+)
+def test_raw_refund_consumes_only_available_credit(refund_amount, applied, left, gap):
+    files = generate("clean")
+
+    def add(qbo):
+        credit = copy.deepcopy(qbo["CreditMemo"][0])
+        credit.update(Id="CM-X", TotalAmt="20.00", AppliedAmount=applied)
+        credit["Line"][0]["Amount"] = "20.00"
+        credit["LinkedTxn"] = [{"TxnType": "Invoice", "TxnId": "I-PAY"}]
+        refund = copy.deepcopy(qbo["RefundReceipt"][0])
+        refund.update(Id="RR-X", TotalAmt=refund_amount)
+        refund["Line"][0]["Amount"] = refund_amount
+        refund["LinkedTxn"] = [
+            {"TxnType": "CreditMemo", "TxnId": "CM-X"},
+            {"TxnType": "Invoice", "TxnId": "I-PAY"},
+        ]
+        qbo["CreditMemo"].append(credit)
+        qbo["RefundReceipt"].append(refund)
+
+    change(files, "qbo.json", add, count=True)
+    result, raw = run(files)
+    ar = result["kpis"]["AR"]
+    assert ar["unapplied_credits"]["value"] == left
+    assert ar["unapplied_cash"]["known_value"] == "25.01"
+    assert ar["known_value"] == ("848.01" if applied == "12.00" else "860.01")
+    assert ar["status"] == ("partial" if gap else "complete")
+    assert result["status"] == ("incomplete" if gap else "complete")
+    if gap:
+        assert gap in [g["missing_lookup_key"] for g in ar["gaps"]]
+        assert ar["value"] is None
+        assert all(c["computed"] is None for c in ar["reported_balance_comparisons"])
+    else:
+        assert result["kpis"]["revenue"]["value"] == "1250.02"
+        contribution = next(
+            c
+            for c in ar["unapplied_credits"]["contributions"]
+            if "qbo:CreditMemo:CM-X" in c["source_refs"]
+        )
+        assert contribution["amount"] == left
+        assert contribution["source_refs"] == [
+            "qbo:CreditMemo:CM-X",
+            "qbo:RefundReceipt:RR-X",
+        ]
+    assert all("missing_lookup_key" not in v for v in raw.values())
+    document = Document(report.render(result, raw))
+    assert all(link[1:] in document.ids for link in document.links)
+
+
+@pytest.mark.parametrize(
+    "mode,expected,gap",
+    [
+        ("unknown", None, "refund_credit:"),
+        ("ambiguous", None, "refund_credit:"),
+        ("cross_customer", None, "same_customer_refund_credit:"),
+        ("void_credit", None, "refund_credit:"),
+        ("before_credit", None, "refund_credit:"),
+        ("at_opening", "100.00", None),
+        ("after_asof", "100.00", None),
+        ("void_refund", "100.00", None),
+        ("at_asof", "0.00", None),
+    ],
+)
+def test_raw_refund_identity_void_and_cutoff_support(mode, expected, gap):
+    files = generate("clean")
+
+    def mutate(qbo):
+        credit = qbo["CreditMemo"][0]
+        credit["AppliedAmount"] = "0.00"
+        refund = qbo["RefundReceipt"][0]
+        refund["LinkedTxn"] = [
+            {"TxnType": "Invoice", "TxnId": "I-CREDIT"},
+            {"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"},
+        ]
+        if mode == "unknown":
+            refund["LinkedTxn"][1]["TxnId"] = "UNKNOWN"
+        elif mode == "ambiguous":
+            refund["LinkedTxn"].append({"TxnType": "CreditMemo", "TxnId": "OTHER"})
+        elif mode == "cross_customer":
+            refund["CustomerRef"] = {"value": "OTHER"}
+        elif mode == "void_credit":
+            credit["status"] = "void"
+        elif mode == "before_credit":
+            credit["EventAt"] = "2026-11-04T07:00:00+00:00"
+        elif mode == "at_opening":
+            refund["EventAt"] = "2026-10-26T07:00:00+00:00"
+        elif mode == "after_asof":
+            refund["EventAt"] = "2026-11-04T07:00:00.000001+00:00"
+        elif mode == "void_refund":
+            refund["status"] = "void"
+        else:
+            refund["EventAt"] = "2026-11-04T07:00:00+00:00"
+
+    change(files, "qbo.json", mutate)
+    if mode == "cross_customer":
+        change(
+            files,
+            "opening_ar.json",
+            lambda s: s["balances"].append({"customer_id": "OTHER", "amount": "0.00"}),
+        )
+    result, raw = run(files)
+    ar = result["kpis"]["AR"]
+    if mode == "after_asof":
+        # Raw contract rejects events outside the declared extraction window.
+        assert result["alerts"][0]["reason_code"] == "WINDOW"
+        assert ar["status"] == "unavailable"
+        assert ar["value"] is None
+        assert ar["unapplied_credits"]["value"] is None
+        assert result["status"] == "incomplete"
+        return
+    assert result["alerts"] == []  # Remaining cases passed the raw importer.
+    assert ar["unapplied_credits"]["value"] == expected
+    assert ar["status"] == ("partial" if gap else "complete")
+    assert ar["known_value"] == "960.01"
+    assert ar["unapplied_cash"]["known_value"] == "25.01"
+    if gap:
+        assert any(g["missing_lookup_key"].startswith(gap) for g in ar["gaps"])
+        assert result["status"] == "incomplete"
+    if mode not in {"after_asof", "void_refund"}:
+        assert "raw" in raw["qbo:RefundReceipt:RR-BOUNDARY"]

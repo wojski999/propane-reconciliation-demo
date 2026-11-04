@@ -60,7 +60,18 @@ contain discounts. Taxes and container deposits are excluded from revenue;
 credit/refund event crosswalks prevent recognizing one adjustment twice.
 AR starts from its opening snapshot and replays gross invoices, applied credits
 and cash allocations by timestamp/stable ID. Credit application through Payment
-is not new cash. Reported Invoice.Balance is a comparison, never an added movement.
+is not new cash. Nonvoid refunds explicitly linked to one known same-customer
+credit consume its available balance through cutoff; they reduce neither AR nor
+unapplied cash. Applied/Payment-linked credit and refunds cannot exceed that credit.
+Reported Invoice.Balance is a comparison, never an added movement.
+
+Demo assumptions: POS item IDs equal QBO Item IDs (an explicit synthetic identity
+contract). POS gallon quantities are assumed to share the policy's `net_60F`
+basis; POS supplies no independent basis measurement or temperature conversion.
+Total gallons relies on that assumption, rather than proving physical equivalence.
+Opening AR contains customer totals, not invoice or credit residuals. Allocations
+to pre-opening invoices/credits and customers absent from the opening snapshot
+therefore make AR incomplete; missing support is never inferred from current Balance.
 
 Output includes original synthetic `inputs/`, `results.json`, `alerts.json`,
 `evidence.json`, `summary.txt` and `report.html`. Repeating identical arguments

@@ -153,7 +153,8 @@ def main(argv=None):
     parser.add_argument("--business-date", default=DEFAULT_DATE.isoformat())
     parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
     parser.add_argument(
-        "--as-of", help="Offset-aware ISO cutoff, default fixed business-day end"
+        "--as-of",
+        help="Offset-aware ISO cutoff, must be >= business-day end (the default)",
     )
     try:
         args = parser.parse_args(argv)

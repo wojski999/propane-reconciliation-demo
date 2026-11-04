@@ -454,3 +454,23 @@ C09 gap durations retain Decimal precision (80-digit working context), including
 subsecond watermark differences. Future HTML must format durations for people
 without changing exact threshold comparisons or source evidence. No new renderer
 or formatting option is introduced here.
+
+
+## Step-5 credit refund disclosure clarification
+
+KPI AR includes nonvoid RefundReceipt events in `(opening cutoff, as_of]` in
+EventAt/stable-ID order. Only explicit LinkedTxn references to exactly one known,
+already replayed, same-customer CreditMemo consume available credit. Available
+credit is total minus max(AppliedAmount, Payment-linked applications) minus prior
+cash refunds. A refund does not subtract AR or unapplied cash, nor recognize the
+credit's revenue adjustment again. Missing/ambiguous links, unsupported opening
+credit residuals, customer conflicts or over-capacity settlements make the affected
+worksheet partial, with exact lookup/event evidence and no negative credit asserted.
+Refunds without a CreditMemo link are not guessed to settle credits. Existing
+RevenueEvent deduplication remains a revenue-only contract.
+
+Synthetic POS item_id equals QBO Item.Id for item classification and fill mappings.
+POS gallon quantities assume the policy net_60F basis; the POS schema has no basis
+measurement and no conversion proves equivalence with delivered gallons. Opening
+AR has customer totals only: it supplies neither pre-opening invoice balances nor
+available credit residuals. Such allocations need explicit missing-support gaps.
