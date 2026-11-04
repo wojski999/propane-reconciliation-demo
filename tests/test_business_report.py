@@ -400,7 +400,11 @@ def test_dangling_current_pos_crosswalk_is_partial_never_zero(state):
         ("21.00", "0.00", None, "refund_credit_capacity:qbo:RefundReceipt:RR-X"),
     ],
 )
-def test_raw_refund_consumes_only_available_credit(refund_amount, applied, left, gap):
+@pytest.mark.parametrize("identity", ["direct", "event", "both"])
+@pytest.mark.parametrize("credit_day", ["2026-11-02", "2026-11-03"])
+def test_raw_refund_consumes_only_available_credit(
+    refund_amount, applied, left, gap, identity, credit_day
+):
     files = generate("clean")
 
     def add(qbo):
@@ -415,6 +419,11 @@ def test_raw_refund_consumes_only_available_credit(refund_amount, applied, left,
             {"TxnType": "CreditMemo", "TxnId": "CM-X"},
             {"TxnType": "Invoice", "TxnId": "I-PAY"},
         ]
+        credit["TxnDate"] = credit_day
+        if identity != "direct":
+            credit["RevenueEvent"] = refund["RevenueEvent"] = "EV-X"
+        if identity == "event":
+            refund["LinkedTxn"] = [{"TxnType": "Invoice", "TxnId": "I-PAY"}]
         qbo["CreditMemo"].append(credit)
         qbo["RefundReceipt"].append(refund)
 
@@ -431,7 +440,9 @@ def test_raw_refund_consumes_only_available_credit(refund_amount, applied, left,
         assert ar["value"] is None
         assert all(c["computed"] is None for c in ar["reported_balance_comparisons"])
     else:
-        assert result["kpis"]["revenue"]["value"] == "1250.02"
+        assert result["kpis"]["revenue"]["value"] == (
+            "1230.02" if credit_day == "2026-11-03" else "1250.02"
+        )
         contribution = next(
             c
             for c in ar["unapplied_credits"]["contributions"]
@@ -461,7 +472,8 @@ def test_raw_refund_consumes_only_available_credit(refund_amount, applied, left,
         ("at_asof", "0.00", None),
     ],
 )
-def test_raw_refund_identity_void_and_cutoff_support(mode, expected, gap):
+@pytest.mark.parametrize("identity", ["direct", "event"])
+def test_raw_refund_identity_void_and_cutoff_support(mode, expected, gap, identity):
     files = generate("clean")
 
     def mutate(qbo):
@@ -472,10 +484,18 @@ def test_raw_refund_identity_void_and_cutoff_support(mode, expected, gap):
             {"TxnType": "Invoice", "TxnId": "I-CREDIT"},
             {"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"},
         ]
+        if identity == "event":
+            credit["RevenueEvent"] = refund["RevenueEvent"] = "EV-BOUNDARY"
+            refund["LinkedTxn"].pop()
         if mode == "unknown":
-            refund["LinkedTxn"][1]["TxnId"] = "UNKNOWN"
+            refund["LinkedTxn"].append({"TxnType": "CreditMemo", "TxnId": "UNKNOWN"})
         elif mode == "ambiguous":
-            refund["LinkedTxn"].append({"TxnType": "CreditMemo", "TxnId": "OTHER"})
+            if identity == "event":
+                other = copy.deepcopy(credit)
+                other["Id"] = "CM-OTHER"
+                qbo["CreditMemo"].append(other)
+            else:
+                refund["LinkedTxn"].append({"TxnType": "CreditMemo", "TxnId": "OTHER"})
         elif mode == "cross_customer":
             refund["CustomerRef"] = {"value": "OTHER"}
         elif mode == "void_credit":
@@ -491,7 +511,7 @@ def test_raw_refund_identity_void_and_cutoff_support(mode, expected, gap):
         else:
             refund["EventAt"] = "2026-11-04T07:00:00+00:00"
 
-    change(files, "qbo.json", mutate)
+    change(files, "qbo.json", mutate, count=True)
     if mode == "cross_customer":
         change(
             files,
@@ -518,3 +538,111 @@ def test_raw_refund_identity_void_and_cutoff_support(mode, expected, gap):
         assert result["status"] == "incomplete"
     if mode not in {"after_asof", "void_refund"}:
         assert "raw" in raw["qbo:RefundReceipt:RR-BOUNDARY"]
+
+
+@pytest.mark.parametrize("payment_first", [True, False])
+@pytest.mark.parametrize("excess", [False, True])
+@pytest.mark.parametrize("credit_day", ["2026-11-02", "2026-11-03"])
+def test_raw_event_refunds_and_payment_share_ordered_capacity(
+    payment_first, excess, credit_day
+):
+    files = generate("clean")
+
+    def mutate(qbo):
+        credit = qbo["CreditMemo"][0]
+        credit.update(
+            AppliedAmount="0.00", RevenueEvent="EV-SHARED", TxnDate=credit_day
+        )
+        refund = qbo["RefundReceipt"][0]
+        refund.update(TotalAmt="30.00", RevenueEvent="EV-SHARED")
+        refund["Line"][0]["Amount"] = "30.00"
+        refund["LinkedTxn"] = [{"TxnType": "Invoice", "TxnId": "I-CREDIT"}]
+        other = copy.deepcopy(refund)
+        other.update(
+            Id="RR-SECOND", EventAt="2026-11-04T06:00:00+00:00", TotalAmt="20.00"
+        )
+        other["Line"][0]["Amount"] = "20.00"
+        qbo["RefundReceipt"].append(other)
+        payment = qbo["Payment"][0]
+        payment["EventAt"] = (
+            "2026-11-03T08:00:00+00:00"
+            if payment_first
+            else "2026-11-04T07:00:00+00:00"
+        )
+        payment["TotalAmt"] = "0.00"
+        payment["Line"][0]["Amount"] = "51.00" if excess else "50.00"
+        payment["Line"][0]["LinkedTxn"] = [
+            {"TxnType": "Invoice", "TxnId": "I-CREDIT"},
+            {"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"},
+        ]
+
+    change(files, "qbo.json", mutate, count=True)
+    result, raw = run(files)
+    ar = result["kpis"]["AR"]
+    assert ar["status"] == ("partial" if excess else "complete")
+    assert ar["unapplied_credits"]["value"] == (None if excess else "0.00")
+    assert ar["unapplied_cash"]["known_value"] == "25.01"
+    assert ar["known_value"] == (
+        "1009.01" if excess and payment_first else "1060.01" if excess else "1010.01"
+    )
+    # Credit recognized once, cash settlements never recognize new revenue.
+    assert result["kpis"]["revenue"]["value"] == (
+        "1250.02" if credit_day == "2026-11-03" else "1350.02"
+    )
+    if excess:
+        expected = (
+            "refund_credit_capacity:qbo:RefundReceipt:RR-SECOND"
+            if payment_first
+            else "credit_allocation:qbo:Payment:PAY-APPLIED:1"
+        )
+        assert expected in [g["missing_lookup_key"] for g in ar["gaps"]]
+        assert result["status"] == "incomplete"
+    else:
+        assert result["status"] == "complete"
+        refs = ar["unapplied_credits"]["contributions"][0]["source_refs"]
+        assert refs == [
+            "qbo:CreditMemo:CM-BOUNDARY",
+            "qbo:Payment:PAY-APPLIED:1",
+            "qbo:RefundReceipt:RR-BOUNDARY",
+            "qbo:RefundReceipt:RR-SECOND",
+        ]
+    assert all(
+        "raw" in raw[k] for k in report.collect_refs(result) if k.startswith("qbo:")
+    )
+    document = Document(report.render(result, raw))
+    assert all(link[1:] in document.ids for link in document.links)
+
+
+@pytest.mark.parametrize("other_credit", [False, True])
+def test_raw_disagreeing_direct_and_event_credit_identity_is_not_consumed(other_credit):
+    files = generate("clean")
+
+    def mutate(qbo):
+        credit = qbo["CreditMemo"][0]
+        credit.update(AppliedAmount="0.00", RevenueEvent="EV-A")
+        refund = qbo["RefundReceipt"][0]
+        refund["RevenueEvent"] = "EV-B"
+        refund["LinkedTxn"] = [
+            {"TxnType": "Invoice", "TxnId": "I-CREDIT"},
+            {"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"},
+        ]
+        if other_credit:
+            other = copy.deepcopy(credit)
+            other.update(Id="CM-OTHER", RevenueEvent="EV-B")
+            qbo["CreditMemo"].append(other)
+
+    change(files, "qbo.json", mutate, count=True)
+    result, raw = run(files)
+    ar = result["kpis"]["AR"]
+    assert ar["status"] == "partial"
+    assert ar["unapplied_credits"]["value"] is None
+    assert ar["unapplied_credits"]["known_value"] == (
+        "200.00" if other_credit else "100.00"
+    )
+    assert ar["known_value"] == "960.01"
+    assert ar["unapplied_cash"]["known_value"] == "25.01"
+    assert result["kpis"]["revenue"]["value"] is None
+    assert any(g["missing_lookup_key"].startswith("refund_credit:") for g in ar["gaps"])
+    assert result["status"] == "incomplete"
+    document = Document(report.render(result, raw))
+    assert all(link[1:] in document.ids for link in document.links)

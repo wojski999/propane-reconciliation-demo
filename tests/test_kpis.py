@@ -156,6 +156,9 @@ def test_adjustment_event_dedup_and_cash_refund_of_prior_credit():
     r["qbo:RefundReceipt:RR-OTHER"] = refund
     # Credit $100 reduces revenue once; refund is the same adjustment.
     assert isolated(data).revenue()["value"] == "1150.02"
+    ar = isolated(data).ar()
+    assert ar["status"] == "complete"
+    assert ar["unapplied_credits"]["value"] == "0.00"
     credit["TxnDate"] = "2026-11-02"
     assert isolated(data).revenue()["value"] == "1250.02"
     refund["LinkedTxn"] = [{"TxnId": "CM-BOUNDARY", "TxnType": "CreditMemo"}]
@@ -511,7 +514,10 @@ def test_credit_refund_then_payment_cannot_reuse_consumed_credit():
 
 
 @pytest.mark.parametrize("payment_first", [True, False])
-def test_multiple_refunds_and_payment_share_one_credit_capacity(payment_first):
+@pytest.mark.parametrize("identity", ["direct", "event", "both"])
+def test_multiple_refunds_and_payment_share_one_credit_capacity(
+    payment_first, identity
+):
     data = inputs()
     r = data["records"]
     credit = r["qbo:CreditMemo:CM-BOUNDARY"]
@@ -519,6 +525,10 @@ def test_multiple_refunds_and_payment_share_one_credit_capacity(payment_first):
     refund = r["qbo:RefundReceipt:RR-BOUNDARY"]
     refund["TotalAmt"] = 3000
     refund["LinkedTxn"] = [{"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"}]
+    if identity != "direct":
+        credit["RevenueEvent"] = refund["RevenueEvent"] = "SHARED-CREDIT"
+    if identity == "event":
+        refund["LinkedTxn"] = []
     other = copy.deepcopy(refund)
     other.update(Id="RR-SECOND", EventAt="2026-11-04T06:00:00+00:00", TotalAmt=2000)
     r["qbo:RefundReceipt:RR-SECOND"] = other

@@ -65,6 +65,34 @@ class KPIs:
             if k.count(":") == 2 and active(v)
         ]
 
+    def refund_credit(self, row):
+        """Resolve explicit credit identity once for revenue and AR replay.
+
+        RevenueEvent also labels standalone refunds; only a credit bearing that
+        event establishes credit settlement intent. Include void/future candidates
+        here so neither can silently turn a settlement into a standalone refund.
+        """
+        direct = [k for k in linked(row) if k.startswith("qbo:CreditMemo:")]
+        event = row.get("RevenueEvent")
+        candidates = [
+            k
+            for k, credit in self.rows("qbo:CreditMemo:")
+            if k.count(":") == 2 and event and credit.get("RevenueEvent") == event
+        ]
+        targets = sorted(set(direct + candidates))
+        conflict = bool(
+            direct
+            and event
+            and (
+                (candidates and direct != candidates)
+                or any(
+                    self.r.get(k, {}).get("RevenueEvent") not in {None, event}
+                    for k in direct
+                )
+            )
+        )
+        return targets, conflict
+
     def blocked(self, sheet, scope):
         reason = self.checks["not_evaluated"].get("KPI:" + scope)
         if reason:
@@ -270,9 +298,7 @@ class KPIs:
         for key, row in adjustments:
             # Explicit credit settlement is handled separately below, even when
             # the refund also carries the same RevenueEvent as its credit.
-            if key.startswith("qbo:RefundReceipt:") and any(
-                target.startswith("qbo:CreditMemo:") for target in linked(row)
-            ):
+            if key.startswith("qbo:RefundReceipt:") and self.refund_credit(row)[0]:
                 continue
             groups[row.get("RevenueEvent") or key].append((key, row))
         excluded = set()
@@ -314,14 +340,20 @@ class KPIs:
         for key, row in adjustments:
             if row["TxnDate"] != self.run["business_date"] or key in excluded:
                 continue
-            credit_targets = [k for k in linked(row) if k.startswith("qbo:CreditMemo:")]
+            credit_targets, conflict = (
+                self.refund_credit(row)
+                if key.startswith("qbo:RefundReceipt:")
+                else ([], False)
+            )
             if credit_targets:
                 if (
-                    len(credit_targets) != 1
+                    conflict
+                    or len(credit_targets) != 1
                     or credit_targets[0] not in self.r
                     or not active(self.r[credit_targets[0]])
                     or stamp(self.r[credit_targets[0]]["EventAt"])
                     > stamp(row["EventAt"])
+                    or self.r[credit_targets[0]]["CustomerRef"] != row["CustomerRef"]
                     or abs(row["TotalAmt"]) > abs(self.r[credit_targets[0]]["TotalAmt"])
                 ):
                     sheet.gap("recognized_credit:" + ";".join(credit_targets), [key])
@@ -382,11 +414,13 @@ class KPIs:
             if cutoff < stamp(row["EventAt"]) <= self.now
         )
         for _, key, row in events:
-            # Standalone cash refunds have no AR/credit movement and need no
-            # opening customer support. Never infer a credit from sale links.
-            if key.startswith("qbo:RefundReceipt:") and not any(
-                target.startswith("qbo:CreditMemo:") for target in linked(row)
-            ):
+            # A sale link alone never establishes credit settlement identity.
+            targets, conflict = (
+                self.refund_credit(row)
+                if key.startswith("qbo:RefundReceipt:")
+                else ([], False)
+            )
+            if key.startswith("qbo:RefundReceipt:") and not targets:
                 continue
             if row["CustomerRef"]["value"] not in customers:
                 sheet.gap("opening_customer:" + row["CustomerRef"]["value"], [key, sk])
@@ -420,8 +454,7 @@ class KPIs:
                         sheet.add("applied_credit", -applied, [key, targets[0]])
                 continue
             if key.startswith("qbo:RefundReceipt:"):
-                targets = [k for k in linked(row) if k.startswith("qbo:CreditMemo:")]
-                if len(targets) != 1 or targets[0] not in credits:
+                if conflict or len(targets) != 1 or targets[0] not in credits:
                     sheet.gap("refund_credit:" + ";".join(targets), [key])
                     continue
                 credit = credits[targets[0]]

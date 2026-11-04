@@ -459,15 +459,24 @@ or formatting option is introduced here.
 ## Step-5 credit refund disclosure clarification
 
 KPI AR includes nonvoid RefundReceipt events in `(opening cutoff, as_of]` in
-EventAt/stable-ID order. Only explicit LinkedTxn references to exactly one known,
-already replayed, same-customer CreditMemo consume available credit. Available
+EventAt/stable-ID order. A shared resolver for revenue and AR recognizes explicit
+LinkedTxn credit references or RevenueEvent identity with exactly one CreditMemo.
+The credit must be nonvoid, already replayed and belong to the same customer to
+consume available credit. Direct and event identities must agree when both name
+credits; disagreement never chooses one identity or consumes twice. Available
 credit is total minus max(AppliedAmount, Payment-linked applications) minus prior
 cash refunds. A refund does not subtract AR or unapplied cash, nor recognize the
 credit's revenue adjustment again. Missing/ambiguous links, unsupported opening
 credit residuals, customer conflicts or over-capacity settlements make the affected
 worksheet partial, with exact lookup/event evidence and no negative credit asserted.
-Refunds without a CreditMemo link are not guessed to settle credits. Existing
-RevenueEvent deduplication remains a revenue-only contract.
+A refund's RevenueEvent also labels standalone cash adjustments: without a matching
+CreditMemo or a direct credit link it remains standalone, rather than inventing a
+missing credit. This preserves the explicit standalone REFUND-BOUNDARY/REFUND-BATCH
+fixture events. Unknown direct credit IDs and event matches to void, future,
+pre-opening, multiple or wrong-customer credits produce explicit gaps. A sale link
+alone never identifies a credit. Partial/multiple refunds sharing an identified
+credit consume its one ordered capacity even when their amounts differ; they do
+not require equal refund/credit amounts to prove identity.
 
 Synthetic POS item_id equals QBO Item.Id for item classification and fill mappings.
 POS gallon quantities assume the policy net_60F basis; the POS schema has no basis
