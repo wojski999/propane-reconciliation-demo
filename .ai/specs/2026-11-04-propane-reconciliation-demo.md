@@ -1,8 +1,8 @@
 # Propane reconciliation demo — specification
 
-Date: 2026-11-04. Status: **Proposed; owner approval required before implementation.**
+Date: 2026-11-04. Status: **Approved for implementation by the owner on 2026-11-04.**
 
-This PR contains documentation only. Stack is decided; example policies below are demo defaults requiring confirmation before real use. System evidence and limitations: [source-system research](research/2026-11-04-source-systems.md).
+The owner explicitly authorized implementation on 2026-11-04. Stack is decided; example policies below are demo defaults requiring confirmation before real use. System evidence and limitations: [source-system research](research/2026-11-04-source-systems.md).
 
 ## 1. Business case: four questions
 
@@ -35,11 +35,11 @@ No client data, unrelated company names or research, live credentials, productio
 
 Python 3.12; standard-library CSV/JSON, Decimal, datetime/zoneinfo, sqlite3 and HTML escaping; pytest with coverage.py/pytest-cov; Ruff; GitHub Actions on every PR. Minimal dependency for the Anthropic API only if needed. No server required: report is a self-contained HTML file with local evidence anchors.
 
-Proposed future command: `python -m propane_demo --scenario issues --output output`. Default seed `20261104`, fixed business date `2026-11-03`, business timezone `America/Denver` (El Paso), explicit `--as-of` for reproducible runs. Clean scenario uses the same command with `--scenario clean`. This is a future interface, not an available command in this spec-only PR.
+Proposed future command: `python -m propane_demo --scenario issues --output output`. Default seed `20261104`, fixed business date `2026-11-03`, business timezone `America/Denver` (El Paso), explicit `--as-of` for reproducible runs. Clean scenario uses the same command with `--scenario clean`. This is a future interface, not an available command in the Phase A foundation.
 
 Money: Decimal, USD, explicit cent rounding HALF_UP at line/tax boundaries; serialize decimals as strings, store scaled integers in SQLite. Volume: decimal US gallons, precision 0.001 gallon; no binary floats. Comparisons use unrounded internal scaled values. UTC timestamps carry offsets and are displayed in the business timezone; day intervals are half-open local midnight boundaries converted to UTC, including DST. No currency conversion or guessed timezone.
 
-CI later: `ruff check .`, `ruff format --check .`, `pytest --cov=propane_demo --cov-branch --cov-report=term-missing --cov-report=json --cov-fail-under=100`. Independently assert measured line coverage and branch coverage are each 100%; include generator, CLI, import, rules, rendering and summary/fallback code. Do not implement CI in this PR.
+Business implementation CI contract: `ruff check .`, `ruff format --check .`, `pytest --cov=propane_demo --cov-branch --cov-report=term-missing --cov-report=json --cov-fail-under=100`. Independently assert measured line coverage and branch coverage are each 100%; include generator, CLI, import, rules, rendering and summary/fallback code. Phase A establishes CI now using `make check` and coverage.py directly; later issues extend the same gate as business modules are introduced.
 
 ## 4. Sample data and ingestion
 
@@ -194,4 +194,4 @@ Approve the scope, fictional thresholds and fixtures before implementation. Clie
 4. Which assets/readings are available, their gallon basis, calibrated uncertainty, tank conversion tables and accepted inventory tolerances? Are retail fills/exchanges tracked by volume, weight or count?
 5. May optional summaries send minimized computed findings to the client's Anthropic account, and which model/retention settings are approved?
 
-Approval record: pending; no implementation authorization recorded.
+Approval record: the owner explicitly approved implementation on 2026-11-04, including Python 3.12, SQLite, plain HTML, pytest with coverage and Ruff. This approval is distinct from the earlier documentation-only merge. Real integrations and deployment remain outside this approval.
