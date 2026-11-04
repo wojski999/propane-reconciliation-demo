@@ -189,10 +189,7 @@ def test_fresh_run_no_cached_success_and_real_failure_refs():
         > 0
     )
     assert "C12" in unavailable(db)
-    assert set(unavailable(db)["C12"]["source_refs"]) == {
-        "manifest:QBO-OK",
-        "manifest:UPDATES-OK",
-    }
+    assert unavailable(db)["C12"]["source_refs"] == ["manifest:QBO-OK"]
     assert db.execute("SELECT count(*) FROM alerts").fetchone()[0] == 1
 
 

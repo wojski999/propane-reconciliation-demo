@@ -683,40 +683,54 @@ def import_run(db, read_file, run, policy, raw_controls):
     return db
 
 
-def unavailable(db):
-    """Source eligibility only, never a business verdict or computed KPI.
-
-    Inventory scopes derive from actual asset mappings and ledger source links;
-    no expected findings/scenario names enter the application dependency graph.
-    """
-    failed = {}
-    for row in db.execute(
-        "SELECT source, manifest_id FROM manifests WHERE status='failed'"
-    ):
-        failed.setdefault(row["source"], []).append("manifest:" + row["manifest_id"])
-    dependencies = dict(DEPENDENCIES)
-    assets = [
-        json.loads(row[0])["asset_id"]
-        for row in db.execute(
-            "SELECT payload FROM records WHERE record_key LIKE 'identity:asset:%'"
-        )
-    ]
-    movements = [
-        json.loads(row[0])
-        for row in db.execute("SELECT payload FROM records WHERE source='inventory'")
-    ]
+def dependencies(records):
+    """Actual source requirements, including asset and posting relationships."""
+    result = {scope: set(required) for scope, required in DEPENDENCIES.items()}
+    assets = {
+        v["asset_id"] for k, v in records.items() if k.startswith("identity:asset:")
+    }
+    movements = [v for k, v in records.items() if k.startswith("inventory:movement:")]
     for asset in assets:
+        aliases = {asset} | {
+            v["source_id"]
+            for k, v in records.items()
+            if k.startswith("identity:asset:") and v["asset_id"] == asset
+        }
         required = {"identity", "readings", "inventory"}
         required.update(
             m["source_system"]
             for m in movements
-            if m["asset_id"] == asset and m["source_system"] in {"cargas", "pos"}
+            if m["asset_id"] in aliases and m["source_system"] in {"cargas", "pos"}
         )
-        dependencies["C08:" + asset] = required
-    # If assets themselves cannot be read, expose the whole inventory scope.
-    if {"identity", "inventory", "readings"} & failed.keys():
-        dependencies["C08"] = {"identity", "inventory", "readings"}
-        dependencies["KPI:inventory"] = {"identity", "inventory", "readings"}
+        required.update(
+            "pos"
+            for k, v in records.items()
+            if k.startswith("pos:POS:") and v["inventory_asset_id"] in aliases
+        )
+        required.update(
+            "cargas"
+            for k, v in records.items()
+            if k.startswith("cargas:delivery:")
+            and aliases & {v["tank_id"], v["truck_id"]}
+        )
+        result["C08:" + asset] = required
+    result["C08"] = {"identity", "inventory", "readings"}
+    result["KPI:inventory"] = {"identity", "inventory", "readings"}
+    return result
+
+
+def unavailable(db):
+    """Import eligibility; use one persisted root alert per atomic source."""
+    failed = {
+        row[0]: json.loads(row[1])
+        for row in db.execute(
+            "SELECT source,source_refs FROM alerts WHERE check_id='C10'"
+        )
+    }
+    records = {
+        key: json.loads(payload)
+        for key, payload in db.execute("SELECT record_key,payload FROM records")
+    }
     return {
         scope: {
             "status": "not_evaluated" if scope.startswith("C") else "unavailable",
@@ -724,6 +738,6 @@ def unavailable(db):
                 ref for source in required & failed.keys() for ref in failed[source]
             ),
         }
-        for scope, required in dependencies.items()
+        for scope, required in dependencies(records).items()
         if required & failed.keys()
     }

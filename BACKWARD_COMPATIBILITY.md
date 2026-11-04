@@ -24,3 +24,13 @@ SQLite source-import tables. Every call starts empty and returns a connection
 owned by its caller. It introduces no persistent schema or migration obligation.
 The smoke CLI, its errors and artifact, and `make check` remain unchanged. Future
 persistence still requires versioned migration and rollback tests before use.
+
+
+Step 4 extends the internal detached input/result with source eligibility,
+per-asset inventory worksheets, consolidation and alerts. `reconcile_database`
+persists C09 alerts into the existing disposable schema; it adds no migration or
+business CLI. Blank CSV gallon basis is retained as C11 missing support, while
+unknown nonblank bases remain invalid C10 input. Smoke command, exits, static
+artifact and validation commands are unchanged. The literal C12 finding ID now
+includes the already reviewed posting-mapping primary key, an internal identity
+contract refinement with unchanged amounts.

@@ -74,7 +74,7 @@ MONEY = set(
 )
 QUANTITY = set("gallons quantity Qty uncertainty_gallons capacity_gallons".split())
 ENUMS = {
-    "gallon_basis": {"observed", "net_60F"},
+    "gallon_basis": {"", "observed", "net_60F"},
     "unit": {"gallon", "each", "cylinder"},
     "quality": {"valid", "uncertain", "invalid"},
     "movement_type": {
@@ -210,7 +210,7 @@ CSV_KEYS = {
 OPTIONAL_CSV = set(
     "truck_id external_invoice_id meter_ticket_id original_transaction_id "
     "settlement_batch_id inventory_asset_id approval_id counterparty_asset_id "
-    "transfer_id qbo_deposit_id".split()
+    "transfer_id qbo_deposit_id gallon_basis".split()
 )
 
 
