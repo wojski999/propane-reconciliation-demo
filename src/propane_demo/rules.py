@@ -516,7 +516,10 @@ class Engine:
                     # One root price/allocation discrepancy per invoice line.
                     refs = [key, price_key, *delivery_refs]
                     self.compare("C04", refs, line["Amount"], expected, related)
-                    if abs(line["Amount"] - expected) <= 1:
+                    if (
+                        abs(line["Amount"] - expected)
+                        <= D(self.p["price_tolerance"]) * 100
+                    ):
                         declared = rounded(
                             D(detail["Qty"]) * detail["UnitPrice"] / 1000 - discount
                         )
@@ -1078,7 +1081,7 @@ class Engine:
                         "qbo",
                         "Deposit.links",
                         ";".join(absent),
-                        "C07:" + key,
+                        "C07:" + key + ":links",
                         related,
                     )
                 unexpected = sorted(set(links) - set(expected_links) - set(absent))
@@ -1106,7 +1109,7 @@ class Engine:
                         sign = -1 if detail["TxnType"] == "RefundReceipt" else 1
                         self.compare(
                             "C07",
-                            [deposit_key + ":" + line["Id"], target],
+                            [key, deposit_key + ":" + line["Id"], target],
                             line["Amount"],
                             sign * self.r[target]["TotalAmt"],
                             [key, *related],
@@ -1273,7 +1276,7 @@ class Engine:
                 ],
             ]
             self.compare(
-                "C12", [k for k, _ in clearing], actual, operational[1], related
+                "C12", [key, *[k for k, _ in clearing]], actual, operational[1], related
             )
 
 

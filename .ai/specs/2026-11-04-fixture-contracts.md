@@ -378,3 +378,18 @@ Credit cross-references remain noncash and cannot reduce AR a second time.
 The synthetic configured clearing account is **debit-positive**: debit amounts
 are positive and credit amounts negative. Operational amounts use the same sign.
 This is an explicit demo posting assumption, not a configurable client policy.
+
+## Shared evidence identity (PR 12 re-review)
+
+Clearing C12 primary refs include the explicit `identity:posting:<mapping_id>`
+and clearing journal line keys. Several posting mappings may share one journal
+and account without merging their independent operational comparisons. This
+refines the internal step-3 finding identity; the independent oracle file remains
+unchanged, with the test explicitly adapting this primary/related ref promotion.
+C07 linked-line comparisons include `pos:batch:<batch_id>` alongside deposit line
+and linked transaction keys. A combined deposit is still checked independently
+against each mapped batch; no cross-batch allocation or netting is inferred.
+Absent native links mark only `C07:<batch-key>:links` not evaluated: amount checks
+that have sufficient evidence still run. Conflicting full findings with identical
+IDs remain an engine error, never an overwrite. C04 bridge eligibility uses the
+configured `price_tolerance`, including when it differs from the demo cent default.

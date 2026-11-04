@@ -54,6 +54,16 @@ def test_exact_independent_oracle_applicable_subset(scenario):
             and f["source_refs"] == ["cargas:delivery:D-NO-MAPPING"]
         )
     ]
+    expected = copy.deepcopy(expected)
+    # Clearing comparisons now identify the configured posting as primary evidence.
+    for finding in expected:
+        if finding["check_id"] == "C12" and len(finding["source_refs"]) == 1:
+            mapping = next(
+                k for k in finding["related_refs"] if k.startswith("identity:posting:")
+            )
+            finding["related_refs"].remove(mapping)
+            finding["source_refs"] = sorted([mapping, *finding["source_refs"]])
+            finding["finding_id"] = "|".join(["C12", *finding["source_refs"]])
     found = actual(data)
 
     # Explanation wording is intentionally not an oracle algorithm. Every other
@@ -299,7 +309,10 @@ def test_batch_components_and_deposit_line_total_checked_independently():
     assert numbers(actual(data, "C07")[0]) == ("500.02", "500.00", "0.02", "0.01")
     data = inputs()
     data["records"]["qbo:Deposit:DEP-SHORT"]["Line"][0]["Amount"] = 49998
-    assert numbers(actual(data, "C07")[0]) == ("470.00", "469.98", "0.02", "0.01")
+    assert {numbers(f) for f in actual(data, "C07")} == {
+        ("470.00", "469.98", "0.02", "0.01"),
+        ("499.98", "500.00", "-0.02", "0.01"),
+    }
 
 
 def test_configured_posting_missing_and_unconfigured_native_invoices():
@@ -979,3 +992,203 @@ def test_tax_primary_pointer_resolves_to_immutable_raw_json_value():
     for segment in pointer.strip("/").split("/"):
         value = value[int(segment)] if isinstance(value, list) else value[segment]
     assert value == "2.00" == tax["actual"]
+
+
+@pytest.mark.parametrize("copies", [2, 3])
+@pytest.mark.parametrize("shared", ["journal", "deposit"])
+def test_shared_evidence_raw_import_retains_findings_and_stable_ids(shared, copies):
+    import csv
+    import io
+
+    files = generate("P05")
+    baseline = actual(inputs("P05"))
+    identity = json.loads(files["identity.json"])
+    qbo = json.loads(files["qbo.json"])
+
+    def read_csv(name):
+        return list(csv.DictReader(io.StringIO(files[name].decode())))
+
+    def write_csv(name, rows):
+        out = io.StringIO(newline="")
+        writer = csv.DictWriter(out, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+        files[name] = out.getvalue().encode()
+
+    if shared == "journal":
+        journal = qbo["JournalEntry"][0]
+        journal["TotalAmt"] = "50.00"
+        for line in journal["Line"]:
+            line["Amount"] = "50.00"
+        for index in range(1, copies):
+            identity["posting_map"].append(
+                dict(
+                    identity["posting_map"][0],
+                    mapping_id=f"POST-PRICE-{index}",
+                    external_ref="I-PRICE",
+                )
+            )
+    else:
+        batches = read_csv("settlements.csv")
+        pos = read_csv("pos.csv")
+        original_pos = copy.deepcopy(pos)
+        original_events = copy.deepcopy(identity["pos_events"])
+        for index in range(1, copies):
+            batch_id = f"B-SHARED-{index}"
+            batches.append(dict(batches[0], batch_id=batch_id))
+            for row in original_pos:
+                if row["settlement_batch_id"] != "B-SETTLED":
+                    continue
+                new = dict(
+                    row,
+                    transaction_id=row["transaction_id"] + f"-{index}",
+                    settlement_batch_id=batch_id,
+                    external_reference=row["external_reference"] + f"-{index}",
+                )
+                if new["original_transaction_id"]:
+                    new["original_transaction_id"] += f"-{index}"
+                pos.append(new)
+                event = next(
+                    e
+                    for e in original_events
+                    if e["pos_id"] == row["transaction_id"] + ":" + row["line_id"]
+                )
+                identity["pos_events"].append(
+                    dict(
+                        event,
+                        mapping_id=event["mapping_id"] + f"-{index}",
+                        pos_id=new["transaction_id"] + ":" + new["line_id"],
+                    )
+                )
+        write_csv("settlements.csv", batches)
+        write_csv("pos.csv", pos)
+        qbo["Deposit"][0]["Line"][0]["Amount"] = "490.00"
+    files["qbo.json"] = json.dumps(qbo).encode()
+    files["identity.json"] = json.dumps(identity).encode()
+    manifests = json.loads(files["manifests.json"])
+    for manifest in manifests:
+        name = manifest["file_id"]
+        if name == "identity.json":
+            manifest["row_count"] = str(len(identity))
+        elif name in {"pos.csv", "settlements.csv"}:
+            manifest["row_count"] = str(len(read_csv(name)))
+    files["manifests.json"] = json.dumps(manifests).encode()
+    db = ingest(files.__getitem__)
+    try:
+        assert (
+            db.execute("SELECT COUNT(*) FROM alerts WHERE check_id='C10'").fetchone()[0]
+            == 0
+        )
+        data = from_database(db)
+    finally:
+        db.close()
+    result = reconcile(data)
+    assert all(f in result["findings"] for f in baseline)
+    check = "C12" if shared == "journal" else "C07"
+    findings = [f for f in result["findings"] if f["check_id"] == check]
+    if shared == "journal":
+        assert len(findings) == copies
+        assert sorted(numbers(f) for f in findings) == sorted(
+            [
+                ("50.00", "100.00", "-50.00", "0.01"),
+                *[("50.00", "200.00", "-150.00", "0.01")] * (copies - 1),
+            ]
+        )
+        assert all(
+            any(k.startswith("identity:posting:") for k in f["source_refs"])
+            for f in findings
+        )
+    else:
+        assert len(findings) == copies + 1
+        assert sorted(numbers(f) for f in findings) == sorted(
+            [
+                *[("490.00", "500.00", "-10.00", "0.01")] * copies,
+                ("470.00", "460.00", "10.00", "0.01"),
+            ]
+        )
+        assert all(
+            any(k.startswith("pos:batch:") for k in f["source_refs"])
+            for f in findings
+            if f["actual"] == "490.00"
+        )
+    assert len({f["finding_id"] for f in result["findings"]}) == len(result["findings"])
+    for finding in result["findings"]:
+        for ref in finding["source_refs"] + finding["related_refs"]:
+            if ref in data["records"]:
+                assert ref in data["pointers"]
+            elif ref.startswith("policy:"):
+                assert ref == "policy:" + data["policy"]["policy_id"]
+            elif ref.startswith("pos:fee:"):
+                _, _, batch, field = ref.split(":")
+                assert field in data["records"]["pos:batch:" + batch]
+            elif ref.startswith("pos:component:"):
+                _, _, batch, field = ref.split(":")
+                assert field in data["records"]["pos:batch:" + batch]
+            elif ref.startswith("qbo:account:"):
+                assert any(
+                    line.get("JournalEntryLineDetail", {})
+                    .get("AccountRef", {})
+                    .get("value")
+                    == ref.removeprefix("qbo:account:")
+                    for row in qbo["JournalEntry"]
+                    for line in row["Line"]
+                )
+            else:
+                assert ref.startswith("cargas:meter_ticket:")
+                assert any(
+                    row.get("meter_ticket_id")
+                    == ref.removeprefix("cargas:meter_ticket:")
+                    for row in data["records"].values()
+                )
+    data["records"] = dict(reversed(list(data["records"].items())))
+    data["occurrences"].reverse()
+    assert reconcile(data) == result == reconcile(data)
+    # Shuffle the actual exports as well as detached dictionary insertion order.
+    for rows in qbo.values():
+        rows.reverse()
+    for rows in identity.values():
+        if isinstance(rows, list):
+            rows.reverse()
+    files["qbo.json"] = json.dumps(qbo).encode()
+    files["identity.json"] = json.dumps(identity).encode()
+    if shared == "deposit":
+        write_csv("pos.csv", list(reversed(read_csv("pos.csv"))))
+        write_csv("settlements.csv", list(reversed(read_csv("settlements.csv"))))
+    db = ingest(files.__getitem__)
+    try:
+        shuffled = from_database(db)
+    finally:
+        db.close()
+    assert reconcile(shuffled) == result
+
+
+@pytest.mark.parametrize("bridge", ["declared", "allocation", "delivery"])
+def test_nondefault_price_tolerance_keeps_independent_bridges(bridge):
+    data = inputs()
+    data["policy"]["price_tolerance"] = "0.05"
+    row = data["records"]["qbo:Invoice:I-PRICE"]
+    row["TotalAmt"] = row["Line"][0]["Amount"] = 20003
+    if bridge == "declared":
+        row["Line"][0]["SalesItemLineDetail"]["UnitPrice"] = 201
+    elif bridge == "allocation":
+        data["records"]["identity:allocation:A-PRICE"]["net_amount"] = 20100
+    else:
+        data["records"]["cargas:delivery:D-PRICE"]["net_amount"] = 20100
+    found = actual(data, "C04")
+    assert len(found) == 1
+    assert numbers(found[0]) == ("200.03", "201.00", "-0.97", "0.05")
+
+
+def test_absent_deposit_target_marks_only_links_not_evaluated():
+    data = inputs()
+    data["records"]["qbo:Deposit:DEP-SHORT"]["Line"][0]["DepositLineDetail"][
+        "TxnId"
+    ] = "ABSENT"
+    data["records"]["qbo:Deposit:DEP-SHORT"]["TotalAmt"] = 46000
+    result = reconcile(data)
+    assert "C07:pos:batch:B-SETTLED:links" in result["not_evaluated"]
+    assert "C07:pos:batch:B-SETTLED" not in result["not_evaluated"]
+    assert any(
+        f["check_id"] == "C07" and f["actual"] == "460.00" and f["expected"] == "470.00"
+        for f in result["findings"]
+    )
