@@ -14,6 +14,8 @@ ALLOWED_INTERNAL_IMPORTS = {
     "generator": {"contracts"},
     "validation": {"contracts"},
     "ingestion": {"contracts", "generator", "validation"},
+    "rule_inputs": {"ingestion"},
+    "rules": set(),
 }
 
 
@@ -33,12 +35,22 @@ def check_application_dependency_direction():
                     "Use absolute imports for dependency enforcement"
                 )
                 imports = [node.module or ""]
+            if module == "rules":
+                assert all(
+                    name in {"collections", "datetime", "decimal", "zoneinfo"}
+                    for name in imports
+                ), "Rules must remain pure"
             for imported in imports:
                 if imported == "propane_demo" or imported.startswith("propane_demo."):
                     target = imported.removeprefix("propane_demo.")
                     assert target in ALLOWED_INTERNAL_IMPORTS[module], (
                         f"Forbidden dependency: {module} -> {target}"
                     )
+            if module == "rules" and isinstance(node, ast.Call):
+                assert not (
+                    isinstance(node.func, ast.Name)
+                    and node.func.id in {"open", "exec", "eval", "compile"}
+                ), "Rules must not perform IO or dynamically load code"
             assert not isinstance(node, ast.Call) or not (
                 isinstance(node.func, ast.Name) and node.func.id == "__import__"
             ), "Use static imports"
@@ -61,4 +73,18 @@ def test_dependency_check_is_not_vacuous_from_foreign_cwd(tmp_path, monkeypatch)
 def test_dependency_check_rejects_empty_discovery(monkeypatch):
     monkeypatch.setattr(Path, "rglob", lambda self, pattern: iter(()))
     with pytest.raises(AssertionError, match="No application modules discovered"):
+        check_application_dependency_direction()
+
+
+@pytest.mark.parametrize("source", ["import pathlib", "open('forbidden')"])
+def test_rules_purity_guard_rejects_forbidden_import_and_call(monkeypatch, source):
+    original = Path.read_text
+    monkeypatch.setattr(
+        Path,
+        "read_text",
+        lambda path, *args, **kwargs: source
+        if path.name == "rules.py"
+        else original(path, *args, **kwargs),
+    )
+    with pytest.raises(AssertionError, match="Rules must"):
         check_application_dependency_direction()

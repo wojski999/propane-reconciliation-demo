@@ -16,7 +16,10 @@ values. Add real modules when needed, never empty speculative layers.
 Current graph: `cli -> smoke -> standard library`;
 `generator -> contracts -> standard library`;
 `ingestion -> validation / generator / contracts -> standard library`;
-`validation -> contracts -> standard library`. Generator reads packaged synthetic
+`validation -> contracts -> standard library`;
+`rule_inputs -> ingestion -> ...`; `rules -> standard library` only.
+The rules import allowlist excludes IO, persistence, CLI, rendering and network;
+the boundary adapter detaches validated scaled values from SQLite. Generator reads packaged synthetic
 source templates only. The independent expected oracle stays under tests and is
 never an application input. Do not read test boundary answers or configured
 expected amounts in checks; derive every comparison from source records.
