@@ -454,3 +454,81 @@ C09 gap durations retain Decimal precision (80-digit working context), including
 subsecond watermark differences. Future HTML must format durations for people
 without changing exact threshold comparisons or source evidence. No new renderer
 or formatting option is introduced here.
+
+
+## Step-5 credit refund disclosure clarification
+
+KPI AR includes nonvoid RefundReceipt events in `(opening cutoff, as_of]` in
+EventAt/stable-ID order. A shared resolver for revenue and AR recognizes explicit
+LinkedTxn credit references or RevenueEvent identity with exactly one CreditMemo.
+The credit must be nonvoid, already replayed and belong to the same customer to
+consume available credit. Direct and event identities must agree when both name
+credits; disagreement never chooses one identity or consumes twice. Available
+credit is total minus max(AppliedAmount, Payment-linked applications) minus prior
+cash refunds. A refund does not subtract AR or unapplied cash, nor recognize the
+credit's revenue adjustment again. Missing/ambiguous links, unsupported opening
+credit residuals, customer conflicts or over-capacity settlements make the affected
+worksheet partial, with exact lookup/event evidence and no negative credit asserted.
+A refund's RevenueEvent also labels standalone cash adjustments: without a matching
+CreditMemo or a direct credit link it remains standalone, rather than inventing a
+missing credit. This preserves the explicit standalone REFUND-BOUNDARY/REFUND-BATCH
+fixture events. Unknown direct credit IDs and event matches to void, future,
+pre-opening, multiple or wrong-customer credits produce explicit gaps. A sale link
+alone never identifies a credit. Partial/multiple refunds sharing an identified
+credit consume its one ordered capacity even when their amounts differ; they do
+not require equal refund/credit amounts to prove identity.
+
+Synthetic POS item_id equals QBO Item.Id for item classification and fill mappings.
+POS gallon quantities assume the policy net_60F basis; the POS schema has no basis
+measurement and no conversion proves equivalence with delivered gallons. Opening
+AR has customer totals only: it supplies neither pre-opening invoice balances nor
+available credit residuals. Such allocations need explicit missing-support gaps.
+
+### PR 15 F1-c: settlement identity before exclusion
+
+Revenue and AR reject a refund whose explicit Invoice/SalesReceipt links are not
+all among its identified credit's original-sale links. This applies to direct,
+event and combined credit identity. They emit the same
+`consistent_adjustment_event:<refund-key>` with existing refund/credit refs.
+Before credit-settlement exclusion, content-identical active refunds sharing one
+RevenueEvent are ambiguous when any member identifies a credit. Economic content
+means total, sorted original-sale links and sorted item/amount lines; native IDs
+and credit-reference representation do not establish distinct refunds. Every
+ambiguous member gaps revenue and AR and consumes no credit. Distinct partial
+refund amounts remain valid ordered settlements. Without a credit, the existing
+standalone adjustment deduplication remains unchanged. CreditMemo.RevenueEvent,
+like RefundReceipt.RevenueEvent, must be a scalar identifier at ingestion.
+Ordered AR capacity failures (`refund_credit_capacity`, `credit_allocation`,
+`credit_capacity`) also gap revenue using the identical lookup and evidence;
+revenue cannot assert complete settlement identity while capacity is unresolved.
+
+
+### PR 15 F1-d: capacity does not depend on opening AR
+
+Revenue invokes the shared ordered replay in QBO-only capacity mode: it does not
+read opening AR, assert an opening balance or publish replayed AR totals. Validated
+CreditMemo, Payment and RefundReceipt events through as-of use the same capacity
+arithmetic and EventAt/stable-ID ordering as AR. Overconsumption retains the exact
+`refund_credit_capacity`, `credit_allocation` or `credit_capacity` lookup and refs.
+Opening AR failure cannot erase those gaps. Below/exact capacity can still produce
+complete revenue when its own QBO/POS/identity sources are eligible. A settling
+credit at/before the opening cutoff additionally produces
+`opening_credit_capacity:<credit-key>`: its original total does not establish an
+opening residual. QBO source failure still blocks revenue before replay; no guessed
+credit or AR value is exposed. AR's existing snapshot eligibility remains unchanged.
+
+### PR 15 F1-e: rejected explicit credit allocations
+
+Every rejected active Payment line with explicit CreditMemo links emits
+`credit_allocation:<line-key>` with the line and all explicit credit links, even
+when invoice support, customer opening coverage or the credit itself is absent.
+The ordered replay records uncertainty by credit key before a credit is available;
+a later credit cannot silently restore a known residual. Rejected amounts do not
+consume capacity. Later refunds against that credit emit `refund_credit_capacity`
+with the rejection evidence; final disclosure emits `credit_capacity` rather than
+a guessed residual. Earlier refunds retain their known consumption, but the later
+rejection still prevents a complete revenue verdict. Unrelated credits retain
+known residual contributions. Opening-AR failure never blocks QBO-only capacity
+validation. Zero, unknown, void and ambiguous credit references cannot erase the
+explicit allocation uncertainty. Valid Payment applications and AppliedAmount
+continue to share max(applied, seen), never their sum.
