@@ -9,3 +9,4 @@ when a failed check, review finding or repeated mistake teaches a reusable lesso
 - [Rule dependencies and provenance](lessons/2026-11-04-rule-dependencies-and-provenance.md): actual supporting-source dependencies, root failure pointers and adversarial financial boundaries.
 - [Shared evidence identity](lessons/2026-11-04-shared-evidence-identity.md): many-to-one journals/deposits need the varying mapping/batch key in finding identity.
 - [Transfer and freshness propagation](lessons/2026-11-04-transfer-and-freshness-propagation.md): preflight both transfer endpoints and apply actual stale-source dependencies.
+- [KPI event boundaries and evidence output](lessons/2026-11-04-kpi-event-boundaries.md): posting versus event cutoffs, credit/cash deduplication, basis gaps and raw failure pointers.

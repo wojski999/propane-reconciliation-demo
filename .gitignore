@@ -10,6 +10,7 @@ htmlcov/
 build/
 dist/
 artifacts/
+output/
 .env
 .env.*
 !.env.example
