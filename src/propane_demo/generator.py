@@ -58,6 +58,8 @@ def generate(scenario="clean", seed=DEFAULT_SEED, business_date=DEFAULT_DATE):
             manifest["row_count"] = str(
                 sum(len(rows) for rows in content.values())
                 if manifest["file_id"] == "qbo.json"
+                else len(content["records"])
+                if manifest["file_id"] == "updates.json"
                 else len(content)
             )
 
@@ -68,6 +70,11 @@ def generate(scenario="clean", seed=DEFAULT_SEED, business_date=DEFAULT_DATE):
         if isinstance(value, list):
             return [materialize(item) for item in value]
         if isinstance(value, str):
+            if value.startswith(("@start_hour:", "@end_hour:")):
+                anchor = start if value.startswith("@start_hour:") else end
+                return (anchor + timedelta(hours=int(value.split(":")[1]))).isoformat()
+            if value.startswith("@day:"):
+                return (business_date + timedelta(days=int(value[5:]))).isoformat()
             if value.startswith("@hour:"):
                 return (end + timedelta(hours=int(value[6:]))).isoformat()
             return (

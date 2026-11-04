@@ -252,6 +252,9 @@
             "pos:POS:T-BATCH:1",
             "pos:POS:T-REFUND:1",
             "pos:fee:B-SETTLED:fees",
+            "qbo:Deposit:DEP-SHORT:2",
+            "qbo:Deposit:DEP-SHORT:3",
+            "qbo:Deposit:DEP-SHORT:4",
             "qbo:RefundReceipt:RR-BATCH",
             "qbo:SalesReceipt:SR-BATCH"
           ],
@@ -402,10 +405,13 @@
         "C05:pos",
         "C07",
         "C08:BULK-A",
+        "C08:ISOLATED",
         "KPI:retail",
         "KPI:revenue"
       ],
-      "legitimate_cascades": []
+      "legitimate_cascades": [
+        "Failed POS suppresses C08:BULK-A and C08:ISOLATED because both have POS-backed movements."
+      ]
     },
     "P12": {
       "findings": [
@@ -728,6 +734,7 @@
         "C06",
         "C07",
         "C08:BULK-A",
+        "C08:ISOLATED",
         "C08:TRUCK-A",
         "C08:TRUCK-NO-READING",
         "C12",
@@ -738,7 +745,7 @@
         "KPI:revenue"
       ],
       "legitimate_cascades": [
-        "P08 shortage suppressed because POS feed failed; preserve its worksheet inputs, no verdict.",
+        "P08 shortage and both C08:BULK-A/C08:ISOLATED verdicts suppressed because POS failed; preserve worksheet inputs, no verdict.",
         "P09 sensor uncertainty and P12 missing reading remain independent of POS failure.",
         "QBO stale suppresses P01/P02/P04/P05/P06/P07/P13/P14 verdicts; failed POS suppresses P03."
       ]

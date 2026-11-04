@@ -40,4 +40,4 @@ include = ["src/**/*.py", "tests/**/*.py", "scripts/**/*.py", "pyproject.toml"]
 select = ["E", "F", "I", "UP", "B"]
 
 [tool.setuptools.package-data]
-propane_demo = ["data/*.json"]
+propane_demo = ["data/template.json"]

@@ -49,7 +49,7 @@ def test_seed_is_run_namespace_date_is_explicit_and_no_wall_clock(tmp_path):
     assert first["run.json"]["business_date"] == "2024-02-29"
     assert first["run.json"]["run_id"] != second["run.json"]["run_id"]
     assert first["qbo.json"] == second["qbo.json"]
-    assert first["qbo.json"]["Invoice"][0]["TxnDate"] == "2024-02-28"
+    assert first["qbo.json"]["Invoice"][0]["TxnDate"] == "2024-02-29"
     script = (
         "from propane_demo.generator import generate; import hashlib; "
         'print(hashlib.sha256(b"".join(generate().values())).hexdigest())'
@@ -114,6 +114,8 @@ def test_contracts_are_entity_specific_and_manifests_count_physical_rows():
         count = (
             sum(map(len, content.values()))
             if manifest["source"] == "qbo"
+            else len(content["records"])
+            if manifest["file_id"] == "updates.json"
             else len(content)
         )
         assert int(manifest["row_count"]) == count

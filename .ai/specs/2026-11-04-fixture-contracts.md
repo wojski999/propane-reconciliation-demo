@@ -18,9 +18,9 @@ The seed is an unsigned 32-bit integer and namespaces the run ID; financial valu
 stay fixed so hand calculations stay inspectable. The business date is a `date`,
 not a string/datetime. Timestamps are offset-aware UTC ISO strings shifted relative
 to the half-open America/Denver business day; DST yields 23/25-hour days. Inputs
-include 72 hours of history before cutoff for grace and AR replay. QBO TxnDate
+include history from local-day start minus 192 elapsed hours for settlement grace and AR replay. QBO TxnDate
 is a posting date, EventAt is explicit synthetic event chronology. The opening AR
-snapshot is at cutoff minus 72 hours; business reporting window remains local day.
+snapshot is at local-day start minus 192 hours; business reporting window remains local day.
 Generation supports [2020-01-01, 2035-01-01) and rejects other dates with
 ValueError. Prices begin in 2019 to cover prior-day/history records even at the
 first supported business date; they end exclusively at 2035-01-01.
@@ -30,7 +30,7 @@ ordered columns declared in `CSV_FIELDS`, newline is LF and files end in LF.
 Money/volume are decimal strings; money has two fractional places, gallons three.
 Decimal HALF_UP rounds line/tax amounts at cents; scaled SQLite integers belong
 to the later import step. No financial float, currency conversion or inferred basis.
-Boundary vectors supplement actual source examples and are not source verdicts.
+Boundary answer vectors are test-only; generated application inputs contain no boundary verdicts or configured expected operational net.
 
 ## Source entities
 
@@ -81,7 +81,7 @@ Balance is only a reference. Unapplied money and cash refunds do not reduce AR.
 Each manifest retains manifest_id in addition to the section-4 required fields.
 row_count is physical CSV rows / JSON array records; QBO sums entity arrays;
 identity and opening-AR JSON count top-level members (not normalized rows).
-Updates are distinct source versions. Raw-repeat preserves both physical pointers.
+Updates are distinct source versions; the UPDATES-OK manifest counts records, not wrapper members. Raw-repeat preserves both physical pointers.
 P11 deliberately emits a short malformed POS row and a failed CSV_SCHEMA manifest;
 its declared count is one physical row. Successful empty optional JSON is [].
 Manifest failure is authoritative, even if other files remain parseable.
@@ -127,8 +127,8 @@ unusual-discount review threshold stays 10%; therefore no extra C04 mismatch.
 Clean includes exact one-cent price/unapplied boundaries, $100 credit/refund,
 10% approved discount, exact 24-hour delivery/invoice/payment grace, real fractional
 gallons, void/cancelled/zero/negative refund, tax bridge and paired transfers.
-Additional boundary vectors describe freshness, fee/grace and cent HALF_UP cases
-for later rule tests; they do not assert executed results.
+Additional test-only boundary vectors describe freshness, fee/grace and cent HALF_UP cases
+for later rule tests; they do not ship in generated inputs.
 
 ## Scenario inventory and cascades
 
@@ -142,8 +142,65 @@ loads a fresh template so mutating one scenario cannot contaminate another.
 
 In combined issues, stale QBO suppresses QBO-dependent billing, money, posting
 and adjustment verdicts; failed POS suppresses POS duplicate/price/settlement and
-BULK-A shortage. P09 uncertainty and P12 missing reading/mapping remain visible.
+BULK-A and ISOLATED shortages. P09 uncertainty and P12 missing reading/mapping remain visible.
 There are exactly five findings (C08 uncertainty, C09, C10, two C11), two alerts;
 no false missing-counterpart conclusions or shortage from a failed feed. Oracle
 lists not-evaluated scopes and legitimate cascades explicitly. Future rule tests
 may refine this contract only with explicit fixture/oracle review together.
+
+## Chronology and input isolation (review remediation)
+
+`@start_hour:N` and `@end_hour:N` are elapsed UTC-hour offsets from the two
+local-midnight boundaries. `@hour:N` is explicitly an elapsed offset from cutoff;
+`@day:N` is a posting-date offset from the requested business date. Current
+inventory movements, their delivery/POS sources, and most sale/revenue records
+occur at start + 2 hours on every supported day. Opening/closing readings bracket
+these movements; BOUNDARY readings sit exactly start - 1 hour and end + 1 hour.
+The reading manifest includes that permitted endpoint halo through end + 1 hour.
+All other history manifests start at start - 192 hours and finish at cutoff.
+
+Intentional elapsed-time vectors: D-GRACE, I-GRACE and PAY-GRACE are exactly
+24 hours old. On a 23-hour day they precede local midnight; on a 25-hour day they
+are one hour after it. P10's watermark is exactly 25 hours old and therefore
+coincides with midnight on a 25-hour day. Their local-day membership intentionally
+changes; age and non-due/stale meaning do not. Historical D-MISSING and I-ORPHAN
+are 30 hours old and remain before the business day. These distinct unmeasured
+billing examples never add a current inventory movement.
+
+I-CREDIT, I-PAY and I-PAID are advance invoices at cutoff - 36 hours for their
+current-day mapped deliveries. CM-BOUNDARY/CM-UNUSUAL and PAY-APPLIED precede
+cutoff by 29 hours; PAY-EXCESS by 28 hours. Each is strictly after its invoice.
+This is explicit synthetic advance billing, not a policy inferred from real data.
+Other current-day sale lines supply nonempty daily revenue and volume inputs.
+
+B-SETTLED sales at start - 150 hours and refund at -149 hours precede settlement
+at -144 hours. The deposit at -120 hours follows settlement. Six elapsed days
+before day start leaves more than two Mon-Fri business days before cutoff on
+every tested weekday, including DST transition/adjacent days. SR-BATCH and
+RR-BATCH mirror these historical POS events and do not create current revenue.
+DEP-SHORT lines bridge 500 gross, -20 refund and -10 processor fee; P07 adds a
+separate -10 settlement variance line, yielding 460. The comparison uses the
+whole mapped deposit, while line 1 remains its stable primary evidence anchor.
+
+T-DELIVERY is a captured representation of I-OUT, not a second sale. Its identity
+crosswalk names PAY-DELIVERY, which allocates the same 200 to I-OUT at start + 3
+hours, leaving Invoice.Balance zero. Consumers recognize invoice revenue once,
+payment as AR/cash movement only, and D-OUT as the single inventory outflow.
+I-VOID retains the synthetic status marker but its total, balance, line amount and
+quantity are zero; excluding it or summing reported balances cannot inflate AR.
+
+`updates.json` is a required QBO replay stream in the same atomic source import
+as qbo.json, covered by UPDATES-OK. Its wrapper identifies entity Customer;
+row_count counts `records`. Import qbo.json's base version, then replay records
+by Id and numeric SyncToken; the repeated version 0 is byte-equivalent, hence
+idempotent, and version 1 replaces it rather than adding another customer. Retain
+both raw pointers as provenance. Missing/invalid stream or manifest fails that
+source, never silently drops the update. This defines ingestion for issue #5;
+no importer is implemented here.
+
+posting_map carries linkage/account IDs only: derive operational net from the
+linked invoice lines. Boundary answer vectors live only in tests. Architecture
+and package-data tests prohibit application access to the oracle and restrict
+shipped data to the source template. Numeric oracle assertions independently
+calculate actual, expected, delta and thresholds from source/policy records;
+consistent-but-wrong P07 and P13 oracle mutations must be rejected.
