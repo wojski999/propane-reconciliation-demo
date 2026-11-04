@@ -101,3 +101,20 @@ and exact SHA are reported on PR #15 and in the Cezar report to avoid self-refer
 No author review/QA approval, base push or merge. Parent owns the two independent
 current-head reviews, artifact QA and merge. Unconfirmed iCloud preview delivery
 is not claimed as available on both Macs.
+
+## Final adversarial completion
+
+Raw source regressions cover a surviving POS crosswalk with missing/void/pending
+current POS row: retail and revenue are partial, never zero. AR additionally
+rejects cross-customer credit/cash applications, mixed target types and negative
+unsupported allocations; non-invoice cash is disclosed as unapplied. A ledger
+with support gaps cannot assert a computed reported-Balance reconciliation.
+These extend the same step-5 calculation contract; no prior rule/oracle or C12
+policy changed. Committed sample and machine results regenerated and bound to
+current code by the reproducibility test.
+
+Final frozen source gate (task-owned Python 3.12.3, exact timeout 300 make check):
+**654 tests passed in 93.96 seconds; 1883/1883 lines and 850/850 branch exits**.
+Ruff lint/format clean, no exclusions or validation-command edits. 102 targeted
+KPI/report/architecture tests also pass. Current-head CI and downloaded artifact
+hashes are recorded on PR #15 and in the Cezar report after this commit.

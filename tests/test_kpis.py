@@ -370,3 +370,53 @@ def test_cross_customer_payment_cannot_supply_known_ar():
     result = isolated(data).ar()
     assert result["value"] is None
     assert result["gaps"][0]["missing_lookup_key"].startswith("same_customer")
+
+
+@pytest.mark.parametrize(
+    "mode",
+    [
+        "credit_customer",
+        "payment_credit_customer",
+        "negative_credit",
+        "mixed_target",
+        "negative_payment",
+    ],
+)
+def test_ar_incompatible_allocations_are_partial(mode):
+    data = inputs()
+    r = data["records"]
+    r["ar:snapshot:AR-OPEN"]["balances"].append({"customer_id": "OTHER", "amount": 0})
+    credit = r["qbo:CreditMemo:CM-BOUNDARY"]
+    line = r["qbo:Payment:PAY-APPLIED"]["Line"][0]
+    if mode == "credit_customer":
+        credit["CustomerRef"] = {"value": "OTHER"}
+    elif mode == "payment_credit_customer":
+        credit["CustomerRef"] = {"value": "OTHER"}
+        credit["AppliedAmount"] = 0
+        credit["LinkedTxn"] = []
+        line["LinkedTxn"] = [
+            {"TxnType": "Invoice", "TxnId": "I-PAID"},
+            {"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"},
+        ]
+    elif mode == "negative_credit":
+        credit["AppliedAmount"] = -1
+    elif mode == "mixed_target":
+        line["LinkedTxn"].append({"TxnType": "SalesReceipt", "TxnId": "SR-TAX"})
+    else:
+        line["Amount"] = -1
+    result = isolated(data).ar()
+    assert result["value"] is None
+    assert result["unapplied_credits"]["value"] is None
+    assert all(
+        c["computed"] is None and c["delta"] is None
+        for c in result["reported_balance_comparisons"]
+    )
+
+
+def test_payment_without_invoice_link_is_unapplied_even_with_other_reference():
+    data = inputs()
+    row = data["records"]["qbo:Payment:PAY-APPLIED"]
+    row["Line"][0]["LinkedTxn"] = [{"TxnType": "SalesReceipt", "TxnId": "SR-TAX"}]
+    result = isolated(data).ar()
+    assert result["value"] == "960.01"
+    assert result["unapplied_cash"]["value"] == "125.01"

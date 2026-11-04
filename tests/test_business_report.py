@@ -358,3 +358,27 @@ def test_committed_sample_matches_current_computation_and_render():
     assert (root / "clean-report.html").read_text() == report.render(result, raw)
     assert json.loads((root / "clean-results.json").read_text()) == result
     assert (root / "clean-summary.txt").read_text() == report.summary(result) + "\n"
+
+
+@pytest.mark.parametrize("state", ["missing", "void", "pending"])
+def test_dangling_current_pos_crosswalk_is_partial_never_zero(state):
+    files = generate()
+
+    def omit(rows):
+        row = next(r for r in rows if r["transaction_id"] == "T-CYLINDER")
+        if state == "missing":
+            rows.remove(row)
+        else:
+            row["status"] = state
+
+    change(files, "pos.csv", omit, count=True)
+    result, raw = run(files)
+    assert result["status"] == "incomplete"
+    assert result["kpis"]["retail"]["status"] == "partial"
+    assert result["kpis"]["retail"]["value"] is None
+    assert result["kpis"]["revenue"]["value"] is None
+    assert (
+        result["kpis"]["retail"]["gaps"][0]["missing_lookup_key"]
+        == "active_pos_event:pos:POS:T-CYLINDER:1"
+    )
+    assert "identity:pos_event:EVENT-T-CYLINDER" in raw

@@ -22,3 +22,9 @@ Wrap long document strings; hiding overflow would lose evidence. At the inspecte
 alerts sort by severity independently of canonical machine alert IDs. Check full
 coverage again after the final source/render change; a previous passing import
 in an already-running test process does not validate later edits.
+
+Final raw regressions found that iterating present POS rows alone misses a dangling
+crosswalk to an absent/void/pending row. Inspect the surviving mapping and active
+current QBO event too; retain precise missing POS keys. AR similarly checks the
+customer and type of each allocation, keeps non-invoice cash unapplied, and
+suppresses numeric Balance comparisons when earlier support is incomplete.

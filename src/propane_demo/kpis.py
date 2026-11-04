@@ -81,6 +81,23 @@ class KPIs:
             < stamp(self.run["window_end"])
         )
 
+    def missing_pos_events(self, sheet):
+        for key, event in self.rows("identity:pos_event:"):
+            target = f"qbo:{event['qbo_entity']}:{event['qbo_id']}"
+            qbo = self.r.get(target)
+            pos_key = "pos:POS:" + event["pos_id"]
+            pos = self.r.get(pos_key)
+            relevant = (
+                qbo is not None
+                and active(qbo)
+                and (
+                    qbo["TxnDate"] == self.run["business_date"]
+                    or self.in_day(qbo["EventAt"])
+                )
+            )
+            if relevant and (pos is None or not active(pos)):
+                sheet.gap("active_pos_event:" + pos_key, [key, target])
+
     def volumes(self):
         delivered, retail = Worksheet("US gallons"), Worksheet("US gallons")
         if not self.blocked(delivered, "delivered"):
@@ -126,6 +143,7 @@ class KPIs:
                 [ref for a in qbo_roots for ref in a["source_refs"]],
             )
         if not retail_blocked and not qbo_roots:
+            self.missing_pos_events(retail)
             for key, row in self.rows("pos:POS:"):
                 if row["status"] != "captured" or not self.in_day(row["occurred_at"]):
                     continue
@@ -208,6 +226,7 @@ class KPIs:
         sheet = Worksheet("USD")
         if self.blocked(sheet, "revenue"):
             return sheet.result()
+        self.missing_pos_events(sheet)
         # Crosswalks establish POS representation. No POS money is added again.
         represented = defaultdict(list)
         for key, row in self.rows("pos:POS:"):
@@ -383,6 +402,8 @@ class KPIs:
                     if (
                         len(targets) != 1
                         or targets[0] not in balances
+                        or self.r[targets[0]]["CustomerRef"] != row["CustomerRef"]
+                        or applied < 0
                         or applied > abs(row["TotalAmt"])
                     ):
                         sheet.gap("applied_credit_invoice:" + key, [key, sk])
@@ -391,6 +412,19 @@ class KPIs:
                         sheet.add("applied_credit", -applied, [key, targets[0]])
                 continue
             unapplied, _ = payment_cash(row)
+            # Any cash line without an Invoice or CreditMemo allocation remains
+            # unapplied, even if a non-invoice transaction is referenced.
+            unapplied = max(
+                unapplied,
+                sum(
+                    line["Amount"]
+                    for line in row["Line"]
+                    if not any(
+                        target.startswith(("qbo:Invoice:", "qbo:CreditMemo:"))
+                        for target in linked(line)
+                    )
+                ),
+            )
             cash.add("unapplied_cash", unapplied, [key])
             for line in sorted(row["Line"], key=lambda line: line["Id"]):
                 lk = key + ":" + line["Id"]
@@ -409,6 +443,12 @@ class KPIs:
                     sheet.gap("same_customer_payment_invoice:" + lk, [lk, targets[0]])
                     continue
                 amount = line["Amount"]
+                if amount < 0 or any(
+                    not target.startswith(("qbo:Invoice:", "qbo:CreditMemo:"))
+                    for target in linked(line)
+                ):
+                    sheet.gap("single_invoice_cash_or_credit_allocation:" + lk, [lk])
+                    continue
                 if credit_links:
                     if len(credit_links) != 1 or credit_links[0] not in credits:
                         sheet.gap("credit_application:" + ";".join(credit_links), [lk])
@@ -416,6 +456,7 @@ class KPIs:
                     credit = credits[credit_links[0]]
                     if (
                         credit["target"] not in {None, targets[0]}
+                        or self.r[credit_links[0]]["CustomerRef"] != row["CustomerRef"]
                         or credit["seen"] + amount > credit["total"]
                     ):
                         sheet.gap("credit_allocation:" + lk, [lk, *credit_links])
@@ -439,11 +480,16 @@ class KPIs:
             comparisons.append(
                 {
                     "source_refs": [key],
-                    "computed": money(balance),
+                    "status": "partial" if sheet.gaps else "complete",
+                    "computed": None if sheet.gaps else money(balance),
                     "reported": money(self.r[key]["Balance"]),
-                    "delta": money(self.r[key]["Balance"] - balance),
+                    "delta": None
+                    if sheet.gaps
+                    else money(self.r[key]["Balance"] - balance),
                 }
             )
+        cash.gaps = list(sheet.gaps)
+        credit_left.gaps = list(sheet.gaps)
         return sheet.result() | {
             "opening_cutoff": snapshot["as_of"],
             "unapplied_cash": cash.result(),

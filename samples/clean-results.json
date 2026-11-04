@@ -819,7 +819,8 @@
           "reported": "100.00",
           "source_refs": [
             "qbo:Invoice:I-COMBINED"
-          ]
+          ],
+          "status": "complete"
         },
         {
           "computed": "100.00",
@@ -827,7 +828,8 @@
           "reported": "100.00",
           "source_refs": [
             "qbo:Invoice:I-CREDIT"
-          ]
+          ],
+          "status": "complete"
         },
         {
           "computed": "20.00",
@@ -835,7 +837,8 @@
           "reported": "20.00",
           "source_refs": [
             "qbo:Invoice:I-EQUAL-A"
-          ]
+          ],
+          "status": "complete"
         },
         {
           "computed": "20.00",
@@ -843,7 +846,8 @@
           "reported": "20.00",
           "source_refs": [
             "qbo:Invoice:I-EQUAL-B"
-          ]
+          ],
+          "status": "complete"
         },
         {
           "computed": "0.01",
@@ -851,7 +855,8 @@
           "reported": "0.01",
           "source_refs": [
             "qbo:Invoice:I-FRACTION"
-          ]
+          ],
+          "status": "complete"
         },
         {
           "computed": "200.00",
@@ -859,7 +864,8 @@
           "reported": "200.00",
           "source_refs": [
             "qbo:Invoice:I-GRACE"
-          ]
+          ],
+          "status": "complete"
         },
         {
           "computed": "0.00",
@@ -867,7 +873,8 @@
           "reported": "0.00",
           "source_refs": [
             "qbo:Invoice:I-OUT"
-          ]
+          ],
+          "status": "complete"
         },
         {
           "computed": "0.00",
@@ -875,7 +882,8 @@
           "reported": "0.00",
           "source_refs": [
             "qbo:Invoice:I-PAID"
-          ]
+          ],
+          "status": "complete"
         },
         {
           "computed": "100.00",
@@ -883,7 +891,8 @@
           "reported": "100.00",
           "source_refs": [
             "qbo:Invoice:I-PAY"
-          ]
+          ],
+          "status": "complete"
         },
         {
           "computed": "200.00",
@@ -891,7 +900,8 @@
           "reported": "200.00",
           "source_refs": [
             "qbo:Invoice:I-PRICE"
-          ]
+          ],
+          "status": "complete"
         },
         {
           "computed": "20.00",
@@ -899,7 +909,8 @@
           "reported": "20.00",
           "source_refs": [
             "qbo:Invoice:I-SERVICE"
-          ]
+          ],
+          "status": "complete"
         },
         {
           "computed": "40.00",
@@ -907,7 +918,8 @@
           "reported": "40.00",
           "source_refs": [
             "qbo:Invoice:I-SPLIT-A"
-          ]
+          ],
+          "status": "complete"
         },
         {
           "computed": "60.00",
@@ -915,7 +927,8 @@
           "reported": "60.00",
           "source_refs": [
             "qbo:Invoice:I-SPLIT-B"
-          ]
+          ],
+          "status": "complete"
         }
       ],
       "status": "complete",
