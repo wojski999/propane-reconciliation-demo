@@ -480,6 +480,14 @@ class KPIs:
                 sheet.add("opening_AR", balance["amount"], [sk])
         conflicts = self.adjustment_conflicts()
         balances, credits = {}, {}
+        unresolved = {}
+
+        def reject_credit_line(lk, credit_links):
+            if credit_links:
+                sheet.gap("credit_allocation:" + lk, [lk, *credit_links])
+                for target in credit_links:
+                    unresolved.setdefault(target, []).append(lk)
+
         events = sorted(
             (stamp(row["EventAt"]), key, row)
             for entity in ("Invoice", "CreditMemo", "Payment", "RefundReceipt")
@@ -501,6 +509,16 @@ class KPIs:
                 continue
             if row["CustomerRef"]["value"] not in customers:
                 sheet.gap("opening_customer:" + row["CustomerRef"]["value"], [key, sk])
+                if key.startswith("qbo:Payment:"):
+                    for line in row["Line"]:
+                        reject_credit_line(
+                            key + ":" + line["Id"],
+                            [
+                                k
+                                for k in linked(line)
+                                if k.startswith("qbo:CreditMemo:")
+                            ],
+                        )
                 continue
             if key.startswith("qbo:Invoice:"):
                 balances[key] = row["TotalAmt"]
@@ -542,6 +560,11 @@ class KPIs:
                 amount = abs(row["TotalAmt"])
                 if self.r[targets[0]]["CustomerRef"] != row["CustomerRef"]:
                     sheet.gap("same_customer_refund_credit:" + key, [key, *targets])
+                elif targets[0] in unresolved:
+                    sheet.gap(
+                        "refund_credit_capacity:" + key,
+                        [key, *credit["refs"], *unresolved[targets[0]]],
+                    )
                 elif (
                     max(credit["applied"], credit["seen"]) + credit["refunded"] + amount
                     > credit["total"]
@@ -572,37 +595,49 @@ class KPIs:
                 credit_links = [
                     k for k in linked(line) if k.startswith("qbo:CreditMemo:")
                 ]
+                rejection = None
                 if not targets:
                     if credit_links:
-                        sheet.gap("credit_application_invoice:" + lk, [lk])
-                    continue
-                if len(targets) != 1 or targets[0] not in balances:
-                    sheet.gap("payment_invoice:" + ";".join(targets), [lk, sk])
-                    continue
-                if self.r[targets[0]]["CustomerRef"] != row["CustomerRef"]:
-                    sheet.gap("same_customer_payment_invoice:" + lk, [lk, targets[0]])
-                    continue
-                amount = line["Amount"]
-                if amount < 0 or any(
+                        rejection = ("credit_application_invoice:" + lk, [lk])
+                elif len(targets) != 1 or targets[0] not in balances:
+                    rejection = ("payment_invoice:" + ";".join(targets), [lk, sk])
+                elif self.r[targets[0]]["CustomerRef"] != row["CustomerRef"]:
+                    rejection = (
+                        "same_customer_payment_invoice:" + lk,
+                        [lk, targets[0]],
+                    )
+                elif line["Amount"] < 0 or any(
                     not target.startswith(("qbo:Invoice:", "qbo:CreditMemo:"))
                     for target in linked(line)
                 ):
-                    sheet.gap("single_invoice_cash_or_credit_allocation:" + lk, [lk])
-                    continue
-                if credit_links:
+                    rejection = ("single_invoice_cash_or_credit_allocation:" + lk, [lk])
+                elif credit_links:
                     if len(credit_links) != 1 or credit_links[0] not in credits:
-                        sheet.gap("credit_application:" + ";".join(credit_links), [lk])
-                        continue
-                    credit = credits[credit_links[0]]
-                    if (
-                        credit["target"] not in {None, targets[0]}
-                        or self.r[credit_links[0]]["CustomerRef"] != row["CustomerRef"]
-                        or max(credit["applied"], credit["seen"] + amount)
-                        + credit["refunded"]
-                        > credit["total"]
-                    ):
-                        sheet.gap("credit_allocation:" + lk, [lk, *credit_links])
-                        continue
+                        rejection = (
+                            "credit_application:" + ";".join(credit_links),
+                            [lk],
+                        )
+                    else:
+                        credit = credits[credit_links[0]]
+                        if (
+                            credit_links[0] in unresolved
+                            or credit["target"] not in {None, targets[0]}
+                            or self.r[credit_links[0]]["CustomerRef"]
+                            != row["CustomerRef"]
+                            or max(credit["applied"], credit["seen"] + line["Amount"])
+                            + credit["refunded"]
+                            > credit["total"]
+                        ):
+                            rejection = ("credit_allocation:" + lk, [lk, *credit_links])
+                if rejection:
+                    if rejection[0] != "credit_allocation:" + lk:
+                        sheet.gap(*rejection)
+                    reject_credit_line(lk, credit_links)
+                    continue
+                if not targets:
+                    continue
+                amount = line["Amount"]
+                if credit_links:
                     already = min(amount, max(0, credit["applied"] - credit["seen"]))
                     credit["seen"] += amount
                     credit["refs"].append(lk)
@@ -619,7 +654,9 @@ class KPIs:
                 - max(credit["applied"], credit["seen"])
                 - credit["refunded"]
             )
-            if remaining < 0:
+            if key in unresolved:
+                sheet.gap("credit_capacity:" + key, [*credit["refs"], *unresolved[key]])
+            elif remaining < 0:
                 sheet.gap("credit_capacity:" + key, credit["refs"])
             else:
                 credit_left.add("unapplied_credit", remaining, credit["refs"])

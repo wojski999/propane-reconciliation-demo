@@ -564,3 +564,41 @@ def test_standalone_cash_refund_does_not_require_opening_customer_ar():
     assert ar["value"] == "860.01"
     assert ar["unapplied_cash"]["value"] == "25.01"
     assert ar["unapplied_credits"]["value"] == "0.00"
+
+
+def test_missing_opening_customer_preserves_explicit_payment_credit_uncertainty():
+    data = inputs()
+    records = data["records"]
+    payment = records["qbo:Payment:PAY-APPLIED"]
+    payment["Line"][0]["LinkedTxn"].append(
+        {"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"}
+    )
+    records["ar:snapshot:AR-OPEN"]["balances"] = []
+    ar = isolated(data).ar()
+    assert {
+        "missing_lookup_key": "credit_allocation:qbo:Payment:PAY-APPLIED:1",
+        "source_refs": ["qbo:CreditMemo:CM-BOUNDARY", "qbo:Payment:PAY-APPLIED:1"],
+    } in ar["gaps"]
+    assert ar["value"] is None
+    assert ar["unapplied_credits"]["contributions"] == []
+
+
+def test_later_valid_line_cannot_restore_rejected_credit_capacity():
+    data = inputs()
+    records = data["records"]
+    payment = records["qbo:Payment:PAY-APPLIED"]
+    first = payment["Line"][0]
+    second = copy.deepcopy(first)
+    first["LinkedTxn"] = [{"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"}]
+    second.update(Id="2", Amount=1000)
+    second["LinkedTxn"] = [
+        {"TxnType": "Invoice", "TxnId": "I-CREDIT"},
+        {"TxnType": "CreditMemo", "TxnId": "CM-BOUNDARY"},
+    ]
+    payment["Line"].append(second)
+    ar = isolated(data).ar()
+    keys = {g["missing_lookup_key"] for g in ar["gaps"]}
+    assert "credit_allocation:qbo:Payment:PAY-APPLIED:1" in keys
+    assert "credit_allocation:qbo:Payment:PAY-APPLIED:2" in keys
+    assert "credit_capacity:qbo:CreditMemo:CM-BOUNDARY" in keys
+    assert ar["unapplied_credits"]["contributions"] == []

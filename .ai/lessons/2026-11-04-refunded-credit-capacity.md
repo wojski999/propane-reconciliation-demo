@@ -51,3 +51,13 @@ Regression controls must include below/exact/over capacity, an invalid opening
 source, and credit exactly at opening cutoff. Missing opening credit residuals
 remain explicit even if the original credit total is known. Mutate back to the old
 AR-dependent call to prove that the raw failure-isolation tests detect the defect.
+
+F1-e: invoice-side rejection must preserve credit-side uncertainty. An explicit
+credit link survives even when the invoice is absent, void, unknown, later,
+foreign, ambiguous or accompanied by a cash-sale link. Centralize rejection
+bookkeeping; record unresolved credit keys independently of event availability.
+Audit parent-level opening/customer skips as well as line-level continues. Never
+turn a rejected amount into a known consumption or disclose a guessed residual.
+Test raw compute/render paths with both orders, opening failures, exact capacity
+controls and an unrelated healthy credit, then disable rejection propagation to
+prove the regression assertions detect the old skip behavior.

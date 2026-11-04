@@ -516,3 +516,19 @@ credit at/before the opening cutoff additionally produces
 `opening_credit_capacity:<credit-key>`: its original total does not establish an
 opening residual. QBO source failure still blocks revenue before replay; no guessed
 credit or AR value is exposed. AR's existing snapshot eligibility remains unchanged.
+
+### PR 15 F1-e: rejected explicit credit allocations
+
+Every rejected active Payment line with explicit CreditMemo links emits
+`credit_allocation:<line-key>` with the line and all explicit credit links, even
+when invoice support, customer opening coverage or the credit itself is absent.
+The ordered replay records uncertainty by credit key before a credit is available;
+a later credit cannot silently restore a known residual. Rejected amounts do not
+consume capacity. Later refunds against that credit emit `refund_credit_capacity`
+with the rejection evidence; final disclosure emits `credit_capacity` rather than
+a guessed residual. Earlier refunds retain their known consumption, but the later
+rejection still prevents a complete revenue verdict. Unrelated credits retain
+known residual contributions. Opening-AR failure never blocks QBO-only capacity
+validation. Zero, unknown, void and ambiguous credit references cannot erase the
+explicit allocation uncertainty. Valid Payment applications and AppliedAmount
+continue to share max(applied, seen), never their sum.

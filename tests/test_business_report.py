@@ -827,3 +827,153 @@ def test_raw_revenue_credit_capacity_independent_of_opening_ar(opening, second):
     assert all(
         "raw" in raw[k] for k in report.collect_refs(result) if k.startswith("qbo:")
     )
+
+
+@pytest.mark.parametrize(
+    "invoice",
+    ["none", "void", "unknown", "later", "foreign", "two", "receipt", "valid"],
+)
+@pytest.mark.parametrize("opening", ["valid", "invalid"])
+@pytest.mark.parametrize("payment_first", [False, True])
+@pytest.mark.parametrize("refund_amount", ["14.00", "15.00", "16.00"])
+@pytest.mark.parametrize(
+    "credit_state",
+    ["normal", "unknown", "ambiguous", "zero", "void", "later", "applied"],
+)
+def test_raw_rejected_credit_allocation_matrix(
+    invoice, opening, payment_first, refund_amount, credit_state
+):
+    files = generate("clean")
+
+    def mutate(qbo):
+        credit = copy.deepcopy(qbo["CreditMemo"][0])
+        credit.update(
+            Id="CM-X",
+            TotalAmt="40.00",
+            AppliedAmount="0.00",
+            RevenueEvent="EV-X",
+            TxnDate="2026-11-02",
+            EventAt="2026-11-02T12:00:00+00:00",
+            LinkedTxn=[{"TxnType": "Invoice", "TxnId": "I-PAY"}],
+        )
+        credit["Line"][0]["Amount"] = "40.00"
+        qbo["CreditMemo"].append(credit)
+        payment = copy.deepcopy(qbo["Payment"][0])
+        payment.update(
+            Id="P-C",
+            TotalAmt="0.00",
+            UnappliedAmt="0.00",
+            EventAt="2026-11-03T08:00:00+00:00"
+            if payment_first
+            else "2026-11-03T18:00:00+00:00",
+        )
+        payment["Line"] = [copy.deepcopy(payment["Line"][0])]
+        line = payment["Line"][0]
+        line.update(
+            Id="1",
+            Amount="25.00",
+            LinkedTxn=[{"TxnType": "CreditMemo", "TxnId": "CM-X"}],
+        )
+        if invoice != "none":
+            line["LinkedTxn"].append(
+                {
+                    "TxnType": "Invoice",
+                    "TxnId": {
+                        "void": "I-VOID",
+                        "unknown": "I-NOPE",
+                        "later": "I-LATER",
+                        "foreign": "I-FOREIGN",
+                    }.get(invoice, "I-PAY"),
+                }
+            )
+        if invoice in {"later", "foreign"}:
+            other = copy.deepcopy(qbo["Invoice"][0])
+            other.update(
+                Id="I-LATER" if invoice == "later" else "I-FOREIGN",
+                EventAt="2026-11-03T19:00:00+00:00"
+                if invoice == "later"
+                else "2026-11-02T13:00:00+00:00",
+            )
+            if invoice == "foreign":
+                other["CustomerRef"] = {"value": "C-RETAIL"}
+            qbo["Invoice"].append(other)
+        if invoice in {"two", "receipt"}:
+            line["LinkedTxn"].append(
+                {
+                    "TxnType": "Invoice" if invoice == "two" else "SalesReceipt",
+                    "TxnId": "I-OUT" if invoice == "two" else "SR-ORIGINAL",
+                }
+            )
+        healthy = copy.deepcopy(credit)
+        healthy.update(Id="CM-H", TotalAmt="7.00", RevenueEvent="EV-H")
+        healthy["Line"][0]["Amount"] = "7.00"
+        qbo["CreditMemo"].append(healthy)
+        if credit_state == "unknown":
+            line["LinkedTxn"][0]["TxnId"] = "CM-NOPE"
+        elif credit_state == "ambiguous":
+            line["LinkedTxn"].append({"TxnType": "CreditMemo", "TxnId": "CM-H"})
+        elif credit_state == "zero":
+            credit["TotalAmt"] = credit["Line"][0]["Amount"] = "0.00"
+        elif credit_state == "void":
+            credit["status"] = "void"
+        elif credit_state == "later":
+            credit["EventAt"] = "2026-11-03T19:00:00+00:00"
+        elif credit_state == "applied":
+            credit["AppliedAmount"] = "25.00"
+        qbo["Payment"].append(payment)
+        refund = copy.deepcopy(qbo["RefundReceipt"][0])
+        refund.update(
+            Id="RR-X",
+            TotalAmt=refund_amount,
+            RevenueEvent="EV-X",
+            EventAt="2026-11-03T12:00:00+00:00",
+            LinkedTxn=[{"TxnType": "Invoice", "TxnId": "I-PAY"}],
+        )
+        refund["CustomerRef"] = copy.deepcopy(payment["CustomerRef"])
+        credit["CustomerRef"] = copy.deepcopy(payment["CustomerRef"])
+        refund["Line"][0]["Amount"] = refund_amount
+        qbo["RefundReceipt"].append(refund)
+
+    change(files, "qbo.json", mutate, count=True)
+    if opening == "invalid":
+        change(files, "opening_ar.json", lambda data: data.update(as_of="invalid"))
+    result, raw = run(files)
+    revenue = result["kpis"]["revenue"]
+    rejected = invoice != "valid" or credit_state not in {"normal", "applied"}
+    partial = rejected or refund_amount == "16.00"
+    assert revenue["status"] == ("partial" if partial else "complete")
+    assert revenue["value"] == (None if partial else "1250.02")
+    if rejected:
+        assert {
+            "missing_lookup_key": "credit_allocation:qbo:Payment:P-C:1",
+            "source_refs": [
+                *(["qbo:CreditMemo:CM-H"] if credit_state == "ambiguous" else []),
+                "qbo:CreditMemo:CM-NOPE"
+                if credit_state == "unknown"
+                else "qbo:CreditMemo:CM-X",
+                "qbo:Payment:P-C:1",
+            ],
+        } in revenue["gaps"]
+        if payment_first and credit_state not in {"unknown", "void", "later"}:
+            assert any(
+                g["missing_lookup_key"]
+                == "refund_credit_capacity:qbo:RefundReceipt:RR-X"
+                for g in revenue["gaps"]
+            )
+    if opening == "invalid":
+        assert result["kpis"]["AR"]["status"] == "unavailable"
+    if (
+        opening == "valid"
+        and result["kpis"]["AR"]["status"] != "unavailable"
+        and credit_state != "ambiguous"
+    ):
+        assert any(
+            c["amount"] == "7.00" and "qbo:CreditMemo:CM-H" in c["source_refs"]
+            for c in result["kpis"]["AR"]["unapplied_credits"]["contributions"]
+        )
+    document = Document(report.render(result, raw))
+    assert all(link[1:] in document.ids for link in document.links)
+    assert all(
+        "raw" in record or "missing_lookup_key" in record or "derived_from" in record
+        for record in raw.values()
+    )
