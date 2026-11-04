@@ -19,7 +19,7 @@ parent. No ingestion, business checks, KPIs or business report are implemented.
 - Pure generator returns 15 ordered UTF-8 source files; no oracle/application link.
 - 18 exact scenarios: clean, P01–P14, raw-repeat, wrong-clearing, issues.
 - Combined issues: five future findings, two alerts, explicit suppression/cascades.
-- `make check`: 83 tests passed; Ruff lint/format passed; 92/92 measured lines and
+- `make check`: 85 tests passed; Ruff lint/format passed; 92/92 measured lines and
   36/36 branch exits covered independently, with no exclusions.
 - Tests verify arithmetic, source references, entity differences, isolation,
   reproducibility across processes/TZ/hash seeds, date/seed limits, DST and raw repeat.
@@ -42,3 +42,7 @@ still states no audit was evaluated. Final-head CI evidence is posted on the PR
 rather than creating recursive evidence-only commits. All labels were read back;
 label pagination lesson recorded. Source snapshots exported to the VPS preview
 inbox; iCloud upload cannot be confirmed from this worker.
+
+Date-boundary review extended fictional prices into 2019, covering prior-day
+transactions at the first supported 2020 business date. Both date edges tested;
+final make check: 85 passed, exact 92/92 lines and 36/36 branches.

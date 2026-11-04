@@ -21,8 +21,9 @@ to the half-open America/Denver business day; DST yields 23/25-hour days. Inputs
 include 72 hours of history before cutoff for grace and AR replay. QBO TxnDate
 is a posting date, EventAt is explicit synthetic event chronology. The opening AR
 snapshot is at cutoff minus 72 hours; business reporting window remains local day.
-Prices are valid over [2020-01-01, 2035-01-01); generation rejects dates outside
-this fixture pricing range with ValueError rather than extrapolating.
+Generation supports [2020-01-01, 2035-01-01) and rejects other dates with
+ValueError. Prices begin in 2019 to cover prior-day/history records even at the
+first supported business date; they end exclusively at 2035-01-01.
 
 JSON keys sort lexically, arrays retain explicit source order, CSV follows the
 ordered columns declared in `CSV_FIELDS`, newline is LF and files end in LF.

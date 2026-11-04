@@ -493,3 +493,16 @@ def test_serialized_financial_values_never_use_binary_float():
     for raw in generate().values():
         if raw.startswith((b"{", b"[")):
             json.loads(raw, parse_float=reject_float)
+
+
+@pytest.mark.parametrize("day", [date(2020, 1, 1), date(2034, 12, 31)])
+def test_supported_date_edges_preserve_historical_price_coverage(day):
+    data = dataset(business_date=day)
+    prices = {row["item_id"]: row for row in data["prices.csv"]}
+    for entity in ["Invoice", "SalesReceipt"]:
+        for record in data["qbo.json"][entity]:
+            for line in record["Line"]:
+                price = prices[line["SalesItemLineDetail"]["ItemRef"]["value"]]
+                assert (
+                    price["effective_from"] <= record["TxnDate"] < price["effective_to"]
+                )
