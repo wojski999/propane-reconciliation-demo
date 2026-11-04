@@ -363,13 +363,15 @@
         "C01",
         "C02",
         "C03:qbo",
+        "C04:pos",
         "C04:qbo",
+        "C05:pos:POS:T-REFUND:1",
         "C05:qbo",
         "C06",
         "C07",
         "C12",
-        "KPI:revenue",
-        "KPI:AR"
+        "KPI:AR",
+        "KPI:revenue"
       ],
       "legitimate_cascades": []
     },
@@ -572,7 +574,7 @@
     "wrong-clearing": {
       "findings": [
         {
-          "finding_id": "C12|qbo:JournalEntry:JE-UNBALANCED:1",
+          "finding_id": "C12|identity:posting:POST-I-PAY|qbo:JournalEntry:JE-UNBALANCED:1",
           "check_id": "C12",
           "severity": "high",
           "status": "exception",
@@ -583,10 +585,10 @@
           "delta": "-10.00",
           "threshold": "0.01",
           "source_refs": [
+            "identity:posting:POST-I-PAY",
             "qbo:JournalEntry:JE-UNBALANCED:1"
           ],
           "related_refs": [
-            "identity:posting:POST-I-PAY",
             "policy:POLICY-1",
             "qbo:Invoice:I-PAY",
             "qbo:JournalEntry:JE-UNBALANCED:2",

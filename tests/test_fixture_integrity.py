@@ -628,7 +628,7 @@ RELATED_EXPECTATIONS = {
     "P14": ["identity:approval:APP-REFUND policy:POLICY-1"],
     "raw-repeat": ["qbo:Invoice:I-PRICE qbo:version:I-PRICE:0"],
     "wrong-clearing": [
-        "identity:posting:POST-I-PAY policy:POLICY-1 qbo:Invoice:I-PAY "
+        "policy:POLICY-1 qbo:Invoice:I-PAY "
         "qbo:JournalEntry:JE-UNBALANCED:2 qbo:account:CLEARING "
         "qbo:account:REVENUE"
     ],
@@ -652,6 +652,8 @@ def assert_suppression_and_alert_contract():
     """Independent test-only scenario contract, never production dependencies."""
     expected = {
         "P10": {
+            "C04:pos",
+            "C05:pos:POS:T-REFUND:1",
             "C01",
             "C02",
             "C03:qbo",
@@ -692,9 +694,10 @@ def assert_suppression_and_alert_contract():
             assert m["status"] == "failed" and m["error_code"] == "CSV_SCHEMA"
         assert entry["alerts"] == [check + "|manifest:" + m["manifest_id"]]
     singles = [ORACLE["scenarios"][f"P{i:02}"] for i in range(1, 15)]
-    assert set(ORACLE["scenarios"]["issues"]["not_evaluated"]) == set().union(
-        *(set(entry["not_evaluated"]) for entry in singles)
-    )
+    combined = set().union(*(set(entry["not_evaluated"]) for entry in singles))
+    # Failed POS already blocks the entire C05:pos scope in the combined run.
+    combined.remove("C05:pos:POS:T-REFUND:1")
+    assert set(ORACLE["scenarios"]["issues"]["not_evaluated"]) == combined
     assert set(ORACLE["scenarios"]["issues"]["alerts"]) == set().union(
         *(set(entry["alerts"]) for entry in singles)
     )

@@ -16,7 +16,6 @@ from propane_demo.rules import Engine, reconcile
 ORACLE = json.loads(
     (Path(__file__).parent / "fixtures/expected_findings.json").read_text()
 )
-IMPLEMENTED = {"C01", "C02", "C03", "C04", "C05", "C06", "C07", "C12"}
 
 
 def inputs(scenario="clean", business_date=date(2026, 11, 3), blocked=None):
@@ -37,33 +36,9 @@ def numbers(finding):
 
 
 @pytest.mark.parametrize("scenario", SCENARIOS)
-def test_exact_independent_oracle_applicable_subset(scenario):
-    # This step does NOT implement C09. Inject the explicitly known future
-    # freshness scopes to test its dependency boundary on P10/combined data.
-    blocked = {
-        scope: {"status": "not_evaluated", "source_refs": ["manifest:QBO-STALE"]}
-        for scope in ORACLE["scenarios"]["P10"]["not_evaluated"]
-    }
-    data = inputs(scenario, blocked=blocked if scenario in {"P10", "issues"} else None)
-    expected = [
-        f
-        for f in ORACLE["scenarios"][scenario]["findings"]
-        if f["check_id"] in IMPLEMENTED
-        or (
-            f["check_id"] == "C11"
-            and f["source_refs"] == ["cargas:delivery:D-NO-MAPPING"]
-        )
-    ]
-    expected = copy.deepcopy(expected)
-    # Clearing comparisons now identify the configured posting as primary evidence.
-    for finding in expected:
-        if finding["check_id"] == "C12" and len(finding["source_refs"]) == 1:
-            mapping = next(
-                k for k in finding["related_refs"] if k.startswith("identity:posting:")
-            )
-            finding["related_refs"].remove(mapping)
-            finding["source_refs"] = sorted([mapping, *finding["source_refs"]])
-            finding["finding_id"] = "|".join(["C12", *finding["source_refs"]])
+def test_exact_complete_independent_oracle(scenario):
+    data = inputs(scenario)
+    expected = ORACLE["scenarios"][scenario]["findings"]
     found = actual(data)
 
     # Explanation wording is intentionally not an oracle algorithm. Every other
@@ -74,14 +49,13 @@ def test_exact_independent_oracle_applicable_subset(scenario):
     assert substantive(found) == substantive(expected)
     assert all(f["explanation"] for f in found)
     result = reconcile(data)
-    assert result["freshness_evaluated"] is False
-    assert {
-        scope for scope in result["not_evaluated"] if scope.split(":")[0] in IMPLEMENTED
-    } == {
-        scope
-        for scope in ORACLE["scenarios"][scenario]["not_evaluated"]
-        if scope.split(":")[0] in IMPLEMENTED
-    }
+    assert result["freshness_evaluated"] is True
+    assert set(result["not_evaluated"]) == set(
+        ORACLE["scenarios"][scenario]["not_evaluated"]
+    )
+    assert [a["alert_id"] for a in result["alerts"]] == ORACLE["scenarios"][scenario][
+        "alerts"
+    ]
 
 
 @pytest.mark.parametrize(
@@ -122,6 +96,8 @@ def test_split_combined_partial_allocations_and_grace():
     data = inputs()
     # Advance past grace, and remove 1 gallon from one half of split billing.
     data["run"]["as_of"] = "2026-11-06T07:00:00+00:00"
+    for manifest in data["manifests"]:
+        manifest["metadata"]["covered_through"] = data["run"]["as_of"]
     data["records"]["identity:allocation:A-SPLIT-A"]["gallons"] -= 1000
     found = actual(data, "C01")
     split = next(f for f in found if "cargas:delivery:D-SPLIT" in f["source_refs"])
@@ -344,7 +320,7 @@ def test_failure_scopes_suppress_missing_mapping_cascades():
         data = from_database(db)
     finally:
         db.close()
-    assert actual(data) == []
+    assert {f["check_id"] for f in actual(data)} == {"C10"}
     assert "C01" in reconcile(data)["not_evaluated"]
 
 
@@ -704,7 +680,7 @@ def test_qbo_failure_suppresses_pos_price_without_missing_customer_cascade():
         data = from_database(db)
     finally:
         db.close()
-    assert actual(data) == []
+    assert {f["check_id"] for f in actual(data)} == {"C10"}
     assert reconcile(data)["not_evaluated"]["C04:pos"]["source_refs"] == [
         "manifest:QBO-OK"
     ]
@@ -713,7 +689,7 @@ def test_qbo_failure_suppresses_pos_price_without_missing_customer_cascade():
 def test_pos_failure_suppresses_configured_batch_posting_but_not_journal_balance():
     data = inputs("P11")
     data["records"]["identity:posting:POST-I-PAY"]["external_ref"] = "B-SETTLED"
-    assert actual(data) == []
+    assert {f["check_id"] for f in actual(data)} == {"C10"}
     assert "C12:identity:posting:POST-I-PAY" in reconcile(data)["not_evaluated"]
 
 

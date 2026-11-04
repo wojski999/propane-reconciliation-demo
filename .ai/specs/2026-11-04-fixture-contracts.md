@@ -393,3 +393,44 @@ Absent native links mark only `C07:<batch-key>:links` not evaluated: amount chec
 that have sufficient evidence still run. Conflicting full findings with identical
 IDs remain an engine error, never an overwrite. C04 bridge eligibility uses the
 configured `price_tolerance`, including when it differs from the demo cent default.
+
+## Step-4 inventory and freshness boundary
+
+`rules.reconcile(inputs)` now evaluates the actual source watermarks before all
+implemented checks (C01–C12); `freshness_evaluated` is true. The detached input
+contains validated manifests, persisted alerts and record-derived dependencies.
+`rule_inputs.reconcile_database(db)` orchestrates that pure function and persists
+its alerts idempotently in the existing disposable database. It does not render,
+compute KPIs, perform IO outside SQLite, or call a network. C10 owns invalid
+metadata, including extraction beyond as-of plus five minutes; no C09/C11 root
+is added for the same failed source. C09 compares coverage with report as-of,
+not extraction time, and retains one worst-watermark alert per atomic source/run.
+Reading endpoint freshness is expressed as the C08 sensor-uncertain exception;
+quality and uncertainty likewise cannot produce a shortage/excess verdict.
+
+`inventory` contains one worksheet per explicitly measured asset, signed
+`contributions`, immutable source keys, basis, expected/observed/delta/tolerance
+and evaluated/not-evaluated/sensor-uncertain state. A blocked worksheet retains
+known signed `ledger_inputs` without claiming an expected total. Source records
+validate ledger outflows; a POS delivery representation contributes zero rather
+than another outflow. Retail count conversion requires the explicit SKU fill
+mapping and the ledger's stated basis. No temperature conversion exists.
+`consolidation` removes paired transfer contributions and is unavailable if any
+asset is unavailable/uncertain or bases cannot be combined. Per-asset exceptions
+remain visible even if their deltas offset in consolidation. This is inventory
+arithmetic only; revenue, AR and sales-volume KPI arithmetic remains step 5.
+
+Blank CSV gallon_basis is a missing-support value retained for C11. An unknown
+nonblank basis remains a C10 schema failure. Missing or ambiguous endpoints,
+unknown SKU fill, incompatible bases, incomplete transfer pairs and inconsistent
+ledger/source evidence use exact existing refs and lookup keys, never guessed
+volume. Transfers are validated before either endpoint asset is compared.
+
+The full literal 18-scenario oracle is now compared without injecting future
+freshness scopes. The reviewed C12 primary posting mapping is promoted in the
+literal oracle and checked explicitly, with unchanged amounts/thresholds. P10's
+eligibility contract additionally lists C04:pos (QBO customer price class) and
+C05:pos:POS:T-REFUND:1 (QBO approval), dependencies already established by the
+step-3 source-failure tests. In combined issues, the whole failed C05:pos scope
+subsumes that per-refund scope. No business expected values or planted findings
+change. Future KPI unavailable scopes are eligibility, not computed KPI results.
