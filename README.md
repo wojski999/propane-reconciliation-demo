@@ -4,8 +4,8 @@ A public demonstration of daily propane distribution checks using synthetic data
 The planned report highlights transactions needing attention and traces each
 finding to its source. No real systems, client records or credentials are used.
 
-**Current status: foundation and step-1 synthetic fixtures.** The deterministic
-generator and independent test oracle are available. Reconciliation checks, KPIs
+**Current status: foundation, synthetic fixtures and step-2 atomic ingestion.**
+The deterministic generator, SQLite importer and independent test oracle are available. Reconciliation checks, KPIs
 and vendor integrations are not implemented yet. See the
 [approved specification](.ai/specs/2026-11-04-propane-reconciliation-demo.md).
 
@@ -64,3 +64,40 @@ headers, entity-specific fields, evidence IDs, boundaries and combined suppressi
 The independent oracle under tests describes expected **future** findings; the
 generator does not execute checks or claim a clean audit. The business CLI and
 report remain later ordered implementation steps.
+
+## Inspect an imported run
+
+```python
+from propane_demo.generator import generate
+from propane_demo.ingestion import ingest, unavailable
+
+files = generate("P11")
+db = ingest(files.__getitem__)
+try:
+    print(dict(db.execute("SELECT * FROM run").fetchone()))
+    print([dict(row) for row in db.execute("SELECT * FROM alerts")])
+    print(unavailable(db))
+finally:
+    db.close()
+```
+
+For exported files, pass `lambda name: (input_directory / name).read_bytes()`.
+Every call creates a fresh in-memory SQLite database; there is no stored cache,
+persistent schema, migration or accounting write. The caller closes the connection.
+Invalid run/policy controls raise a safe `Invalid` error; individual failed feeds
+produce incomplete import status and one critical C10 alert per atomic source.
+QBO base and its update stream are one source transaction. Immutable raw bytes
+and failed manifests survive normalized-row rollback. `records` is the current
+version view, `versions` retains history, and `occurrences` retains every physical
+record pointer, including exact repeats. Money is integer cents; volume is integer
+thousandths of a US gallon. `scaled_values` stores typed SQLite INTEGER cells
+with scale and field pointer; structured normalized payloads retain the same integers.
+
+`complete` means import completed, **not** that business checks passed or sources
+are fresh. Coverage watermarks remain explicit in manifests; C09 freshness checks
+are step 4. `unavailable` describes failed-source dependencies, including asset
+scopes derived from mappings and movement links. Syntactically valid missing
+lookups remain inspectable in `references_needed` and source records for future
+C11; they never become fabricated counterpart IDs or an import-time business
+verdict. Reconciliation, KPI calculations, the business CLI and its exit codes,
+HTML business reporting and optional narrative remain later implementation steps.

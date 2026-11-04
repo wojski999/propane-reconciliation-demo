@@ -12,6 +12,8 @@ ALLOWED_INTERNAL_IMPORTS = {
     "cli": {"smoke"},
     "contracts": set(),
     "generator": {"contracts"},
+    "validation": {"contracts"},
+    "ingestion": {"contracts", "generator", "validation"},
 }
 
 

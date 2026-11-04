@@ -79,7 +79,8 @@ applied credits and allocated payments are replayed after that snapshot. Invoice
 Balance is only a reference. Unapplied money and cash refunds do not reduce AR.
 
 Each manifest retains manifest_id in addition to the section-4 required fields.
-row_count is physical CSV rows / JSON array records; QBO sums entity arrays;
+row_count is logical CSV data records (including exact repeats, excluding blank
+lines) / JSON array records; QBO sums entity arrays;
 identity and opening-AR JSON count top-level members (not normalized rows).
 Updates are distinct source versions; the UPDATES-OK manifest counts records, not wrapper members. Raw-repeat preserves both physical pointers.
 P11 deliberately emits a short malformed POS row and a failed CSV_SCHEMA manifest;
@@ -217,3 +218,72 @@ Every source timestamp is within its declared window, no later than extraction
 and as-of plus future_max_minutes. Coverage lies within the declared window and
 no later than extraction. Only P10's QBO covered_through is deliberately stale;
 its newer records still obey window, extraction and future-time constraints.
+
+
+## Step-2 ingestion representation
+
+The importer now enforces the version-1 fictional boundaries. Its disposable
+SQLite schema is recreated in memory for each invocation; there is no persistent
+database format or migration. The smoke CLI/artifact contract remains unchanged.
+Raw bytes are stored as immutable BLOBs with SHA-256; occurrences retain source
+file and physical row / zero-based JSON pointer. Normalized JSON uses integer
+cents and thousandths of gallons (temperature/discount percent: thousandths).
+The `scaled_values` table additionally stores each numeric field as a typed SQLite
+INTEGER with its scale, record/version and nested field pointer. No rounding or
+binary float is accepted at import. Effective price intervals for
+the same item/class/unit/basis must not overlap. Unknown units/statuses and
+malformed reference syntax are source failures; absent supporting matches remain
+missing lookup evidence for later C11 rather than guessed matches.
+
+QBO source atomicity includes both base collections and the required update stream.
+Exact same-version rows retain distinct occurrences, while the same physical file
+replay is idempotent. Conflicting content at a source ID/version fails the source.
+The highest numeric version owns current records/lines; previous versions and
+raw occurrences remain available without double counting. Each other manifest
+source is atomic independently. A failure rolls back normalized records, versions
+and occurrences, preserving original file bytes, a failed manifest and one C10
+critical alert. Successful empty feeds are different from missing/unreadable,
+malformed, failed or wrong-row-count feeds.
+
+Import status is complete/incomplete; it is not a freshness/business verdict.
+The later C09 engine consumes actual manifest watermarks. Failure availability
+is derived from declared source dependencies and real asset movement links,
+never test-oracle suppression lists. This API does not implement findings, C11
+matching, business reconciliation, KPI arithmetic or reporting.
+
+Synthetic demo severity clarification: an unavailable asset inventory quantity is
+a core inventory KPI under the existing C11 policy, hence P12 missing boundary
+readings have high severity. This documents the already approved fixture/oracle
+interpretation; it creates no new client policy or inventory calculation.
+
+
+## Step-2 review corrections (PR #11)
+
+CSV occurrence pointers use the physical **ending line** of each data record,
+from `csv.DictReader.line_num`; blank lines consume physical line numbers but do
+not add records. A quoted multiline record points to its closing line. Invalid
+multiline identifier fields fail at that same ending line. Raw file bytes remain
+the authoritative evidence. Exact repeated CSV records retain separate immutable
+occurrences under one version/current record; repeated price rows do not create
+an overlapping interval. Differing content at the same CSV key is a source failure.
+The occurrences grouped by record_key/version expose duplicate evidence for future
+C03; this importer does not evaluate C03.
+
+Identity collections reject unknown row keys. Required keys remain as documented
+above; only pos_events.delivery_id/payment_id and approvals.approved_discount_pct
+are optional. Opening AR accepts exactly snapshot_id/as_of/balances, with exactly
+customer_id/amount in each balance. Customer/Item cannot carry transaction Line.
+Source parsing recursion failures are safe JSON_SCHEMA failures; unusable manifest
+indexes fail closed for all groups while raw bytes and failure manifests survive.
+Invalid control metadata remains fatal. A fatal expected import/storage boundary
+closes the allocated connection before propagating the error.
+
+Synthetic absent-manifest IDs use `missing:<file>`, a namespace impossible for
+validated real manifest identifiers. A higher QBO parent version clears current
+child records **and their reference requirements**; older replay preserves raw
+history without restoring deleted current records/references.
+
+P11 suppresses only the asset-specific inventory checks in the reviewed oracle;
+it does not suppress the whole inventory KPI. Whole-scope identity/inventory/
+readings failures retain whole inventory unavailability. Oracle contents remain
+unchanged and test-only.

@@ -646,3 +646,119 @@ def test_all_related_evidence_matches_scenario_semantics():
         assert len(findings) == len(groups)
         for finding, expected in zip(findings, groups, strict=True):
             assert finding["related_refs"] == sorted(expected.split())
+
+
+def assert_suppression_and_alert_contract():
+    """Independent test-only scenario contract, never production dependencies."""
+    expected = {
+        "P10": {
+            "C01",
+            "C02",
+            "C03:qbo",
+            "C04:qbo",
+            "C05:qbo",
+            "C06",
+            "C07",
+            "C12",
+            "KPI:revenue",
+            "KPI:AR",
+        },
+        "P11": {
+            "C03:pos",
+            "C04:pos",
+            "C05:pos",
+            "C07",
+            "C08:BULK-A",
+            "C08:ISOLATED",
+            "KPI:retail",
+            "KPI:revenue",
+        },
+    }
+    for scenario, scopes in expected.items():
+        entry = ORACLE["scenarios"][scenario]
+        assert set(entry["not_evaluated"]) == scopes
+        manifests = dataset(scenario)["manifests.json"]
+        m = next(
+            m
+            for m in manifests
+            if m["file_id"] == ("qbo.json" if scenario == "P10" else "pos.csv")
+        )
+        check = "C09" if scenario == "P10" else "C10"
+        if scenario == "P10":
+            assert datetime.fromisoformat(m["extracted_at"]) - datetime.fromisoformat(
+                m["covered_through"]
+            ) == timedelta(hours=25)
+        else:
+            assert m["status"] == "failed" and m["error_code"] == "CSV_SCHEMA"
+        assert entry["alerts"] == [check + "|manifest:" + m["manifest_id"]]
+    singles = [ORACLE["scenarios"][f"P{i:02}"] for i in range(1, 15)]
+    assert set(ORACLE["scenarios"]["issues"]["not_evaluated"]) == set().union(
+        *(set(entry["not_evaluated"]) for entry in singles)
+    )
+    assert set(ORACLE["scenarios"]["issues"]["alerts"]) == set().union(
+        *(set(entry["alerts"]) for entry in singles)
+    )
+    for scenario, entry in ORACLE["scenarios"].items():
+        d = dataset(scenario)
+        for finding in entry["findings"]:
+            assert finding["business_date"] == d["run.json"]["business_date"]
+            assert finding["rule_version"] == d["policies.json"]["version"]
+
+
+def test_suppression_and_alert_contract():
+    assert_suppression_and_alert_contract()
+
+
+@pytest.mark.parametrize(
+    "scope",
+    [
+        "C02",
+        "C06",
+        "C07",
+        "C12",
+        "KPI:AR",
+        "KPI:delivered",
+        "KPI:inventory",
+        "KPI:retail",
+        "KPI:revenue",
+    ],
+)
+def test_dropped_combined_unavailable_scope_rejected(monkeypatch, scope):
+    entry = ORACLE["scenarios"]["issues"]
+    monkeypatch.setitem(
+        entry, "not_evaluated", [x for x in entry["not_evaluated"] if x != scope]
+    )
+    with pytest.raises(AssertionError):
+        assert_suppression_and_alert_contract()
+
+
+@pytest.mark.parametrize(
+    "scenario,field,value",
+    [
+        ("P10", "alerts", []),
+        ("P11", "not_evaluated", ["C12"]),
+    ],
+)
+def test_alert_and_unrelated_suppression_mutations_rejected(
+    monkeypatch, scenario, field, value
+):
+    entry = ORACLE["scenarios"][scenario]
+    if field == "not_evaluated":
+        value = entry[field] + value
+    monkeypatch.setitem(entry, field, value)
+    with pytest.raises(AssertionError):
+        assert_suppression_and_alert_contract()
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("business_date", "2020-01-01"),
+        ("rule_version", "other"),
+    ],
+)
+def test_finding_run_metadata_mutations_rejected(monkeypatch, field, value):
+    finding = ORACLE["scenarios"]["P11"]["findings"][0]
+    monkeypatch.setitem(finding, field, value)
+    with pytest.raises(AssertionError):
+        assert_suppression_and_alert_contract()
