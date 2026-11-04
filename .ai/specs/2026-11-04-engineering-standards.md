@@ -14,7 +14,9 @@ Use Decimal for money/quantity arithmetic when introduced; floats are not financ
 values. Add real modules when needed, never empty speculative layers.
 
 Current graph: `cli -> smoke -> standard library`;
-`generator -> contracts -> standard library`. Generator reads packaged synthetic
+`generator -> contracts -> standard library`;
+`ingestion -> validation / generator / contracts -> standard library`;
+`validation -> contracts -> standard library`. Generator reads packaged synthetic
 source templates only. The independent expected oracle stays under tests and is
 never an application input. Do not read test boundary answers or configured
 expected amounts in checks; derive every comparison from source records.
@@ -37,8 +39,9 @@ The current CLI accepts only an output path; argparse rejects invalid arguments.
 Catch expected boundary failures, emit a safe error and nonzero status. Never
 catch broad Exception to report success. The smoke CLI catches OSError and exits 1;
 usage errors exit 2. No stale audit result or financial verdict is produced.
-SQLite smoke state is in-memory and discarded. Persistent schema/migration and
-atomic import design are deferred to the import issue; no simulated migrations.
+SQLite smoke state is in-memory and discarded. Step-2 ingestion uses a fresh in-memory schema for every invocation and source
+savepoints; no persistent migration format is introduced. Raw bytes and failure
+manifests survive source rollback. No simulated migrations.
 
 ## Security minimum
 

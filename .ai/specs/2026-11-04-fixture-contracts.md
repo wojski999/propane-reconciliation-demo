@@ -217,3 +217,40 @@ Every source timestamp is within its declared window, no later than extraction
 and as-of plus future_max_minutes. Coverage lies within the declared window and
 no later than extraction. Only P10's QBO covered_through is deliberately stale;
 its newer records still obey window, extraction and future-time constraints.
+
+
+## Step-2 ingestion representation
+
+The importer now enforces the version-1 fictional boundaries. Its disposable
+SQLite schema is recreated in memory for each invocation; there is no persistent
+database format or migration. The smoke CLI/artifact contract remains unchanged.
+Raw bytes are stored as immutable BLOBs with SHA-256; occurrences retain source
+file and physical row / zero-based JSON pointer. Normalized JSON uses integer
+cents and thousandths of gallons (temperature/discount percent: thousandths).
+The `scaled_values` table additionally stores each numeric field as a typed SQLite
+INTEGER with its scale, record/version and nested field pointer. No rounding or
+binary float is accepted at import. Effective price intervals for
+the same item/class/unit/basis must not overlap. Unknown units/statuses and
+malformed reference syntax are source failures; absent supporting matches remain
+missing lookup evidence for later C11 rather than guessed matches.
+
+QBO source atomicity includes both base collections and the required update stream.
+Exact same-version rows retain distinct occurrences, while the same physical file
+replay is idempotent. Conflicting content at a source ID/version fails the source.
+The highest numeric version owns current records/lines; previous versions and
+raw occurrences remain available without double counting. Each other manifest
+source is atomic independently. A failure rolls back normalized records, versions
+and occurrences, preserving original file bytes, a failed manifest and one C10
+critical alert. Successful empty feeds are different from missing/unreadable,
+malformed, failed or wrong-row-count feeds.
+
+Import status is complete/incomplete; it is not a freshness/business verdict.
+The later C09 engine consumes actual manifest watermarks. Failure availability
+is derived from declared source dependencies and real asset movement links,
+never test-oracle suppression lists. This API does not implement findings, C11
+matching, business reconciliation, KPI arithmetic or reporting.
+
+Synthetic demo severity clarification: an unavailable asset inventory quantity is
+a core inventory KPI under the existing C11 policy, hence P12 missing boundary
+readings have high severity. This documents the already approved fixture/oracle
+interpretation; it creates no new client policy or inventory calculation.
