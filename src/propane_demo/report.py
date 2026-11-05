@@ -1170,8 +1170,10 @@ def business_sections(result, raw_evidence, changes=None):
     money = [impact_amount(f, result)[1] for f in findings]
     money = [amount for amount in money if amount is not None]
     decision = (
-        "About <b>" + escaped(formatted(sum(money), "USD")) + "</b> in flagged "
-        "amounts needs a decision today. "
+        "About <b>"
+        + escaped(formatted(sum(money), "USD"))
+        + f"</b> across {len(money)} flagged items needs a decision today "
+        "(estimates and differences, not booked amounts). "
         if money
         else ""
     )
@@ -1365,7 +1367,7 @@ def business_sections(result, raw_evidence, changes=None):
             + escaped(ACTIONS[check])
             + '</p></div><details class="disclosure"><summary>See source records'
             "</summary><p>" + links(refs) + '</p></details></div><div class="acts">'
-            '<span class="b p" aria-disabled="true">Mark as resolved</span>'
+            '<span class="b" aria-disabled="true">Mark as resolved</span>'
             '<span class="b" aria-disabled="true">Assign</span>'
             '<span class="mock">Pilot feature · not saved</span></div></aside>'
         )
@@ -1419,7 +1421,9 @@ def render(result, raw_evidence, *, narrative_status=None, changes=None):
         + escaped(
             json.dumps(result.get("exposure_estimates", {}), indent=2, sort_keys=True)
         )
-        + "</pre></section><section><h2>Prior business day comparison</h2><pre>"
+        + "</pre></section><section><h2>Prior business day comparison</h2><p>"
+        "Baseline: the synthetic clean scenario on the prior business day, "
+        "computed by the same pipeline.</p><pre>"
         + escaped(json.dumps(changes, indent=2, sort_keys=True))
         + "</pre></section>"
     )

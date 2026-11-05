@@ -64,3 +64,7 @@ issue #18. Design reference: `.ai/design/2026-11-05-report-mockup-v2*`.
 - Screenshots: `showcase-*.png`, `issues-*.png`, and the comparisons
   `mockup-v2-vs-showcase-{desktop,mobile}.png` in `.ai/qa/2026-11-05-report/`.
 - Calculations: `samples/*-results.json` and `*-summary.txt` unchanged.
+
+## Review follow-up (6f0bc995, approve)
+
+Addressed the optional findings: the decision sum now reads "across N flagged items ... (estimates and differences, not booked amounts)"; "Mark as resolved" uses the muted inactive style; the technical prior-day section states the synthetic clean baseline. PR title and `feature` label set; the PR stays draft for the owner visual approval.

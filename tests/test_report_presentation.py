@@ -334,6 +334,9 @@ def test_prior_day_changes_compare_only_complete_consecutive_values():
     assert "▼ $50.00 vs. Nov 2" in front and "▲ $40.00 vs. Nov 2" in front
     assert "Prior business day comparison is not available" not in front
     assert "&quot;prior&quot;: &quot;860.01&quot;" in technical
+    assert (
+        "Baseline: the synthetic clean scenario on the prior business day" in technical
+    )
 
 
 def test_mockup_v2_shell_flow_table_drawer_and_pilot_controls():
@@ -350,7 +353,9 @@ def test_mockup_v2_shell_flow_table_drawer_and_pilot_controls():
     assert front.count("Pilot feature · not saved") == 5
     assert 'Exceptions<span class="n">5</span>' in front
     assert "Tue, Nov 3" in front and "Data as of 6:30 AM" in front
-    assert "About <b>$380.00</b> in flagged amounts" in front
+    assert "About <b>$380.00</b> across 4 flagged items needs a decision" in front
+    assert "not booked amounts" in front
+    assert '<span class="b" aria-disabled="true">Mark as resolved</span>' in front
     # Money flow: authoritative KPIs, AR cash allocations and the C07 difference.
     for value in ("600 gal", "$1,290.02", "$300.00", "$460.00"):
         assert f'<p class="v">{value}</p>' in front
