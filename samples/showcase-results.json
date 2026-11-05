@@ -1,5 +1,15 @@
 {
   "alerts": [],
+  "card_deposits": {
+    "count": 1,
+    "dates": [
+      "2026-10-29"
+    ],
+    "source_refs": [
+      "qbo:Deposit:DEP-SHORT"
+    ],
+    "value": "460.00"
+  },
   "check_scopes": {
     "C01": {
       "status": "evaluated"
@@ -1995,12 +2005,14 @@
     "business_date": "2026-11-03",
     "contract_version": "1",
     "report_labels": {
+      "cargas:customer:CE-C1": "Rio Grande Ranch",
       "cargas:delivery:D-MISSING": "Delivery #1042 to Rio Grande Ranch",
       "cargas:reading:R-CLOSE": "South yard bulk tank at Rio Grande Depot",
       "cargas:reading:R-OPEN": "South yard bulk tank at Rio Grande Depot",
       "pos:POS:T-DUP-A:1": "Receipt #2081 for Rio Grande Ranch",
       "pos:POS:T-DUP-B:1": "Receipt #2082 for Rio Grande Ranch",
       "pos:batch:B-SETTLED": "Card batch #5042 at Rio Grande counter",
+      "pos:customer:POS-C1": "Rio Grande Ranch",
       "qbo:CreditMemo:CM-UNUSUAL:1": "Credit #3105 for Rio Grande Ranch",
       "qbo:Deposit:DEP-SHORT:1": "Deposit #8142 for card sales"
     },
@@ -2008,6 +2020,6 @@
     "window_end": "2026-11-04T07:00:00+00:00",
     "window_start": "2026-11-03T07:00:00+00:00"
   },
-  "source_digest": "4c7fcb8bca93ef300fdef3cd91285f2a77a9260b9c4096016205752dae71c19f",
+  "source_digest": "b0346f4f24593a0a8daa51dfd4379a2c4767f0476132fd53bc6670893c62b7c8",
   "status": "complete"
 }

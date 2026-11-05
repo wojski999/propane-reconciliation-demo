@@ -12,7 +12,7 @@ import pytest
 from test_ingestion import change
 from test_rules import ORACLE
 
-from propane_demo import business, narrative, report
+from propane_demo import business, narrative, presentation, report
 from propane_demo.contracts import SCENARIOS
 from propane_demo.generator import generate
 from propane_demo.ingestion import ingest
@@ -396,8 +396,12 @@ def test_installed_business_command_no_key_or_network(tmp_path, monkeypatch):
 def test_committed_sample_matches_current_computation_and_render():
     result, raw = run()
     root = Path(__file__).resolve().parents[1] / "samples"
+    prior = business.baseline(20261104, generate.__defaults__[2])
     assert (root / "clean-report.html").read_text() == report.render(
-        result, raw, narrative_status=narrative.build(result)
+        result,
+        raw,
+        narrative_status=narrative.build(result),
+        changes=presentation.prior_changes(result, prior),
     )
     assert json.loads((root / "clean-results.json").read_text()) == result
     assert (root / "clean-summary.txt").read_text() == report.summary(result) + "\n"

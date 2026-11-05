@@ -3118,6 +3118,8 @@
   "showcase": {
     "customer_name": "Rio Grande Ranch",
     "report_labels": {
+      "cargas:customer:CE-C1": "Rio Grande Ranch",
+      "pos:customer:POS-C1": "Rio Grande Ranch",
       "cargas:delivery:D-MISSING": "Delivery #1042 to Rio Grande Ranch",
       "pos:POS:T-DUP-A:1": "Receipt #2081 for Rio Grande Ranch",
       "pos:POS:T-DUP-B:1": "Receipt #2082 for Rio Grande Ranch",

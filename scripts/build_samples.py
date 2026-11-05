@@ -3,15 +3,17 @@
 import json
 from pathlib import Path
 
-from propane_demo.business import compute
-from propane_demo.generator import generate
+from propane_demo.business import baseline, compute
+from propane_demo.generator import DEFAULT_DATE, DEFAULT_SEED, generate
 from propane_demo.ingestion import ingest
 from propane_demo.narrative import build
+from propane_demo.presentation import prior_changes
 from propane_demo.report import collect_refs, evidence, render, summary
 
 
 def main():
     root = Path(__file__).resolve().parents[1] / "samples"
+    prior = baseline(DEFAULT_SEED, DEFAULT_DATE)
     for scenario in ("clean", "issues", "showcase"):
         db = ingest(generate(scenario).__getitem__)
         try:
@@ -30,7 +32,13 @@ def main():
         )
         text = build(result, **kwargs)
         (root / f"{scenario}-report.html").write_text(
-            render(result, raw, narrative_status=text), encoding="utf-8"
+            render(
+                result,
+                raw,
+                narrative_status=text,
+                changes=prior_changes(result, prior),
+            ),
+            encoding="utf-8",
         )
         (root / f"{scenario}-results.json").write_text(
             json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8"

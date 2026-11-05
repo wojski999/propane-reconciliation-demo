@@ -1,6 +1,6 @@
 """Pure, evidence-bound exposure estimates; never financial KPI totals or postings."""
 
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from decimal import ROUND_HALF_UP, Decimal
 from zoneinfo import ZoneInfo
 
@@ -75,3 +75,57 @@ def exposures(inputs, checks):
                     "source_refs": refs,
                 }
     return estimates
+
+
+def prior_changes(result, prior):
+    """Differences between two authoritative runs on consecutive business days."""
+    if (
+        prior is None
+        or prior["gallon_basis"] != result["gallon_basis"]
+        or date.fromisoformat(prior["run"]["business_date"])
+        != date.fromisoformat(result["run"]["business_date"]) - timedelta(days=1)
+    ):
+        return {}
+    changes = {}
+    for key, sheet in result["kpis"].items():
+        old = prior["kpis"].get(key, {})
+        if (
+            sheet["value"] is None
+            or old.get("value") is None
+            or old["unit"] != sheet["unit"]
+        ):
+            continue
+        changes[key] = {
+            "prior_business_date": prior["run"]["business_date"],
+            "prior": old["value"],
+            "change": str(Decimal(sheet["value"]) - Decimal(old["value"])),
+            "unit": sheet["unit"],
+        }
+    return changes
+
+
+def card_deposits(inputs, checks):
+    """Active QuickBooks deposits linked to card batches; None when C07 is unchecked."""
+    if any(scope.startswith("C07") for scope in checks["not_evaluated"]):
+        return None
+    records = inputs["records"]
+    keys = sorted(
+        {
+            "qbo:Deposit:" + batch["qbo_deposit_id"]
+            for key, batch in records.items()
+            if key.startswith("pos:batch:")
+        }
+    )
+    rows = [
+        (key, records[key])
+        for key in keys
+        if key in records
+        and records[key].get("status", "") not in {"void", "cancelled", "pending"}
+    ]
+    total = sum((Decimal(row["TotalAmt"]) for _, row in rows), Decimal(0)) / 100
+    return {
+        "value": str(total.quantize(Decimal(".01"))),
+        "count": len(rows),
+        "dates": sorted({row["TxnDate"] for _, row in rows}),
+        "source_refs": [key for key, _ in rows],
+    }

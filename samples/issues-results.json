@@ -34,6 +34,7 @@
       "status": "open"
     }
   ],
+  "card_deposits": null,
   "check_scopes": {
     "C01": {
       "source_refs": [

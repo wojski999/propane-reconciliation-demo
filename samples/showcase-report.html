@@ -28,66 +28,146 @@ dd{margin-bottom:1rem}
 table,tbody,tr,th,td{display:block}thead{display:none}tr{margin-bottom:1.5rem}}
 @media print{main{max-width:none;padding:0}details{break-inside:avoid}a{color:inherit}}
 
-body{background:#f3f5f4;color:#172d2b}main{max-width:78rem;padding:3rem 2rem}
-h1{font-size:2.4rem;line-height:1.3;letter-spacing:-.025em;margin:0 0 .75rem}
-h2{letter-spacing:-.015em}h3{line-height:1.4}a{color:#005d74}
-.morning-header{border-bottom:1px solid #b8c7c2;padding-bottom:1.5rem}
-.headline{font-size:1.45rem;line-height:1.5;max-width:64ch;margin:1rem 0}
-.report-note{color:#405954;font-size:.9rem}.kpi-grid{display:grid;
-grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin:1rem 0}
-.kpi{background:#fff;padding:1.25rem;border:1px solid #b8c7c2;border-radius:12px}
-.kpi h3{font-size:1rem;margin:0}.kpi-value{font-size:2rem;line-height:1.3;
-font-weight:700;font-variant-numeric:tabular-nums;margin:.8rem 0}
-.kpi-value.unavailable{font-size:1.15rem;color:#8e1717;line-height:1.5}
-.kpi p:last-child{margin-bottom:0}.attention-card{background:#fff;
-border:1px solid #b8c7c2;border-radius:12px;padding:1.5rem;margin:1rem 0}
-.attention-card h3{margin:.4rem 0 .8rem;font-size:1.3rem;max-width:65ch}
-.priority{font-size:.85rem;font-weight:700;text-transform:uppercase;color:#8e1717}
-.attention-card.medium .priority{color:#765200}.attention-card p{color:#172d2b}
-.attention-card small{font-size:.8rem}.source-list{padding:0;list-style:none;
-background:#fff;border-top:1px solid #b8c7c2}
-.source-list li{display:flex;justify-content:space-between;gap:1rem;
-padding:.65rem 0;border-bottom:1px solid #b8c7c2}
-.source-list strong{display:inline-block;min-width:16rem}.state{font-weight:650}
-.state.success{color:#226044}.state.stale{color:#765200}
-.state.failed{color:#8e1717}.technical{margin-top:3rem;border-top:1px solid #b8c7c2;
-padding-top:1.5rem}.technical>summary{font-size:1.25rem}
-.disclosure{margin-top:1rem}.technical .status{font-size:1rem}
-footer{margin-top:3rem;color:#405954;font-size:.9rem}
-@media(max-width:60rem){.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:40rem){main{padding:1.5rem 1rem}h1{font-size:1.9rem}
-.headline{font-size:1.2rem}.kpi-grid{grid-template-columns:1fr}
-.source-list li{display:block}.source-list strong{display:block;min-width:0}
-.source-list li>span{display:block}.source-list li>span+span{margin-top:.25rem}
-.attention-card{padding:1rem}}
-@media print{body{background:#fff}.kpi-grid{grid-template-columns:repeat(4,1fr)}
-.kpi-value{font-size:1.4rem}.attention-card,.kpi{break-inside:avoid}
-.technical{font-size:.85rem}nav{display:none}}
-</style><body><main id="top"><header class="morning-header"><h1>Propane morning report</h1>
-<p class="headline">Tuesday, Nov 3: 5 items need your attention. All sources up to date.</p>
-<p class="report-note">Synthetic demonstration · 2026-11-03 · America/Denver. No live integrations or accounting writes.</p>
-<nav aria-label="Morning report"><a href="#today">Needs attention today</a><a href="#data-status">Data status</a><a href="#technical">Technical details</a></nav></header><section aria-labelledby="numbers"><h2 id="numbers">Your business at a glance</h2><div class="kpi-grid">
-<article class="kpi"><h3>Delivered gallons</h3><p class="kpi-value">600 gal</p><a href="#e-bfd6f9b9fb0344c4cc92d82f545c673b639db9d995f4fc1f0c9e33dd81b72ec7">See calculation</a></article>
-<article class="kpi"><h3>Retail gallons</h3><p class="kpi-value">55 gal</p><a href="#e-9412acbaaa676e59b0657ac70677d86780a704265d03ab9d3647058d1bc9adfb">See calculation</a></article>
-<article class="kpi"><h3>Net revenue</h3><p class="kpi-value">$1,290.02</p><a href="#e-f24fc5388d997e60319d17457ccb2e60668e73f268ae5af27af0aa4decdc64e2">See calculation</a></article>
-<article class="kpi"><h3>Accounts receivable</h3><p class="kpi-value">$810.01</p><a href="#e-677f11a710d75a6c089d94a38630273009684f9a5d271b0425ee6f22d9684a8e">See calculation</a></article>
-</div><p class="report-note">Prior business day comparisons are not computed.</p><p>Total gallons sold: 655 gal. Measurement basis: US gallons at 60°F.</p></section><section id="today"><h2>Needs attention today</h2>
-<article class="attention-card high"><span class="priority">high priority</span><h3>Delivery #1042 to Rio Grande Ranch: delivered gallons remain unbilled in QuickBooks</h3><p>100 gal delivered but not allocated to billing. Approximately $200.00 not billed at the effective list price (estimate before discounts; not booked revenue).</p><p><strong>Next step:</strong> Check the delivery ticket and confirm billing with the office.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-56731ffe6daff073d1d4ac23d8a77fc9fa8e7054afc27805ce696ccf5362bc3a">cargas:delivery:D-MISSING</a> <a href="#e-50c06a9e84d1704951485c628982336ffac2dd9c0a1a0f1daa2e64a4d740621e">cargas:meter_ticket:MT-D-MISSING</a> <a href="#e-0ee060fa5d17783cf5c39500ed0f1c8e38901d4f6cb8e4213f906978874f6cd1">identity:customer:CUSTOMER-1</a> <a href="#e-f781edc56efc111350b83356bb59f12b5c1a6679c86f40290229ae9e6a9078c5">identity:item:ITEM-1</a> <a href="#e-9c88aae1cf85f4c81e19e245b4df74644749c829880d792126c9d791da09b166">prices:price:PRICE-BASE</a> <a href="#e-16c5b94bee324f8b08293790ca0687473c0beb21b385e5087bf3731d3c9d3bd7">qbo:Customer:C-1</a></p></details><small>Rule C01</small></article>
-<article class="attention-card high"><span class="priority">high priority</span><h3>Receipt #2081 for Rio Grande Ranch; Receipt #2082 for Rio Grande Ranch: possible duplicate sale records</h3><p>2 records share a source or external transaction reference. Confirm whether this is a repeated import or a duplicate sale. Potential duplicate net sales: $20.00, pending review.</p><p><strong>Next step:</strong> Compare both source records before reversing any sale.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-178ea131caf8bfb9688369b7bf0e5e0f43be78731b8531a1d63ea4bc467596a2">pos:POS:T-DUP-A:1</a> <a href="#e-6ea04f8d6cf2f8ce1b740bd42f4e0cd27206f34086d392ef2fae0885f93b58c3">pos:POS:T-DUP-B:1</a> <a href="#e-4242fbcceb0fd556a56f94e66ae1b9619d20c025c5824e658604f06cf5a6cfe6">pos:external_reference:EXT-DUP</a></p></details><small>Rule C03</small></article>
-<article class="attention-card high"><span class="priority">high priority</span><h3>Card batch #5042 at Rio Grande counter; Deposit #8142 for card sales: card settlement differs from the QuickBooks deposit</h3><p>Deposit is $10.00 below the expected amount.</p><p><strong>Next step:</strong> Compare the processor statement, fees and bank deposit with accounting.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a> <a href="#e-d75bf7e059ec716a08eeddd9ee01a1538b74a7d25edb56bc76f69c27e5df2f0e">pos:POS:T-BATCH:1</a> <a href="#e-13fb115e516deaa7b1f1b8c84eaeef7e49bf7b06632f7c4c3a49a7e216f5dc44">pos:POS:T-REFUND:1</a> <a href="#e-456f93cf2f2a9375683616703d847e0b96f0b79d058eff47d908ec52080789de">pos:batch:B-SETTLED</a> <a href="#e-2f0632c9d4709a74ff2d774887cacda1f2f47baeb6263556636b3df7a774455b">pos:fee:B-SETTLED:fees</a> <a href="#e-26f2ad174222e3b79c6c51280da8f052a9949077a93cf448aae7deef75bfed7b">qbo:Deposit:DEP-SHORT:1</a> <a href="#e-124bdcffe2921eb8d722b55c9b75a467fb6582beca961b6e8574d4a5fa83d527">qbo:Deposit:DEP-SHORT:2</a> <a href="#e-99857e8f9a4f45315e033d0467fd42f562671cfd41baac0604e09b8bc3f60d56">qbo:Deposit:DEP-SHORT:3</a> <a href="#e-d23a333f5dc636856dea749ea5658793178de5dc6334b90d32c698f5814c17e5">qbo:Deposit:DEP-SHORT:4</a> <a href="#e-920162b28fd5229790ce42d0b6408fd4600caff372e2e1a6212698c014a9fb82">qbo:RefundReceipt:RR-BATCH</a> <a href="#e-c4954c8f852c5916d0180035bd427a715c52cbf2b8f71ebf244f5fb78a40696e">qbo:SalesReceipt:SR-BATCH</a></p></details><small>Rule C07</small></article>
-<article class="attention-card high"><span class="priority">high priority</span><h3>South yard bulk tank at Rio Grande Depot: tank inventory needs review</h3><p>Tank reading is 30 gal below the expected amount. No unit cost is supplied; dollar value is unavailable.</p><p><strong>Next step:</strong> Verify the tank readings and movement log with operations.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-484266954b5481f5b995ce394dfdaf38c436279adffe3b91efdeef6577f74e8a">cargas:delivery:D-OUT</a> <a href="#e-31c79b2f0c84bc08db92a7560846c57268490b65713619398bf4b8013797206b">cargas:meter_ticket:MT-D-OUT</a> <a href="#e-09588f16a6e0884bf07615716964e8335aee31e47b6cb188e485bb56f89aef4e">cargas:reading:R-CLOSE</a> <a href="#e-2553188599bc889bc69d98ac334426e786d22e7d141fc201ecce3cc15831997a">cargas:reading:R-OPEN</a> <a href="#e-c5a00bba17ef74e90602b44c064efce1bd9b279280742f4c581d81d7c3d33026">inventory:movement:M-OUT</a> <a href="#e-0258e414a50ba6818105b93295b76478c44c2207c32a750e9523853e590da935">inventory:movement:M-PURCHASE</a> <a href="#e-24861b540fdfa278e0c8f327b0fdc16078ba30ba90b3c41d487a04051a9584cc">inventory:movement:M-RETAIL</a> <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a> <a href="#e-702873907c6e9e85972343b92d441e524c2f13761f076289cd8f5c7896de820e">pos:POS:T-RETAIL:1</a></p></details><small>Rule C08</small></article>
-<article class="attention-card medium"><span class="priority">medium priority</span><h3>Credit #3105 for Rio Grande Ranch: credit, refund or discount needs review</h3><p>$150.00 adjustment flagged for review.</p><p><strong>Next step:</strong> Confirm the original sale and approval with the accounting team.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-54e1f9680e93d65c843e10f240644ba309e9ac642a7a5a4864c14d04ceeb2b1b">identity:approval:APP-CREDIT</a> <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a> <a href="#e-dc7c27abef75f5be03cccca67ad13058032f254022196939584834c4de0dbdf0">qbo:CreditMemo:CM-UNUSUAL:1</a> <a href="#e-bf9ce9248dc4e99173830ddd6e1f28a59f63bb84b1e311c9621a899f48f1900e">qbo:Invoice:I-CREDIT</a></p></details><small>Rule C05</small></article>
-</section><section id="data-status"><h2>Data status</h2><p>Last updated and coverage times in America/Denver. A fresh export does not guarantee up-to-date coverage. Supporting tables and individual imports are in Technical details.</p><ul class="source-list">
-<li><span><strong>QuickBooks</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 06:12 AM MST<br><small>Covered through Nov 04, 2026 12:00 AM MST</small></span></li>
-<li><span><strong>Cargas</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 05:55 AM MST<br><small>Covered through Nov 04, 2026 12:00 AM MST</small></span></li>
-<li><span><strong>POS</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 06:01 AM MST<br><small>Covered through Nov 04, 2026 12:00 AM MST</small></span></li>
-<li><span><strong>Card processor</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 06:17 AM MST<br><small>Covered through Nov 04, 2026 12:00 AM MST</small></span></li>
-<li><span><strong>Tank readings</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 05:50 AM MST<br><small>Covered through Nov 04, 2026 12:00 AM MST</small></span></li>
-</ul></section><details class="technical" id="technical"><summary>Technical details — checks, calculations and immutable evidence</summary>
+body{background:#f1f5f9;color:#0f172a;font:14px/1.45 -apple-system,
+BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+main#top{max-width:none;margin:0;padding:0}
+.app{display:grid;grid-template-columns:216px minmax(0,1fr);min-height:100vh}
+.side{background:#0b1220;color:#cbd5e1;padding:16px 12px;flex-direction:column;
+flex-wrap:nowrap;gap:2px}.brand{display:flex;align-items:center;gap:10px;
+color:#fff;font-weight:700;padding:4px 8px 18px}.logo{width:28px;height:28px;
+border-radius:7px;background:#0369a1;display:grid;place-items:center;font-size:13px}
+.brand small{display:block;font-weight:400;color:#94a3b8;font-size:11px}
+.side .sec{font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+color:#94a3b8;padding:14px 10px 6px;margin:0}.side a,.side .off{display:flex;
+align-items:center;gap:8px;color:#cbd5e1;text-decoration:none;padding:7px 10px;
+border-radius:7px;font-size:13px}.side a.on{background:#1e293b;color:#fff}
+.side .n{margin-left:auto;background:#b91c1c;color:#fff;border-radius:999px;
+font-size:11px;padding:0 7px}.side .off{color:#94a3b8;cursor:not-allowed}
+.side .off small{margin-left:auto;font-size:10px;color:#94a3b8;
+border:1px solid #334155;border-radius:4px;padding:0 4px}
+.side .bottom{margin-top:auto;border-top:1px solid #1e293b;padding:12px 10px 0;
+font-size:12px;color:#94a3b8}.shell{display:flex;flex-direction:column;min-width:0}
+.top{display:flex;align-items:center;flex-wrap:wrap;gap:10px;background:#fff;
+border-bottom:1px solid #e2e8f0;padding:10px 20px}.crumb{color:#64748b;font-size:13px}
+.crumb b{color:#0f172a}.sp{flex:1}.pill{display:inline-flex;align-items:center;
+gap:6px;border:1px solid #e2e8f0;border-radius:8px;padding:6px 10px;font-size:13px;
+background:#fff;color:#334155}.dot{width:8px;height:8px;border-radius:50%;
+background:#16a34a;flex:none}.dot.stale{background:#d97706}
+.dot.failed{background:#b91c1c}.b{display:inline-flex;align-items:center;
+border-radius:8px;padding:7px 12px;font-size:13px;font-weight:600;
+border:1px solid #e2e8f0;background:#fff;color:#334155;cursor:not-allowed}
+.b.p{background:#0369a1;border-color:#0369a1;color:#fff}.mock{font-size:11px;
+color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;
+padding:2px 8px}.content{padding:20px;display:grid;gap:16px;min-width:0}
+.greet h1{font-size:22px;line-height:1.3;margin:0}.greet p{margin:4px 0 0;
+color:#334155;max-width:none}.greet .headline{font-size:15px;color:#0f172a}
+.greet b{color:#b91c1c}.card{background:#fff;border:1px solid #e2e8f0;
+border-radius:10px;min-width:0}.ch{display:flex;align-items:center;flex-wrap:wrap;
+gap:4px 10px;padding:12px 16px;border-bottom:1px solid #e2e8f0}
+.ch h2,.ch h3{font-size:14px;line-height:1.4;margin:0}.m{color:#64748b;font-size:12px}
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.st{padding:14px 16px;border-right:1px solid #e2e8f0}.st:last-child{border-right:0}
+.k{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+color:#64748b;margin:0}.v{font-size:22px;font-weight:700;line-height:1.3;
+margin:6px 0 2px;font-variant-numeric:tabular-nums}.v.unavailable{font-size:14px;
+color:#b91c1c;font-weight:650}.v.alert{color:#b91c1c}.s{color:#64748b;
+font-size:12px;margin:0}.s a{color:#0369a1}.chip{display:inline-flex;
+margin:8px 6px 0 0;font-size:12px;font-weight:600;border-radius:6px;padding:2px 8px;
+background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;text-decoration:none}
+.chip.ok{background:#f0fdf4;color:#15803d;border-color:#bbf7d0}
+.chip.warn{background:#fffbeb;color:#92400e;border-color:#fde68a}
+.kp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.kp .card{padding:12px 16px}.kp .v{font-size:20px}
+.kp .v.unavailable{font-size:14px}.note{color:#64748b;
+font-size:12px;margin:0}.split{display:grid;
+grid-template-columns:minmax(0,1fr) 380px;gap:16px;align-items:start}
+.tabs{display:flex;gap:4px;margin-left:auto}.tabs a{font-size:12px;padding:4px 10px;
+border-radius:999px;color:#334155;text-decoration:none}.ft{display:none}
+.ex:not(:has(.ft:target)) .tabs a.all{background:#0f172a;color:#fff}
+.ex th{text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+color:#64748b;font-weight:600;padding:8px 16px;background:#f8fafc;
+border-bottom:1px solid #e2e8f0}.ex td{padding:10px 16px;
+border-bottom:1px solid #e2e8f0;vertical-align:middle}.ex tr:last-child td{
+border-bottom:0}.ex .num{text-align:right}.pr{font-size:11px;font-weight:700;
+border-radius:5px;padding:2px 7px;background:#fef2f2;color:#b91c1c;white-space:nowrap}
+.pr.medium{background:#fffbeb;color:#92400e}.tag{font-size:11px;
+color:#334155;border:1px solid #cbd5e1;border-radius:4px;padding:0 5px}
+.it a{font-weight:600;color:#0f172a}
+.it small{display:block;color:#64748b;font-size:12px}.src,.stt{font-size:12px;
+color:#334155;white-space:nowrap}.amt{text-align:right;font-weight:700;
+white-space:nowrap;font-variant-numeric:tabular-nums}
+.split:not(:has(.drawer:target)) .r-0 td{background:#f0f9ff}
+.split:not(:has(.drawer:target)) .r-0 td:first-child{box-shadow:inset 3px 0 0 #0369a1}
+.drawer{display:none;scroll-margin-top:16px}.drawer:target,
+.split:not(:has(.drawer:target)) .drawer:first-child{display:block}
+.drawer .body{padding:14px 16px;display:grid;gap:12px}.drawer h4{font-size:11px;
+text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin:0 0 4px}
+.drawer p{margin:0}.docs{display:grid;gap:8px}.doc{border:1px solid #e2e8f0;
+border-radius:8px;padding:10px 12px;font-size:12px}.doc .t{display:flex;
+justify-content:space-between;gap:8px;font-weight:700;font-size:11px;
+text-transform:uppercase;color:#64748b;margin-bottom:4px}.doc .t a{
+text-transform:none;font-weight:600;color:#0369a1}.doc dl{
+grid-template-columns:7rem minmax(0,1fr);gap:2px 8px;margin:6px 0 0}
+.doc dt{color:#64748b;font-weight:400;overflow-wrap:anywhere}.doc dd{margin:0}
+.doc.miss{border-style:dashed;
+border-color:#fca5a5;background:#fef2f2;color:#b91c1c}.acts{display:flex;
+flex-wrap:wrap;align-items:center;gap:8px;border-top:1px solid #e2e8f0;
+padding:12px 16px}.pills{display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+padding:12px 16px}.pills>.technical{order:2;margin-left:auto}.pills>.coverage{order:3;
+flex-basis:100%}.pills>details[open]{flex-basis:100%;margin-left:0}
+.pills>details>summary{display:inline-flex;border:1px solid #e2e8f0;
+border-radius:8px;padding:7px 12px;font-size:13px;font-weight:600;color:#0f172a}
+.pills>.coverage>summary{border:0;padding:0;font-size:12px;color:#0369a1}
+.times{margin:8px 0 0;padding-left:18px;font-size:13px}
+.tech{font-size:15px;line-height:1.6;padding:8px 4px}.tech h2{font-size:1.25rem;
+margin-top:2rem}footer{margin-top:2rem;color:#334155;font-size:.9rem}
+@media(max-width:1100px){.split{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:760px){.app{grid-template-columns:minmax(0,1fr)}.side,
+.top .wide{display:none}.content{padding:12px}.flow{grid-template-columns:1fr 1fr}
+.st:nth-child(2){border-right:0}.st:nth-child(-n+2){border-bottom:1px solid #e2e8f0}
+.kp{grid-template-columns:minmax(0,1fr)}.ex table{display:table}
+.ex thead{display:table-header-group}.ex tbody{display:table-row-group}
+.ex tr{display:table-row;margin:0}.ex th,.ex td{display:table-cell;padding:10px 8px}
+.ex .src,.ex .stt{display:none}.tabs{margin-left:0}}
+@media print{body{background:#fff}.app{display:block}.side,.top .b,.tabs,.acts{
+display:none}.split{grid-template-columns:1fr}.drawer{display:block;
+break-inside:avoid}.card{break-inside:avoid}}
+.split:has(#x-0:target) .r-0 td{background:#f0f9ff}.split:has(#x-0:target) .r-0 td:first-child{box-shadow:inset 3px 0 0 #0369a1}.split:has(#x-1:target) .r-1 td{background:#f0f9ff}.split:has(#x-1:target) .r-1 td:first-child{box-shadow:inset 3px 0 0 #0369a1}.split:has(#x-2:target) .r-2 td{background:#f0f9ff}.split:has(#x-2:target) .r-2 td:first-child{box-shadow:inset 3px 0 0 #0369a1}.split:has(#x-3:target) .r-3 td{background:#f0f9ff}.split:has(#x-3:target) .r-3 td:first-child{box-shadow:inset 3px 0 0 #0369a1}.split:has(#x-4:target) .r-4 td{background:#f0f9ff}.split:has(#x-4:target) .r-4 td:first-child{box-shadow:inset 3px 0 0 #0369a1}#f-critical:target~.tbl tr.row:not(.s-critical){display:none}.ex:has(#f-critical:target) .tabs a[href="#f-critical"]{background:#0f172a;color:#fff}#f-high:target~.tbl tr.row:not(.s-high){display:none}.ex:has(#f-high:target) .tabs a[href="#f-high"]{background:#0f172a;color:#fff}#f-medium:target~.tbl tr.row:not(.s-medium){display:none}.ex:has(#f-medium:target) .tabs a[href="#f-medium"]{background:#0f172a;color:#fff}</style><body><main id="top"><div class="app"><nav class="side" aria-label="Application"><div class="brand"><span class="logo" aria-hidden="true">SC</span><span>Sun City Propane<small>Daily audit · synthetic</small></span></div><a class="on" href="#top" aria-current="page">Morning report</a><a href="#attention">Exceptions<span class="n">5</span></a><a href="#data-sources">Data sources</a><a href="#technical">Technical details</a><p class="sec">Pilot features</p><span class="off" aria-disabled="true">Deliveries<small>Pilot</small></span><span class="off" aria-disabled="true">Customers<small>Pilot</small></span><span class="off" aria-disabled="true">Inventory &amp; tanks<small>Pilot</small></span><span class="off" aria-disabled="true">Weekly &amp; monthly<small>Pilot</small></span><span class="off" aria-disabled="true">Receivables<small>Pilot</small></span><span class="off" aria-disabled="true">Checks &amp; rules<small>Pilot</small></span><p class="bottom">Owner view · synthetic demo</p></nav><div class="shell"><header class="top"><span class="crumb">Reports / <b>Morning report</b></span><span class="sp"></span><span class="pill wide">Tue, Nov 3</span><span class="pill wide">Data as of 6:30 AM</span><span class="b wide" aria-disabled="true">Export PDF</span><span class="b p" aria-disabled="true">Send to team</span><span class="mock">Pilot features · not active in this demo</span></header><div class="content">
+<header class="greet"><h1>Good morning</h1><p class="headline">Tuesday, Nov 3: 5 items need your attention. All sources up to date.</p><p>About <b>$380.00</b> in flagged amounts needs a decision today. Times in America/Denver.</p></header><section class="card" aria-labelledby="money-flow"><div class="ch"><h2 id="money-flow">Yesterday&#x27;s money flow</h2><span class="m">Nov 3 · delivered → billed → paid → deposited. Stages use different periods and units, so no conversion rate is implied.</span></div><div class="flow">
+<div class="st"><p class="k">Delivered</p><p class="v">600 gal</p><p class="s">10 completed deliveries · No change vs. Nov 2 <a href="#e-bfd6f9b9fb0344c4cc92d82f545c673b639db9d995f4fc1f0c9e33dd81b72ec7">See calculation</a></p><span class="chip ok">All matched</span></div>
+<div class="st"><p class="k">Billed</p><p class="v">$1,290.02</p><p class="s">21 sales lines, net of credits · ▲ $40.00 vs. Nov 2 <a href="#e-f24fc5388d997e60319d17457ccb2e60668e73f268ae5af27af0aa4decdc64e2">See calculation</a></p><a class="chip" href="#x-0">Not billed · ~$200.00</a><a class="chip" href="#x-4">Credit to review · $150.00</a></div>
+<div class="st"><p class="k">Paid</p><p class="v">$300.00</p><p class="s">2 payment allocations since Oct 26 <a href="#e-677f11a710d75a6c089d94a38630273009684f9a5d271b0425ee6f22d9684a8e">See calculation</a></p><a class="chip" href="#x-1">Possible duplicate · ~$20.00</a></div>
+<div class="st"><p class="k">Deposited</p><p class="v">$460.00</p><p class="s">1 card deposit dated Oct 29 in QuickBooks <a href="#e-27076fbc6cc83b9888da1d04c8b0e202d77a4a0ebb7532b1a7fca127673f1ce0">See deposit</a></p><a class="chip" href="#x-2">Deposit differs · $10.00</a></div>
+</div></section><div class="kp">
+<section class="card"><h2 class="k">Accounts receivable</h2><p class="v">$810.01</p><p class="s">▼ $50.00 vs. Nov 2 <a href="#e-677f11a710d75a6c089d94a38630273009684f9a5d271b0425ee6f22d9684a8e">See calculation</a></p></section>
+<section class="card"><h2 class="k">Retail gallons (POS)</h2><p class="v">55 gal</p><p class="s">No change vs. Nov 2 <a href="#e-9412acbaaa676e59b0657ac70677d86780a704265d03ab9d3647058d1bc9adfb">See calculation</a></p></section>
+<section class="card"><h2 class="k">Bulk tank inventory</h2><p class="v alert">30 gal unexplained</p><p class="s">5 of 5 tanks and trucks checked · readings 5:50 AM <a href="#x-3">See tank check</a></p></section></div>
+<p class="note">Total gallons sold: 655 gal. Measurement basis: US gallons at 60°F.</p>
+<div class="split"><section class="card ex" id="attention" aria-labelledby="attention-title"><div class="ch"><h2 id="attention-title">Needs attention today</h2><span class="m">highest priority first</span><nav class="tabs" aria-label="Filter by priority"><a class="all" href="#attention">All 5</a><a href="#f-high">High 4</a><a href="#f-medium">Medium 1</a></nav></div><span class="ft" id="f-high"></span><span class="ft" id="f-medium"></span><div class="tbl">
+<table><thead><tr><th>Priority</th><th>Issue</th><th class="src">Source</th><th class="num">Impact</th><th class="stt">Status</th></tr></thead><tbody>
+<tr class="row r-0 s-high"><td><span class="pr high">High</span></td><td class="it"><a href="#x-0">Delivery #1042 to Rio Grande Ranch</a><small>Delivered gallons remain unbilled in QuickBooks</small></td><td class="src">Cargas → QuickBooks</td><td class="amt">~$200.00</td><td class="stt">Open</td></tr>
+<tr class="row r-1 s-high"><td><span class="pr high">High</span></td><td class="it"><a href="#x-1">Receipt #2081 for Rio Grande Ranch; Receipt #2082 for Rio Grande Ranch</a><small>Possible duplicate sale records</small></td><td class="src">POS</td><td class="amt">~$20.00</td><td class="stt">Open</td></tr>
+<tr class="row r-2 s-high"><td><span class="pr high">High</span></td><td class="it"><a href="#x-2">Card batch #5042 at Rio Grande counter; Deposit #8142 for card sales</a><small>Card settlement differs from the QuickBooks deposit</small></td><td class="src">Card processor → QuickBooks</td><td class="amt">$10.00</td><td class="stt">Open</td></tr>
+<tr class="row r-3 s-high"><td><span class="pr high">High</span></td><td class="it"><a href="#x-3">South yard bulk tank at Rio Grande Depot</a><small>Tank inventory needs review</small></td><td class="src">Tank readings</td><td class="amt">30 gal</td><td class="stt">Open</td></tr>
+<tr class="row r-4 s-medium"><td><span class="pr medium">Medium</span></td><td class="it"><a href="#x-4">Credit #3105 for Rio Grande Ranch</a><small>Credit, refund or discount needs review</small></td><td class="src">QuickBooks</td><td class="amt">$150.00</td><td class="stt">Open</td></tr>
+</tbody></table>
+</div></section><div class="drawers">
+<aside class="card drawer" id="x-0" aria-labelledby="xt-0"><div class="ch"><h3 id="xt-0">Delivery #1042 to Rio Grande Ranch: delivered gallons remain unbilled in QuickBooks</h3></div><div class="body"><p><span class="pr high">High</span> <small class="m">Flags any delivered gallons left unbilled after the grace period</small> <span class="tag">C01</span></p><div><h4>What we found</h4><p>100 gal delivered but not allocated to billing. Approximately $200.00 not billed at the effective list price (estimate before discounts; not booked revenue).</p></div><div class="docs"><div class="doc"><p class="t"><span>Cargas · delivery</span><a href="#e-56731ffe6daff073d1d4ac23d8a77fc9fa8e7054afc27805ce696ccf5362bc3a">Raw record</a></p><strong>Delivery #1042 to Rio Grande Ranch</strong><dl><dt>Customer</dt><dd>Rio Grande Ranch</dd><dt>Delivered</dt><dd>Nov 2, 6:00 PM MT</dd><dt>Gallons</dt><dd>100.0</dd><dt>Invoice</dt><dd>—</dd><dt>Net amount</dt><dd>$200.00</dd><dt>Status</dt><dd>completed</dd></dl></div><div class="doc miss"><p class="t"><span>QuickBooks · invoice line</span></p><strong>No matching record</strong><br>Searched QuickBooks invoice lines for delivery #1042 to Rio Grande Ranch.</div></div><div><h4>Next step</h4><p>Check the delivery ticket and confirm billing with the office.</p></div><details class="disclosure"><summary>See source records</summary><p><a href="#e-56731ffe6daff073d1d4ac23d8a77fc9fa8e7054afc27805ce696ccf5362bc3a">cargas:delivery:D-MISSING</a> <a href="#e-50c06a9e84d1704951485c628982336ffac2dd9c0a1a0f1daa2e64a4d740621e">cargas:meter_ticket:MT-D-MISSING</a> <a href="#e-0ee060fa5d17783cf5c39500ed0f1c8e38901d4f6cb8e4213f906978874f6cd1">identity:customer:CUSTOMER-1</a> <a href="#e-f781edc56efc111350b83356bb59f12b5c1a6679c86f40290229ae9e6a9078c5">identity:item:ITEM-1</a> <a href="#e-9c88aae1cf85f4c81e19e245b4df74644749c829880d792126c9d791da09b166">prices:price:PRICE-BASE</a> <a href="#e-16c5b94bee324f8b08293790ca0687473c0beb21b385e5087bf3731d3c9d3bd7">qbo:Customer:C-1</a></p></details></div><div class="acts"><span class="b p" aria-disabled="true">Mark as resolved</span><span class="b" aria-disabled="true">Assign</span><span class="mock">Pilot feature · not saved</span></div></aside>
+<aside class="card drawer" id="x-1" aria-labelledby="xt-1"><div class="ch"><h3 id="xt-1">Receipt #2081 for Rio Grande Ranch; Receipt #2082 for Rio Grande Ranch: possible duplicate sale records</h3></div><div class="body"><p><span class="pr high">High</span> <small class="m">Flags more than one record with the same reference</small> <span class="tag">C03</span></p><div><h4>What we found</h4><p>2 records share a source or external transaction reference. Confirm whether this is a repeated import or a duplicate sale. Potential duplicate net sales: $20.00, pending review.</p></div><div class="docs"><div class="doc"><p class="t"><span>POS · POS</span><a href="#e-178ea131caf8bfb9688369b7bf0e5e0f43be78731b8531a1d63ea4bc467596a2">Raw record</a></p><strong>Receipt #2081 for Rio Grande Ranch</strong><dl><dt>Customer</dt><dd>Rio Grande Ranch</dd><dt>Sold</dt><dd>Nov 3, 2:00 AM MT</dd><dt>Net amount</dt><dd>$20.00</dd><dt>Status</dt><dd>captured</dd></dl></div><div class="doc"><p class="t"><span>POS · POS</span><a href="#e-6ea04f8d6cf2f8ce1b740bd42f4e0cd27206f34086d392ef2fae0885f93b58c3">Raw record</a></p><strong>Receipt #2082 for Rio Grande Ranch</strong><dl><dt>Customer</dt><dd>Rio Grande Ranch</dd><dt>Sold</dt><dd>Nov 3, 2:00 AM MT</dd><dt>Net amount</dt><dd>$20.00</dd><dt>Status</dt><dd>captured</dd></dl></div></div><div><h4>Next step</h4><p>Compare both source records before reversing any sale.</p></div><details class="disclosure"><summary>See source records</summary><p><a href="#e-178ea131caf8bfb9688369b7bf0e5e0f43be78731b8531a1d63ea4bc467596a2">pos:POS:T-DUP-A:1</a> <a href="#e-6ea04f8d6cf2f8ce1b740bd42f4e0cd27206f34086d392ef2fae0885f93b58c3">pos:POS:T-DUP-B:1</a> <a href="#e-4242fbcceb0fd556a56f94e66ae1b9619d20c025c5824e658604f06cf5a6cfe6">pos:external_reference:EXT-DUP</a></p></details></div><div class="acts"><span class="b p" aria-disabled="true">Mark as resolved</span><span class="b" aria-disabled="true">Assign</span><span class="mock">Pilot feature · not saved</span></div></aside>
+<aside class="card drawer" id="x-2" aria-labelledby="xt-2"><div class="ch"><h3 id="xt-2">Card batch #5042 at Rio Grande counter; Deposit #8142 for card sales: card settlement differs from the QuickBooks deposit</h3></div><div class="body"><p><span class="pr high">High</span> <small class="m">Flags differences over $0.01</small> <span class="tag">C07</span></p><div><h4>What we found</h4><p>Deposit is $10.00 below the expected amount.</p></div><div class="docs"><div class="doc"><p class="t"><span>Card processor · batch</span><a href="#e-456f93cf2f2a9375683616703d847e0b96f0b79d058eff47d908ec52080789de">Raw record</a></p><strong>Card batch #5042 at Rio Grande counter</strong><dl><dt>Settled</dt><dd>Oct 28, 1:00 AM MT</dd><dt>Card sales</dt><dd>$500.00</dd><dt>Refunds</dt><dd>$20.00</dd><dt>Fees</dt><dd>$10.00</dd><dt>Expected deposit</dt><dd>$470.00</dd></dl></div><div class="doc"><p class="t"><span>QuickBooks · Deposit</span><a href="#e-26f2ad174222e3b79c6c51280da8f052a9949077a93cf448aae7deef75bfed7b">Raw record</a></p><strong>Deposit #8142 for card sales</strong><dl><dt>Amount</dt><dd>$500.00</dd></dl></div></div><div><h4>Next step</h4><p>Compare the processor statement, fees and bank deposit with accounting.</p></div><details class="disclosure"><summary>See source records</summary><p><a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a> <a href="#e-d75bf7e059ec716a08eeddd9ee01a1538b74a7d25edb56bc76f69c27e5df2f0e">pos:POS:T-BATCH:1</a> <a href="#e-13fb115e516deaa7b1f1b8c84eaeef7e49bf7b06632f7c4c3a49a7e216f5dc44">pos:POS:T-REFUND:1</a> <a href="#e-456f93cf2f2a9375683616703d847e0b96f0b79d058eff47d908ec52080789de">pos:batch:B-SETTLED</a> <a href="#e-2f0632c9d4709a74ff2d774887cacda1f2f47baeb6263556636b3df7a774455b">pos:fee:B-SETTLED:fees</a> <a href="#e-26f2ad174222e3b79c6c51280da8f052a9949077a93cf448aae7deef75bfed7b">qbo:Deposit:DEP-SHORT:1</a> <a href="#e-124bdcffe2921eb8d722b55c9b75a467fb6582beca961b6e8574d4a5fa83d527">qbo:Deposit:DEP-SHORT:2</a> <a href="#e-99857e8f9a4f45315e033d0467fd42f562671cfd41baac0604e09b8bc3f60d56">qbo:Deposit:DEP-SHORT:3</a> <a href="#e-d23a333f5dc636856dea749ea5658793178de5dc6334b90d32c698f5814c17e5">qbo:Deposit:DEP-SHORT:4</a> <a href="#e-920162b28fd5229790ce42d0b6408fd4600caff372e2e1a6212698c014a9fb82">qbo:RefundReceipt:RR-BATCH</a> <a href="#e-c4954c8f852c5916d0180035bd427a715c52cbf2b8f71ebf244f5fb78a40696e">qbo:SalesReceipt:SR-BATCH</a></p></details></div><div class="acts"><span class="b p" aria-disabled="true">Mark as resolved</span><span class="b" aria-disabled="true">Assign</span><span class="mock">Pilot feature · not saved</span></div></aside>
+<aside class="card drawer" id="x-3" aria-labelledby="xt-3"><div class="ch"><h3 id="xt-3">South yard bulk tank at Rio Grande Depot: tank inventory needs review</h3></div><div class="body"><p><span class="pr high">High</span> <small class="m">Flags differences over 6.0 gal</small> <span class="tag">C08</span></p><div><h4>What we found</h4><p>Tank reading is 30 gal below the expected amount. No unit cost is supplied; dollar value is unavailable.</p></div><div class="docs"><div class="doc"><p class="t"><span>Tank readings · reading</span><a href="#e-09588f16a6e0884bf07615716964e8335aee31e47b6cb188e485bb56f89aef4e">Raw record</a></p><strong>South yard bulk tank at Rio Grande Depot</strong><dl><dt>Read</dt><dd>Nov 4, 12:00 AM MT</dd><dt>Gallons</dt><dd>1,020.0</dd><dt>Reading quality</dt><dd>valid</dd></dl></div><div class="doc"><p class="t"><span>Tank readings · reading</span><a href="#e-2553188599bc889bc69d98ac334426e786d22e7d141fc201ecce3cc15831997a">Raw record</a></p><strong>South yard bulk tank at Rio Grande Depot</strong><dl><dt>Read</dt><dd>Nov 3, 12:00 AM MT</dd><dt>Gallons</dt><dd>1,000.0</dd><dt>Reading quality</dt><dd>valid</dd></dl></div></div><div><h4>Next step</h4><p>Verify the tank readings and movement log with operations.</p></div><details class="disclosure"><summary>See source records</summary><p><a href="#e-484266954b5481f5b995ce394dfdaf38c436279adffe3b91efdeef6577f74e8a">cargas:delivery:D-OUT</a> <a href="#e-31c79b2f0c84bc08db92a7560846c57268490b65713619398bf4b8013797206b">cargas:meter_ticket:MT-D-OUT</a> <a href="#e-09588f16a6e0884bf07615716964e8335aee31e47b6cb188e485bb56f89aef4e">cargas:reading:R-CLOSE</a> <a href="#e-2553188599bc889bc69d98ac334426e786d22e7d141fc201ecce3cc15831997a">cargas:reading:R-OPEN</a> <a href="#e-c5a00bba17ef74e90602b44c064efce1bd9b279280742f4c581d81d7c3d33026">inventory:movement:M-OUT</a> <a href="#e-0258e414a50ba6818105b93295b76478c44c2207c32a750e9523853e590da935">inventory:movement:M-PURCHASE</a> <a href="#e-24861b540fdfa278e0c8f327b0fdc16078ba30ba90b3c41d487a04051a9584cc">inventory:movement:M-RETAIL</a> <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a> <a href="#e-702873907c6e9e85972343b92d441e524c2f13761f076289cd8f5c7896de820e">pos:POS:T-RETAIL:1</a></p></details></div><div class="acts"><span class="b p" aria-disabled="true">Mark as resolved</span><span class="b" aria-disabled="true">Assign</span><span class="mock">Pilot feature · not saved</span></div></aside>
+<aside class="card drawer" id="x-4" aria-labelledby="xt-4"><div class="ch"><h3 id="xt-4">Credit #3105 for Rio Grande Ranch: credit, refund or discount needs review</h3></div><div class="body"><p><span class="pr medium">Medium</span> <small class="m">Flags credits or discounts over $100.00</small> <span class="tag">C05</span></p><div><h4>What we found</h4><p>$150.00 adjustment flagged for review.</p></div><div class="docs"><div class="doc"><p class="t"><span>QuickBooks · CreditMemo</span><a href="#e-dc7c27abef75f5be03cccca67ad13058032f254022196939584834c4de0dbdf0">Raw record</a></p><strong>Credit #3105 for Rio Grande Ranch</strong><dl><dt>Amount</dt><dd>$150.00</dd></dl></div></div><div><h4>Next step</h4><p>Confirm the original sale and approval with the accounting team.</p></div><details class="disclosure"><summary>See source records</summary><p><a href="#e-54e1f9680e93d65c843e10f240644ba309e9ac642a7a5a4864c14d04ceeb2b1b">identity:approval:APP-CREDIT</a> <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a> <a href="#e-dc7c27abef75f5be03cccca67ad13058032f254022196939584834c4de0dbdf0">qbo:CreditMemo:CM-UNUSUAL:1</a> <a href="#e-bf9ce9248dc4e99173830ddd6e1f28a59f63bb84b1e311c9621a899f48f1900e">qbo:Invoice:I-CREDIT</a></p></details></div><div class="acts"><span class="b p" aria-disabled="true">Mark as resolved</span><span class="b" aria-disabled="true">Assign</span><span class="mock">Pilot feature · not saved</span></div></aside>
+</div></div><section class="card" id="data-sources" aria-labelledby="sources-title"><div class="ch"><h2 id="sources-title">Data sources</h2><span class="m">last import, America/Denver</span></div><div class="pills">
+<span class="pill"><span class="dot success"></span>QuickBooks · 6:12 AM</span>
+<span class="pill"><span class="dot success"></span>Cargas · 5:55 AM</span>
+<span class="pill"><span class="dot success"></span>POS · 6:01 AM</span>
+<span class="pill"><span class="dot success"></span>Card processor · 6:17 AM</span>
+<span class="pill"><span class="dot success"></span>Tank readings · 5:50 AM</span>
+<details class="coverage"><summary>Coverage times</summary><ul class="times"><li>QuickBooks: last updated Nov 04, 2026 06:12 AM MST; covered through Nov 04, 2026 12:00 AM MST</li><li>Cargas: last updated Nov 04, 2026 05:55 AM MST; covered through Nov 04, 2026 12:00 AM MST</li><li>POS: last updated Nov 04, 2026 06:01 AM MST; covered through Nov 04, 2026 12:00 AM MST</li><li>Card processor: last updated Nov 04, 2026 06:17 AM MST; covered through Nov 04, 2026 12:00 AM MST</li><li>Tank readings: last updated Nov 04, 2026 05:50 AM MST; covered through Nov 04, 2026 12:00 AM MST</li></ul></details><details class="technical" id="technical"><summary>Technical details</summary><div class="tech">
 <h2>Run and evidence record</h2>
 <p>Business date: 2026-11-03 · America/Denver · synthetic data only</p>
 <p class="status complete">Run status: COMPLETE</p>
-<p>Run: synthetic-20261104-2026-11-03-showcase<br>As of: 2026-11-04T06:30:00-07:00<br>Source digest: 4c7fcb8bca93ef300fdef3cd91285f2a77a9260b9c4096016205752dae71c19f</p>
+<p>Run: synthetic-20261104-2026-11-03-showcase<br>As of: 2026-11-04T06:30:00-07:00<br>Source digest: b0346f4f24593a0a8daa51dfd4379a2c4767f0476132fd53bc6670893c62b7c8</p>
 <nav aria-label="Report sections"><a href="#alerts">Alerts</a><a href="#kpis">KPIs</a><a href="#exceptions">Exceptions</a><a href="#coverage">Coverage</a><a href="#worksheets">Worksheets</a><a href="#evidence">Evidence</a></nav>
 <section id="alerts"><h2>Source alerts</h2>
 <p>No source alerts.</p>
@@ -2367,6 +2447,63 @@ AR: 810.01 USD (complete).
     &quot;SyncToken&quot;: &quot;1&quot;
   }
 }</pre></details>
+<details id="e-27076fbc6cc83b9888da1d04c8b0e202d77a4a0ebb7532b1a7fca127673f1ce0"><summary>qbo:Deposit:DEP-SHORT</summary><pre>{
+  &quot;file_id&quot;: &quot;qbo.json&quot;,
+  &quot;pointer&quot;: &quot;#/Deposit/0&quot;,
+  &quot;raw&quot;: {
+    &quot;EventAt&quot;: &quot;2026-10-29T07:00:00+00:00&quot;,
+    &quot;Id&quot;: &quot;DEP-SHORT&quot;,
+    &quot;Line&quot;: [
+      {
+        &quot;Amount&quot;: &quot;500.00&quot;,
+        &quot;DepositLineDetail&quot;: {
+          &quot;AccountRef&quot;: {
+            &quot;value&quot;: &quot;CLEARING&quot;
+          },
+          &quot;TxnId&quot;: &quot;SR-BATCH&quot;,
+          &quot;TxnType&quot;: &quot;SalesReceipt&quot;
+        },
+        &quot;Id&quot;: &quot;1&quot;
+      },
+      {
+        &quot;Amount&quot;: &quot;-20.00&quot;,
+        &quot;DepositLineDetail&quot;: {
+          &quot;AccountRef&quot;: {
+            &quot;value&quot;: &quot;CLEARING&quot;
+          },
+          &quot;TxnId&quot;: &quot;RR-BATCH&quot;,
+          &quot;TxnType&quot;: &quot;RefundReceipt&quot;
+        },
+        &quot;Id&quot;: &quot;2&quot;
+      },
+      {
+        &quot;Amount&quot;: &quot;-10.00&quot;,
+        &quot;DepositLineDetail&quot;: {
+          &quot;AccountRef&quot;: {
+            &quot;value&quot;: &quot;PROCESSOR_FEES&quot;
+          }
+        },
+        &quot;Id&quot;: &quot;3&quot;
+      },
+      {
+        &quot;Amount&quot;: &quot;-10.00&quot;,
+        &quot;DepositLineDetail&quot;: {
+          &quot;AccountRef&quot;: {
+            &quot;value&quot;: &quot;SETTLEMENT_VARIANCE&quot;
+          }
+        },
+        &quot;Id&quot;: &quot;4&quot;
+      }
+    ],
+    &quot;LinkedTxn&quot;: [],
+    &quot;MetaData&quot;: {
+      &quot;LastUpdatedTime&quot;: &quot;2026-11-04T06:00:00+00:00&quot;
+    },
+    &quot;SyncToken&quot;: &quot;0&quot;,
+    &quot;TotalAmt&quot;: &quot;460.00&quot;,
+    &quot;TxnDate&quot;: &quot;2026-10-29&quot;
+  }
+}</pre></details>
 <details id="e-26f2ad174222e3b79c6c51280da8f052a9949077a93cf448aae7deef75bfed7b"><summary>qbo:Deposit:DEP-SHORT:1</summary><pre>{
   &quot;file_id&quot;: &quot;qbo.json&quot;,
   &quot;pointer&quot;: &quot;#/Deposit/0/Line/0&quot;,
@@ -4140,4 +4277,35 @@ AR: 810.01 USD (complete).
     ],
     &quot;value&quot;: &quot;20.00&quot;
   }
-}</pre></section></details></main></body></html>
+}</pre></section><section><h2>Prior business day comparison</h2><pre>{
+  &quot;AR&quot;: {
+    &quot;change&quot;: &quot;-50.00&quot;,
+    &quot;prior&quot;: &quot;860.01&quot;,
+    &quot;prior_business_date&quot;: &quot;2026-11-02&quot;,
+    &quot;unit&quot;: &quot;USD&quot;
+  },
+  &quot;delivered&quot;: {
+    &quot;change&quot;: &quot;0.000&quot;,
+    &quot;prior&quot;: &quot;600.005&quot;,
+    &quot;prior_business_date&quot;: &quot;2026-11-02&quot;,
+    &quot;unit&quot;: &quot;US gallons&quot;
+  },
+  &quot;retail&quot;: {
+    &quot;change&quot;: &quot;0.000&quot;,
+    &quot;prior&quot;: &quot;55.000&quot;,
+    &quot;prior_business_date&quot;: &quot;2026-11-02&quot;,
+    &quot;unit&quot;: &quot;US gallons&quot;
+  },
+  &quot;revenue&quot;: {
+    &quot;change&quot;: &quot;40.00&quot;,
+    &quot;prior&quot;: &quot;1250.02&quot;,
+    &quot;prior_business_date&quot;: &quot;2026-11-02&quot;,
+    &quot;unit&quot;: &quot;USD&quot;
+  },
+  &quot;total_gallons&quot;: {
+    &quot;change&quot;: &quot;0.000&quot;,
+    &quot;prior&quot;: &quot;655.005&quot;,
+    &quot;prior_business_date&quot;: &quot;2026-11-02&quot;,
+    &quot;unit&quot;: &quot;US gallons&quot;
+  }
+}</pre></section></div></details></div></section></div></div></div></main></body></html>

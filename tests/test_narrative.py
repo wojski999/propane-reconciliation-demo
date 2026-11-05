@@ -9,7 +9,8 @@ import pytest
 from test_business_report import Document, run
 
 from propane_demo import business, narrative, report
-from propane_demo.generator import generate
+from propane_demo.generator import DEFAULT_DATE, DEFAULT_SEED, generate
+from propane_demo.presentation import prior_changes
 
 ENV = {"ANTHROPIC_API_KEY": "synthetic-test-key", "ANTHROPIC_MODEL": "test-model"}
 
@@ -322,7 +323,10 @@ def test_committed_issues_and_illustration_reproduce():
     assert json.loads((root / "issues-results.json").read_text()) == result
     assert (root / "issues-summary.txt").read_text() == report.summary(result) + "\n"
     assert (root / "issues-report.html").read_text() == report.render(
-        result, raw, narrative_status=item
+        result,
+        raw,
+        narrative_status=item,
+        changes=prior_changes(result, business.baseline(DEFAULT_SEED, DEFAULT_DATE)),
     )
 
 
