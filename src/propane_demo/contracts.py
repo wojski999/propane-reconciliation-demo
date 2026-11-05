@@ -40,6 +40,7 @@ QBO_ENTITIES = (
 )
 SCENARIOS = (
     "clean",
+    "showcase",
     *(f"P{i:02}" for i in range(1, 15)),
     "raw-repeat",
     "wrong-clearing",

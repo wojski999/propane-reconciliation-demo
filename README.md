@@ -1,5 +1,11 @@
 # Propane reconciliation demo
 
+[Open the morning report showcase](https://wojski999.github.io/propane-reconciliation-demo/)
+— a complete synthetic day with five planted business exceptions.
+The page becomes available after merge and owner enablement of GitHub Pages
+(source: GitHub Actions). [Download the standalone showcase](samples/showcase-report.html)
+for immediate offline viewing.
+
 Start your morning with the transactions that need attention: missing bills,
 duplicates, settlement differences and unexplained inventory changes. This public
 demo generates fictional QBO-shaped, Cargas-style and POS inputs, reconciles them
@@ -25,7 +31,8 @@ Open `output/report.html` directly in a browser. No server, API key, JavaScript,
 external assets or network is needed after installation. The combined issues
 scenario deliberately contains a failed POS feed and stale QBO coverage: its
 **exit 2 and incomplete status are expected**, not a clean financial conclusion.
-Use `--scenario clean` for a complete run with zero findings and zero alerts.
+Use `--scenario showcase` for complete fresh data with five business exceptions
+(exit 0), or `--scenario clean` for a complete run with zero findings and zero alerts.
 [Committed clean sample](samples/clean-report.html) and
 [matching computed summary](samples/clean-summary.txt) need no installation.
 Inspect the [issues report](samples/issues-report.html),
@@ -51,9 +58,10 @@ Revenue uses explicit accounting posting dates rather than inferred event dates.
 
 ## What the morning report shows
 
-The report starts with complete/incomplete state and source alerts, then delivered,
-retail and total gallons, net revenue and cutoff accounts receivable. Prioritized
-exceptions link to raw evidence. Source windows, extraction times, coverage
+The report starts with a plain-English headline and four KPI tiles, then prioritized
+action cards and source-system status in Denver time. Native disclosures reveal
+the source records. Technical details stay collapsed at the bottom. Prior-day
+comparisons are explicitly not computed; no trend is inferred. Source windows, extraction times, coverage
 watermarks, rule versions, evaluated/not-evaluated counts and signed inventory
 and financial worksheets make limitations visible. Partial figures have no
 asserted total; known contributions remain inspectable.
@@ -177,3 +185,42 @@ independent review: [fixtures #10](https://github.com/wojski999/propane-reconcil
 Foundation and validation corrections are in PRs #2 and #3. The final application
 gate passes **1661 tests**, **2069/2069 lines** and **954/954 branch exits**.
 See the [delivery evidence and remaining limits](.ai/runs/2026-11-05-demo-delivery.md).
+
+## Showcase design and publication
+
+The business-reader layout uses Impeccable in Read mode. Reference patterns:
+[Intuit report overview](https://quickbooks.intuit.com/learn-support/en-us/help-article/product-setup/use-reports-center-categories-insights-information/L2KcVzxB7_US_en_US)
+and [GOV.UK summary lists](https://design-system.service.gov.uk/components/summary-list/).
+These inform the report hierarchy and progressive disclosure; no vendor UI,
+assets or fonts are copied. The report uses inline CSS, native HTML, visible
+keyboard focus, text states alongside color, phone wrapping and print styles.
+
+Regenerate all committed samples with `python scripts/build_samples.py`. Tests
+compare their bytes against computed reports and independently assert all five
+showcase exceptions. The showcase combines P01, P03, P07, P08 and the credit-only part of P05 without changing
+any rule, policy or threshold. The unbilled delivery predates the report day; it
+is an aged exception and does not increase that day's delivered-gallon KPI.
+The $40 of possible duplicate receipts remains in computed revenue pending review.
+
+On push to main, the Pages workflow stages only committed samples and copies
+`showcase-report.html` to `index.html`. Deployment needs the owner to select
+GitHub Actions in Pages settings after merge; the workflow never enables Pages
+or changes repository settings. Deploy permissions are limited to the deployment
+job. No production service or real accounting system is involved.
+
+The owner-reviewed showcase names Rio Grande Ranch, the Rio Grande counter and
+South yard bulk tank using explicitly synthetic fixture labels. It has four high
+priority findings plus one medium credit review. Its cutoff is 06:30 AM Denver,
+with source-specific extraction times before that cutoff. Source groups show the
+worst member state and oldest coverage; all individual imports and supporting
+tables remain in Technical details. Gallons are rounded to whole units on the
+business view; exact values remain in the worksheets. A single note states that
+prior-day comparisons are not computed; no trend is inferred.
+
+Exposure estimates are separate from booked totals: 100 unbilled gallons at the
+effective $2 list price gives approximately $200 before discounts; one potentially
+duplicated $20 net sale gives $20 at risk, pending review. Both include source
+references and are withheld when price support is ambiguous or unavailable. The
+$150 credit is a review candidate, not an asserted loss. The 30-gallon tank variance
+has no dollar valuation because no inventory unit cost is supplied. No selling
+price is substituted for cost. Existing financial rules and thresholds are unchanged.

@@ -1,0 +1,103 @@
+{
+  "standard": "WCAG 2.2 AA, 4.5:1 for normal text",
+  "pairs": [
+    {
+      "pair": "body text",
+      "fg": "#0f172a",
+      "bg": "#f1f5f9",
+      "ratio": 16.3,
+      "aa_normal_text": true
+    },
+    {
+      "pair": "muted text",
+      "fg": "#64748b",
+      "bg": "#ffffff",
+      "ratio": 4.76,
+      "aa_normal_text": true
+    },
+    {
+      "pair": "table header",
+      "fg": "#64748b",
+      "bg": "#f8fafc",
+      "ratio": 4.55,
+      "aa_normal_text": true
+    },
+    {
+      "pair": "sidebar text",
+      "fg": "#cbd5e1",
+      "bg": "#0b1220",
+      "ratio": 12.61,
+      "aa_normal_text": true
+    },
+    {
+      "pair": "sidebar muted/pilot",
+      "fg": "#94a3b8",
+      "bg": "#0b1220",
+      "ratio": 7.3,
+      "aa_normal_text": true
+    },
+    {
+      "pair": "primary button",
+      "fg": "#ffffff",
+      "bg": "#0369a1",
+      "ratio": 5.93,
+      "aa_normal_text": true
+    },
+    {
+      "pair": "link",
+      "fg": "#0369a1",
+      "bg": "#ffffff",
+      "ratio": 5.93,
+      "aa_normal_text": true
+    },
+    {
+      "pair": "high badge/chip",
+      "fg": "#b91c1c",
+      "bg": "#fef2f2",
+      "ratio": 5.91,
+      "aa_normal_text": true
+    },
+    {
+      "pair": "medium badge/warn chip",
+      "fg": "#92400e",
+      "bg": "#fffbeb",
+      "ratio": 6.84,
+      "aa_normal_text": true
+    },
+    {
+      "pair": "ok chip",
+      "fg": "#15803d",
+      "bg": "#f0fdf4",
+      "ratio": 4.79,
+      "aa_normal_text": true
+    },
+    {
+      "pair": "unavailable value",
+      "fg": "#b91c1c",
+      "bg": "#ffffff",
+      "ratio": 6.47,
+      "aa_normal_text": true
+    },
+    {
+      "pair": "exceptions badge",
+      "fg": "#ffffff",
+      "bg": "#b91c1c",
+      "ratio": 6.47,
+      "aa_normal_text": true
+    },
+    {
+      "pair": "selected row text",
+      "fg": "#0f172a",
+      "bg": "#f0f9ff",
+      "ratio": 16.75,
+      "aa_normal_text": true
+    },
+    {
+      "pair": "pill text",
+      "fg": "#334155",
+      "bg": "#ffffff",
+      "ratio": 10.35,
+      "aa_normal_text": true
+    }
+  ]
+}

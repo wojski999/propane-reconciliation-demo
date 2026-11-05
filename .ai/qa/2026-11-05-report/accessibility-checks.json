@@ -1,0 +1,52 @@
+{
+  "palette_contrast_AA": [
+    {
+      "foreground": "#172d2b",
+      "background": "#f3f5f4",
+      "ratio": 13.26
+    },
+    {
+      "foreground": "#172d2b",
+      "background": "#ffffff",
+      "ratio": 14.52
+    },
+    {
+      "foreground": "#405954",
+      "background": "#f3f5f4",
+      "ratio": 6.91
+    },
+    {
+      "foreground": "#405954",
+      "background": "#ffffff",
+      "ratio": 7.57
+    },
+    {
+      "foreground": "#005d74",
+      "background": "#ffffff",
+      "ratio": 7.45
+    },
+    {
+      "foreground": "#8e1717",
+      "background": "#ffffff",
+      "ratio": 9.19
+    },
+    {
+      "foreground": "#765200",
+      "background": "#ffffff",
+      "ratio": 7.05
+    },
+    {
+      "foreground": "#226044",
+      "background": "#ffffff",
+      "ratio": 7.43
+    },
+    {
+      "foreground": "#405366",
+      "background": "#ffffff",
+      "ratio": 7.93
+    }
+  ],
+  "keyboard_navigation": true,
+  "print_headline_and_four_KPIs": true,
+  "scope": "Author checks, not a full assistive-technology audit."
+}

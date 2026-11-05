@@ -14,3 +14,4 @@ when a failed check, review finding or repeated mistake teaches a reusable lesso
 - [Narrative boundaries](lessons/2026-11-05-narrative-boundaries.md): minimized payloads, computed-result digest, honest validation and literal exit expectations.
 
 - [Delivery gates](lessons/2026-11-05-delivery-gates.md): adversarial review, native PR normalization and verified bounded observers.
+- [Portable QA evidence](lessons/2026-11-05-portable-qa-evidence.md): repository-relative tool paths, existing targets and host-path checks before public delivery.

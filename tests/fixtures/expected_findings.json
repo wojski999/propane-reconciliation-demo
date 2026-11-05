@@ -751,6 +751,136 @@
         "P09 sensor uncertainty and P12 missing reading remain independent of POS failure.",
         "QBO stale suppresses P01/P02/P04/P05/P06/P07/P13/P14 verdicts; failed POS suppresses P03."
       ]
+    },
+    "showcase": {
+      "findings": [
+        {
+          "finding_id": "C01|cargas:delivery:D-MISSING",
+          "check_id": "C01",
+          "severity": "high",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "100.000",
+          "expected": "0.000",
+          "delta": "100.000",
+          "threshold": "0.001",
+          "source_refs": [
+            "cargas:delivery:D-MISSING"
+          ],
+          "related_refs": [
+            "cargas:meter_ticket:MT-D-MISSING"
+          ],
+          "missing_reference": {
+            "system": "qbo",
+            "type": "Invoice.Line",
+            "lookup_key": "delivery:D-MISSING"
+          },
+          "explanation": "100 completed gallons remain unallocated after 24 hours."
+        },
+        {
+          "finding_id": "C03|pos:POS:T-DUP-A:1|pos:POS:T-DUP-B:1",
+          "check_id": "C03",
+          "severity": "high",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "2",
+          "expected": "1",
+          "delta": "1",
+          "threshold": "1",
+          "source_refs": [
+            "pos:POS:T-DUP-A:1",
+            "pos:POS:T-DUP-B:1"
+          ],
+          "related_refs": [
+            "pos:external_reference:EXT-DUP"
+          ],
+          "missing_reference": null,
+          "explanation": "Distinct sale IDs share EXT-DUP and match customer, type and amount."
+        },
+        {
+          "finding_id": "C05|qbo:CreditMemo:CM-UNUSUAL:1",
+          "check_id": "C05",
+          "severity": "medium",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "150.00",
+          "expected": "100.00",
+          "delta": "50.00",
+          "threshold": "100.00",
+          "source_refs": [
+            "qbo:CreditMemo:CM-UNUSUAL:1"
+          ],
+          "related_refs": [
+            "identity:approval:APP-CREDIT",
+            "policy:POLICY-1",
+            "qbo:Invoice:I-CREDIT"
+          ],
+          "missing_reference": null,
+          "explanation": "150.00 credit exceeds 100.00 by 50.00; valid original and approval."
+        },
+        {
+          "finding_id": "C07|pos:batch:B-SETTLED|qbo:Deposit:DEP-SHORT:1",
+          "check_id": "C07",
+          "severity": "high",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "460.00",
+          "expected": "470.00",
+          "delta": "-10.00",
+          "threshold": "0.01",
+          "source_refs": [
+            "pos:batch:B-SETTLED",
+            "qbo:Deposit:DEP-SHORT:1"
+          ],
+          "related_refs": [
+            "policy:POLICY-1",
+            "pos:POS:T-BATCH:1",
+            "pos:POS:T-REFUND:1",
+            "pos:fee:B-SETTLED:fees",
+            "qbo:Deposit:DEP-SHORT:2",
+            "qbo:Deposit:DEP-SHORT:3",
+            "qbo:Deposit:DEP-SHORT:4",
+            "qbo:RefundReceipt:RR-BATCH",
+            "qbo:SalesReceipt:SR-BATCH"
+          ],
+          "missing_reference": null,
+          "explanation": "500.00 captured - 20.00 refunds - 10.00 fee = 470.00; 460.00 deposit. Batch past two business days."
+        },
+        {
+          "finding_id": "C08|cargas:reading:R-CLOSE|cargas:reading:R-OPEN",
+          "check_id": "C08",
+          "severity": "high",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "1020.000",
+          "expected": "1050.000",
+          "delta": "-30.000",
+          "threshold": "6.000",
+          "source_refs": [
+            "cargas:reading:R-CLOSE",
+            "cargas:reading:R-OPEN"
+          ],
+          "related_refs": [
+            "cargas:delivery:D-OUT",
+            "cargas:meter_ticket:MT-D-OUT",
+            "inventory:movement:M-OUT",
+            "inventory:movement:M-PURCHASE",
+            "inventory:movement:M-RETAIL",
+            "policy:POLICY-1",
+            "pos:POS:T-RETAIL:1"
+          ],
+          "missing_reference": null,
+          "explanation": "1000 + 200 - 100 - 50 = 1050; observed 1020; delta -30. Tolerance max(2, .005 * 1200) = 6."
+        }
+      ],
+      "alerts": [],
+      "not_evaluated": [],
+      "legitimate_cascades": []
     }
   }
 }

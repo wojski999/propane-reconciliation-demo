@@ -1,0 +1,34 @@
+{
+  "showcase": {
+    "desktop_no_horizontal_scroll": true,
+    "desktop_sidebar_visible": true,
+    "desktop_default_drawer_x0_visible": true,
+    "desktop_row2_opens_drawer_x1": true,
+    "desktop_medium_filter_rows_visible": 1,
+    "desktop_see_calculation_opens_technical": true,
+    "mobile_no_horizontal_scroll": true,
+    "mobile_sidebar_visible": false,
+    "mobile_default_drawer_x0_visible": true,
+    "mobile_row2_opens_drawer_x1": true,
+    "mobile_medium_filter_rows_visible": 1,
+    "mobile_see_calculation_opens_technical": true,
+    "print_all_drawers_visible": true,
+    "print_sidebar_hidden": true
+  },
+  "issues": {
+    "desktop_no_horizontal_scroll": true,
+    "desktop_sidebar_visible": true,
+    "desktop_default_drawer_x0_visible": true,
+    "desktop_row2_opens_drawer_x1": true,
+    "desktop_medium_filter_rows_visible": 1,
+    "desktop_see_calculation_opens_technical": true,
+    "mobile_no_horizontal_scroll": true,
+    "mobile_sidebar_visible": false,
+    "mobile_default_drawer_x0_visible": true,
+    "mobile_row2_opens_drawer_x1": true,
+    "mobile_medium_filter_rows_visible": 1,
+    "mobile_see_calculation_opens_technical": true,
+    "print_all_drawers_visible": true,
+    "print_sidebar_hidden": true
+  }
+}

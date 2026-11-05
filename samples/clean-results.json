@@ -1,5 +1,15 @@
 {
   "alerts": [],
+  "card_deposits": {
+    "count": 1,
+    "dates": [
+      "2026-10-29"
+    ],
+    "source_refs": [
+      "qbo:Deposit:DEP-SHORT"
+    ],
+    "value": "470.00"
+  },
   "check_scopes": {
     "C01": {
       "status": "evaluated"
@@ -559,6 +569,7 @@
     "passed": 20
   },
   "display_as_of": "2026-11-04T00:00:00-07:00",
+  "exposure_estimates": {},
   "freshness": [
     {
       "covered_through": "2026-11-04T00:00:00-07:00",

@@ -1,0 +1,118 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Morning report · Sun City Propane</title>
+<style>
+:root{--ink:#0F172A;--ink2:#334155;--mut:#64748B;--line:#E2E8F0;--bg:#F1F5F9;--card:#fff;--acc:#0369A1;--acc-bg:#E0F2FE;--red:#B91C1C;--red-bg:#FEF2F2;--amb:#B45309;--amb-bg:#FFFBEB;--grn:#15803D;--grn-bg:#F0FDF4;--nav:#0B1220}
+*{box-sizing:border-box}body{margin:0}
+.app{display:grid;grid-template-columns:216px 1fr;min-height:900px;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);border-radius:12px;overflow:hidden;border:1px solid #CBD5E1}
+nav{background:var(--nav);color:#CBD5E1;padding:16px 12px;display:flex;flex-direction:column;gap:2px}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;padding:4px 8px 18px}
+.logo{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#38BDF8,#0369A1);display:grid;place-items:center;font-size:13px;color:#fff}
+.brand small{display:block;font-weight:400;color:#94A3B8;font-size:11px}
+nav .sec{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#64748B;padding:14px 10px 6px}
+nav a{display:flex;align-items:center;gap:10px;color:#CBD5E1;text-decoration:none;padding:7px 10px;border-radius:7px;font-size:13px}
+nav a svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;flex:none}
+nav a.on{background:#1E293B;color:#fff}nav a .n{margin-left:auto;background:#B91C1C;color:#fff;border-radius:999px;font-size:11px;padding:0 7px}
+nav .bottom{margin-top:auto;border-top:1px solid #1E293B;padding-top:12px;font-size:12px;color:#94A3B8;display:flex;gap:8px;align-items:center}
+.av{width:26px;height:26px;border-radius:50%;background:#334155;color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700}
+main{display:flex;flex-direction:column;min-width:0}
+.top{display:flex;align-items:center;gap:12px;background:var(--card);border-bottom:1px solid var(--line);padding:10px 20px}
+.crumb{color:var(--mut);font-size:13px}.crumb b{color:var(--ink)}
+.sp{flex:1}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:13px;background:#fff;color:var(--ink2)}
+.dot{width:8px;height:8px;border-radius:50%;background:#16A34A}.dot.w{background:#D97706}
+.b{display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:7px 12px;font-size:13px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.b.p{background:var(--acc);border-color:var(--acc);color:#fff}
+.content{padding:20px;display:grid;gap:16px}
+.head{display:flex;align-items:flex-end;gap:16px}
+.head h1{font-size:22px;margin:0}.head p{margin:2px 0 0;color:var(--ink2)}.head p b{color:var(--red)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px}
+.ch{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}.ch h2{font-size:14px;margin:0}.ch .m{color:var(--mut);font-size:12px}
+.flow{display:grid;grid-template-columns:repeat(4,1fr)}
+.st{padding:14px 16px;border-right:1px solid var(--line);position:relative}.st:last-child{border-right:0}
+.st .k{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);display:flex;align-items:center;gap:6px}
+.st .k i{width:8px;height:8px;border-radius:2px;display:inline-block}
+.st .v{font-size:22px;font-weight:700;margin:6px 0 0;font-variant-numeric:tabular-nums}.st .s{color:var(--mut);font-size:12px}
+.chip{display:inline-flex;margin-top:8px;font-size:12px;font-weight:600;border-radius:6px;padding:2px 8px;background:var(--red-bg);color:var(--red);border:1px solid #FECACA}.chip.ok{background:var(--grn-bg);color:var(--grn);border-color:#BBF7D0}
+.bar{height:4px;background:#E2E8F0;border-radius:4px;margin-top:10px;overflow:hidden}.bar span{display:block;height:100%}
+.st:not(:last-child)::after{content:"";position:absolute;right:-7px;top:22px;width:12px;height:12px;background:#fff;border-top:1px solid var(--line);border-right:1px solid var(--line);transform:rotate(45deg);z-index:1}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.kp .card{padding:12px 16px}.kp .l{color:var(--mut);font-size:12px}.kp .v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}.up{color:var(--grn);font-weight:600}.dn{color:var(--red);font-weight:600}
+.split{display:grid;grid-template-columns:1fr 380px;gap:16px;align-items:start}
+.tabs{display:flex;gap:4px;margin-left:auto}.tabs span{font-size:12px;padding:4px 10px;border-radius:999px;color:var(--ink2)}.tabs .on{background:var(--ink);color:#fff}
+table{width:100%;border-collapse:collapse}th{text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--mut);font-weight:600;padding:8px 16px;background:#F8FAFC;border-bottom:1px solid var(--line)}
+td{padding:10px 16px;border-bottom:1px solid var(--line);vertical-align:middle}tr:last-child td{border-bottom:0}
+tr.sel td{background:#F0F9FF}tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--acc)}
+.pr{font-size:11px;font-weight:700;border-radius:5px;padding:2px 7px}.pr.h{background:var(--red-bg);color:var(--red)}.pr.m{background:var(--amb-bg);color:var(--amb)}
+.it{font-weight:600}.it small{display:block;font-weight:400;color:var(--mut);font-size:12px}
+.src{font-size:12px;color:var(--ink2);white-space:nowrap}
+.amt{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stt{font-size:12px;color:var(--mut);white-space:nowrap}.stt i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#94A3B8;margin-right:5px}
+.dr .ch{justify-content:space-between}.x{color:var(--mut);font-size:16px}
+.dr .body{padding:14px 16px;display:grid;gap:12px}
+.dr h3{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);margin:0 0 4px}
+.dr p{margin:0}.dr ol{margin:0;padding-left:18px}
+.doc{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12px}
+.doc .t{display:flex;justify-content:space-between;font-weight:700;font-size:11px;text-transform:uppercase;color:var(--mut);margin-bottom:6px}
+.doc dl{display:grid;grid-template-columns:90px 1fr;gap:2px 8px;margin:0}.doc dt{color:var(--mut)}.doc dd{margin:0;font-variant-numeric:tabular-nums}
+.doc.miss{border-style:dashed;border-color:#FCA5A5;background:var(--red-bg);color:var(--red)}
+.acts{display:flex;gap:8px;border-top:1px solid var(--line);padding:12px 16px}
+.mock{font-size:11px;color:var(--amb);background:var(--amb-bg);border:1px solid #FDE68A;border-radius:6px;padding:2px 8px}
+@media (max-width:1100px){.split{grid-template-columns:1fr}}
+@media (max-width:760px){.app{grid-template-columns:1fr}nav{display:none}.flow{grid-template-columns:1fr 1fr}.st::after{display:none}.kp{grid-template-columns:1fr}.src,.stt,th:nth-child(3),th:nth-child(5){display:none}td:nth-child(3),td:nth-child(5){display:none}.top .pill:not(:first-of-type),.top .b:not(.p){display:none}}
+</style></head><body>
+<div class="app">
+<nav>
+ <div class="brand"><div class="logo">SC</div><div>Sun City Propane<small>Daily audit</small></div></div>
+ <a class="on" href="#"><svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8M5 10v10h14V10"/></svg>Morning report</a>
+ <a href="#"><svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg>Exceptions<span class="n">5</span></a>
+ <a href="#"><svg viewBox="0 0 24 24"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7M5.5 21a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM18.5 21a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"/></svg>Deliveries</a>
+ <a href="#"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8"/></svg>Customers</a>
+ <a href="#"><svg viewBox="0 0 24 24"><path d="M12 2C8 7 6 10 6 14a6 6 0 0012 0c0-4-2-7-6-12z"/></svg>Inventory &amp; tanks</a>
+ <div class="sec">Reports</div>
+ <a href="#"><svg viewBox="0 0 24 24"><path d="M3 3v18h18M7 15l4-4 3 3 5-6"/></svg>Weekly &amp; monthly</a>
+ <a href="#"><svg viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Receivables</a>
+ <div class="sec">Setup</div>
+ <a href="#"><svg viewBox="0 0 24 24"><path d="M4 7c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 7v10c0 1.7 3.6 3 8 3s8-1.3 8-3V7M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>Data sources</a>
+ <a href="#"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Checks &amp; rules</a>
+ <div class="bottom"><div class="av">MA</div>Mario · Owner</div>
+</nav>
+<main>
+ <div class="top"><span class="crumb">Reports / <b>Morning report</b></span><span class="mock">mockup · sample numbers</span><span class="sp"></span>
+  <span class="pill">Tue, Nov 3 ▾</span><span class="pill"><span class="dot"></span>Synced 6:02 AM</span><span class="b">Export PDF</span><span class="b p">Send to team</span></div>
+ <div class="content">
+  <div class="head"><div><h1>Good morning, Mario</h1><p>5 items need attention · about <b>$900</b> needs a decision today. 4 of 5 data sources are up to date.</p></div></div>
+  <div class="card"><div class="ch"><h2>Yesterday's money flow</h2><span class="m">Nov 2 · delivered → billed → paid → deposited</span></div>
+   <div class="flow">
+    <div class="st"><div class="k"><i style="background:#0369A1"></i>Delivered</div><div class="v">4,820 gal</div><div class="s">38 tickets · $13,980</div><div class="bar"><span style="width:100%;background:#0369A1"></span></div><span class="chip ok">All matched</span></div>
+    <div class="st"><div class="k"><i style="background:#0E7490"></i>Billed</div><div class="v">$13,690</div><div class="s">36 invoices · 98% of delivered</div><div class="bar"><span style="width:98%;background:#0E7490"></span></div><span class="chip">100 gal not billed · ~$290</span></div>
+    <div class="st"><div class="k"><i style="background:#15803D"></i>Paid</div><div class="v">$11,240</div><div class="s">29 payments · 82% of billed</div><div class="bar"><span style="width:82%;background:#15803D"></span></div><span class="chip">Sold twice · $145</span></div>
+    <div class="st"><div class="k"><i style="background:#4338CA"></i>Deposited</div><div class="v">$11,230</div><div class="s">2 bank deposits</div><div class="bar"><span style="width:81%;background:#4338CA"></span></div><span class="chip">Deposit short · $10</span></div>
+   </div></div>
+  <div class="kp">
+   <div class="card"><div class="l">Accounts receivable</div><div class="v">$48,615</div><div class="l"><span class="dn">▲ $2,450</span> vs. prior day</div></div>
+   <div class="card"><div class="l">Retail cylinder sales (POS)</div><div class="v">412 gal</div><div class="l"><span class="up">▲ 6%</span> vs. prior day</div></div>
+   <div class="card"><div class="l">Bulk tank inventory</div><div class="v">18,240 gal</div><div class="l"><span class="dn">30 gal unexplained</span> · readings 9 h old</div></div>
+  </div>
+  <div class="split">
+   <div class="card"><div class="ch"><h2>Exceptions</h2><span class="m">highest impact first</span><div class="tabs"><span class="on">All 5</span><span>High 3</span><span>Medium 2</span></div></div>
+    <table><thead><tr><th>Priority</th><th>Issue</th><th>Source</th><th style="text-align:right">Impact</th><th>Status</th></tr></thead><tbody>
+     <tr class="sel"><td><span class="pr h">High</span></td><td class="it">Delivery #1042 not billed<small>Rio Grande Dairy · 100 gal · Nov 2</small></td><td class="src">Cargas → QuickBooks</td><td class="amt">~$290</td><td class="stt"><i></i>Open</td></tr>
+     <tr><td><span class="pr h">High</span></td><td class="it">Cylinder exchange sold twice<small>Receipts #8817 / #8818 · same card txn</small></td><td class="src">POS</td><td class="amt">$145</td><td class="stt"><i></i>Open</td></tr>
+     <tr><td><span class="pr h">High</span></td><td class="it">Card deposit short<small>Batch B-1102 vs. deposit DEP-551</small></td><td class="src">Processor → QuickBooks</td><td class="amt">$10</td><td class="stt"><i></i>Open</td></tr>
+     <tr><td><span class="pr m">Medium</span></td><td class="it">Unusual 25% discount<small>Invoice #5521 · usual 5%</small></td><td class="src">QuickBooks</td><td class="amt">$410</td><td class="stt"><i></i>Open</td></tr>
+     <tr><td><span class="pr m">Medium</span></td><td class="it">Bulk tank A 30 gal low<small>Opening + received − delivered ≠ closing</small></td><td class="src">Tank readings</td><td class="amt">~$45</td><td class="stt"><i></i>Open</td></tr>
+    </tbody></table></div>
+   <aside class="card dr"><div class="ch"><h2>Delivery #1042 not billed</h2><span class="x">×</span></div>
+    <div class="body">
+     <div><span class="pr h">High</span> <span class="m" style="color:var(--mut);font-size:12px">Check: delivery → invoice · unbilled after 24 h</span></div>
+     <div><h3>What we found</h3><p>Ticket #1042 exists in Cargas and the meter confirms 100 gal. No QuickBooks invoice references it.</p></div>
+     <div class="doc"><div class="t"><span>Cargas · delivery ticket</span><span>↗</span></div><dl><dt>Ticket</dt><dd>#1042</dd><dt>Customer</dt><dd>Rio Grande Dairy</dd><dt>Delivered</dt><dd>Nov 2, 2:14 PM · Truck 3</dd><dt>Gallons</dt><dd>100.0 (meter)</dd><dt>Price list</dt><dd>$2.90 / gal</dd></dl></div>
+     <div class="doc miss"><div class="t"><span>QuickBooks · invoice</span></div><b>No matching invoice</b><br>Searched Nov 2–3 by ticket and customer.</div>
+     <div><h3>Next step</h3><ol><li>Confirm the ticket with the office.</li><li>Create the invoice in QuickBooks.</li></ol></div>
+    </div>
+    <div class="acts"><span class="b p">Mark as resolved</span><span class="b">Assign</span><span class="b">Add note</span></div>
+   </aside>
+  </div>
+  <div class="card"><div class="ch"><h2>Data sources</h2><span class="m">last successful import</span></div>
+   <div style="display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px"><span class="pill"><span class="dot"></span>QuickBooks · 5:42 AM</span><span class="pill"><span class="dot"></span>Cargas · 5:50 AM</span><span class="pill"><span class="dot"></span>POS · 5:31 AM</span><span class="pill"><span class="dot"></span>Card processor · 5:15 AM</span><span class="pill"><span class="dot w"></span>Tank readings · yesterday 9:10 PM</span><span class="sp"></span><span class="b">Technical details ▸</span></div></div>
+ </div>
+</main></div></body></html>

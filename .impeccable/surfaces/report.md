@@ -1,19 +1,20 @@
 # Morning report
 
-Mode: Read. Audience and content are fixed by approved spec section 7 / issue #8.
+Mode: Read. Audience and content are fixed by approved spec section 7 / issues #8 and #18.
 
 ## Direction contract
 
 THESIS: Make the difference between known numbers and unsupported conclusions
-immediately readable. Status and source alerts precede totals; evidence follows
-business exceptions and signed worksheets.
+immediately readable. A plain-English headline states source failures and unavailable totals before
+KPI tiles; priority action cards precede source status and collapsed evidence.
 
-OWN-WORLD: A plain financial working paper: white page, dark navy text, blue local
+OWN-WORLD: A plain financial working paper: white surfaces on pale office-gray paper, dark green ink, blue local
 links, red incomplete-state notices; system UI text and tabular numeric columns.
 This is a daytime office reading surface, including printing and narrow screens.
 
-STRUCTURE: Document header, status, alert list, KPI definition list, exception
-articles, check coverage, freshness table, signed worksheets, raw evidence index.
+STRUCTURE: Business headline, four KPI tiles, priority action cards and five grouped business-system
+source rows with conservative status and timestamps. The full prior report, including check coverage, freshness table,
+signed worksheets and raw evidence, stays in a bottom technical disclosure.
 Native details/summary controls keep raw data available without overwhelming scan.
 
 SIGNATURE: Every amount has a signed source trail; partial totals never look like
@@ -24,3 +25,9 @@ wrapping and print styles. No script or animation is needed for this document.
 
 VALIDATION: Exact financial and oracle tests, hostile-text escaping, anchor closure,
 offline artifact inspection and parent-owned independent static-report QA.
+
+Owner visual review: synthetic business labels replace raw IDs in closed card
+titles. Whole gallons support scanning; exact worksheet quantities stay available.
+The showcase has four high and one medium item. Evidence-bound dollar exposures
+are marked as estimates separately from KPIs; no inventory cost is inferred. A
+single comparison note replaces repeated unavailable comparisons.

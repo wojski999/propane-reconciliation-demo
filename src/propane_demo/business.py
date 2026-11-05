@@ -6,7 +6,7 @@ import hashlib
 import json
 import sqlite3
 import sys
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -15,6 +15,7 @@ from propane_demo.generator import DEFAULT_DATE, DEFAULT_SEED, generate
 from propane_demo.ingestion import ingest
 from propane_demo.kpis import calculate
 from propane_demo.narrative import build
+from propane_demo.presentation import card_deposits, exposures, prior_changes
 from propane_demo.report import collect_refs, evidence, render, summary
 from propane_demo.rule_inputs import from_database, reconcile_database
 
@@ -95,6 +96,8 @@ def compute(db):
         "rule_version": inputs["policy"]["version"],
         "policy_version": inputs["policy"]["version"],
         "gallon_basis": inputs["policy"]["basis"],
+        "exposure_estimates": exposures(inputs, checks),
+        "card_deposits": card_deposits(inputs, checks),
         "checks": checks,
         "kpis": kpis,
         "alerts": checks["alerts"],
@@ -111,13 +114,25 @@ def compute(db):
     }
 
 
+def baseline(seed, business_date):
+    """Synthetic prior business day: the clean scenario, computed by the same code."""
+    day = business_date - timedelta(days=1)
+    if day < date(2020, 1, 1):
+        return None
+    db = ingest(generate("clean", seed, day).__getitem__)
+    try:
+        return compute(db)
+    finally:
+        db.close()
+
+
 def write_json(path, value):
     path.write_text(
         json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
 
 
-def execute(files, output, *, narrative=False, client=None):
+def execute(files, output, *, narrative=False, client=None, prior=None):
     """Preserve computed artifacts before rendering, never "
     "retain an old report."""
     db = ingest(files.__getitem__)
@@ -142,7 +157,15 @@ def execute(files, output, *, narrative=False, client=None):
     )
     write_json(output / "narrative.json", text)
     try:
-        report.write_text(render(result, raw, narrative_status=text), encoding="utf-8")
+        report.write_text(
+            render(
+                result,
+                raw,
+                narrative_status=text,
+                changes=prior_changes(result, prior),
+            ),
+            encoding="utf-8",
+        )
     except (ValueError, TypeError, OSError):
         report.unlink(missing_ok=True)
         raise
@@ -168,9 +191,8 @@ def main(argv=None):
     )
     try:
         args = parser.parse_args(argv)
-        files = generate(
-            args.scenario, args.seed, date.fromisoformat(args.business_date)
-        )
+        day = date.fromisoformat(args.business_date)
+        files = generate(args.scenario, args.seed, day)
         if args.as_of is not None:
             instant = datetime.fromisoformat(args.as_of)
             if instant.utcoffset() is None:
@@ -180,7 +202,12 @@ def main(argv=None):
             files["run.json"] = (
                 json.dumps(run, indent=2, sort_keys=True) + "\n"
             ).encode()
-        status = execute(files, args.output, narrative=args.narrative)
+        status = execute(
+            files,
+            args.output,
+            narrative=args.narrative,
+            prior=baseline(args.seed, day),
+        )
     except (ValueError, TypeError, OSError, sqlite3.Error, UnicodeError):
         print(
             (
