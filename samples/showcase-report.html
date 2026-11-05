@@ -58,40 +58,36 @@ footer{margin-top:3rem;color:#405954;font-size:.9rem}
 @media(max-width:40rem){main{padding:1.5rem 1rem}h1{font-size:1.9rem}
 .headline{font-size:1.2rem}.kpi-grid{grid-template-columns:1fr}
 .source-list li{display:block}.source-list strong{display:block;min-width:0}
+.source-list li>span{display:block}.source-list li>span+span{margin-top:.25rem}
 .attention-card{padding:1rem}}
 @media print{body{background:#fff}.kpi-grid{grid-template-columns:repeat(4,1fr)}
 .kpi-value{font-size:1.4rem}.attention-card,.kpi{break-inside:avoid}
 .technical{font-size:.85rem}nav{display:none}}
 </style><body><main id="top"><header class="morning-header"><h1>Propane morning report</h1>
-<p class="headline">Tuesday, Nov 3: 4 items need your attention. All sources up to date.</p>
+<p class="headline">Tuesday, Nov 3: 5 items need your attention. All sources up to date.</p>
 <p class="report-note">Synthetic demonstration · 2026-11-03 · America/Denver. No live integrations or accounting writes.</p>
 <nav aria-label="Morning report"><a href="#today">Needs attention today</a><a href="#data-status">Data status</a><a href="#technical">Technical details</a></nav></header><section aria-labelledby="numbers"><h2 id="numbers">Your business at a glance</h2><div class="kpi-grid">
-<article class="kpi"><h3>Delivered gallons</h3><p class="kpi-value">600.005 gal</p><p class="report-note">Prior business day comparison not computed.</p><a href="#e-bfd6f9b9fb0344c4cc92d82f545c673b639db9d995f4fc1f0c9e33dd81b72ec7">See calculation</a></article>
-<article class="kpi"><h3>Retail gallons</h3><p class="kpi-value">55.000 gal</p><p class="report-note">Prior business day comparison not computed.</p><a href="#e-9412acbaaa676e59b0657ac70677d86780a704265d03ab9d3647058d1bc9adfb">See calculation</a></article>
-<article class="kpi"><h3>Net revenue</h3><p class="kpi-value">$1,290.02</p><p class="report-note">Prior business day comparison not computed.</p><a href="#e-f24fc5388d997e60319d17457ccb2e60668e73f268ae5af27af0aa4decdc64e2">See calculation</a></article>
-<article class="kpi"><h3>Accounts receivable</h3><p class="kpi-value">$860.01</p><p class="report-note">Prior business day comparison not computed.</p><a href="#e-677f11a710d75a6c089d94a38630273009684f9a5d271b0425ee6f22d9684a8e">See calculation</a></article>
-</div><p>Total gallons sold: 655.005 gal. Measurement basis: net_60F.</p></section><section id="today"><h2>Needs attention today</h2>
-<article class="attention-card high"><span class="priority">high priority</span><h3>Delivered gallons remain unbilled in QuickBooks: D-MISSING · CE-C1</h3><p>100.000 gal delivered but not allocated to billing.</p><p><strong>Next step:</strong> Check the delivery ticket and confirm billing with the office.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-56731ffe6daff073d1d4ac23d8a77fc9fa8e7054afc27805ce696ccf5362bc3a">cargas:delivery:D-MISSING</a> <a href="#e-50c06a9e84d1704951485c628982336ffac2dd9c0a1a0f1daa2e64a4d740621e">cargas:meter_ticket:MT-D-MISSING</a></p></details><small>Rule C01</small></article>
-<article class="attention-card high"><span class="priority">high priority</span><h3>Possible duplicate sale records: T-DUP-A · POS-C1; T-DUP-B · POS-C1</h3><p>Repeated source or external transaction identity needs review.</p><p><strong>Next step:</strong> Compare both source records before reversing any sale.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-178ea131caf8bfb9688369b7bf0e5e0f43be78731b8531a1d63ea4bc467596a2">pos:POS:T-DUP-A:1</a> <a href="#e-6ea04f8d6cf2f8ce1b740bd42f4e0cd27206f34086d392ef2fae0885f93b58c3">pos:POS:T-DUP-B:1</a> <a href="#e-4242fbcceb0fd556a56f94e66ae1b9619d20c025c5824e658604f06cf5a6cfe6">pos:external_reference:EXT-DUP</a></p></details><small>Rule C03</small></article>
-<article class="attention-card high"><span class="priority">high priority</span><h3>Card settlement differs from the QuickBooks deposit: B-SETTLED; DEP-SHORT</h3><p>Deposit is $10.00 below the expected amount.</p><p><strong>Next step:</strong> Compare the processor statement, fees and bank deposit with accounting.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a> <a href="#e-d75bf7e059ec716a08eeddd9ee01a1538b74a7d25edb56bc76f69c27e5df2f0e">pos:POS:T-BATCH:1</a> <a href="#e-13fb115e516deaa7b1f1b8c84eaeef7e49bf7b06632f7c4c3a49a7e216f5dc44">pos:POS:T-REFUND:1</a> <a href="#e-456f93cf2f2a9375683616703d847e0b96f0b79d058eff47d908ec52080789de">pos:batch:B-SETTLED</a> <a href="#e-2f0632c9d4709a74ff2d774887cacda1f2f47baeb6263556636b3df7a774455b">pos:fee:B-SETTLED:fees</a> <a href="#e-26f2ad174222e3b79c6c51280da8f052a9949077a93cf448aae7deef75bfed7b">qbo:Deposit:DEP-SHORT:1</a> <a href="#e-124bdcffe2921eb8d722b55c9b75a467fb6582beca961b6e8574d4a5fa83d527">qbo:Deposit:DEP-SHORT:2</a> <a href="#e-99857e8f9a4f45315e033d0467fd42f562671cfd41baac0604e09b8bc3f60d56">qbo:Deposit:DEP-SHORT:3</a> <a href="#e-d23a333f5dc636856dea749ea5658793178de5dc6334b90d32c698f5814c17e5">qbo:Deposit:DEP-SHORT:4</a> <a href="#e-920162b28fd5229790ce42d0b6408fd4600caff372e2e1a6212698c014a9fb82">qbo:RefundReceipt:RR-BATCH</a> <a href="#e-c4954c8f852c5916d0180035bd427a715c52cbf2b8f71ebf244f5fb78a40696e">qbo:SalesReceipt:SR-BATCH</a></p></details><small>Rule C07</small></article>
-<article class="attention-card high"><span class="priority">high priority</span><h3>Tank inventory needs review: R-CLOSE · BULK-A; R-OPEN · BULK-A</h3><p>Tank reading is 30.000 gal below the expected amount.</p><p><strong>Next step:</strong> Verify the tank readings and movement log with operations.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-484266954b5481f5b995ce394dfdaf38c436279adffe3b91efdeef6577f74e8a">cargas:delivery:D-OUT</a> <a href="#e-31c79b2f0c84bc08db92a7560846c57268490b65713619398bf4b8013797206b">cargas:meter_ticket:MT-D-OUT</a> <a href="#e-09588f16a6e0884bf07615716964e8335aee31e47b6cb188e485bb56f89aef4e">cargas:reading:R-CLOSE</a> <a href="#e-2553188599bc889bc69d98ac334426e786d22e7d141fc201ecce3cc15831997a">cargas:reading:R-OPEN</a> <a href="#e-c5a00bba17ef74e90602b44c064efce1bd9b279280742f4c581d81d7c3d33026">inventory:movement:M-OUT</a> <a href="#e-0258e414a50ba6818105b93295b76478c44c2207c32a750e9523853e590da935">inventory:movement:M-PURCHASE</a> <a href="#e-24861b540fdfa278e0c8f327b0fdc16078ba30ba90b3c41d487a04051a9584cc">inventory:movement:M-RETAIL</a> <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a> <a href="#e-702873907c6e9e85972343b92d441e524c2f13761f076289cd8f5c7896de820e">pos:POS:T-RETAIL:1</a></p></details><small>Rule C08</small></article>
-</section><section id="data-status"><h2>Data status</h2><p>Last updated and coverage times in America/Denver. A fresh export does not guarantee up-to-date coverage.</p><ul class="source-list">
-<li><span><strong>Cargas deliveries</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
-<li><span><strong>Optional supporting records</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
-<li><span><strong>Customer and item mappings</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
-<li><span><strong>Inventory movements</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
-<li><span><strong>Opening receivables</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
-<li><span><strong>POS</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
-<li><span><strong>Price list</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
-<li><span><strong>QuickBooks</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
-<li><span><strong>Tank readings</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
-<li><span><strong>Card settlements</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
-<li><span><strong>QuickBooks</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<article class="kpi"><h3>Delivered gallons</h3><p class="kpi-value">600 gal</p><a href="#e-bfd6f9b9fb0344c4cc92d82f545c673b639db9d995f4fc1f0c9e33dd81b72ec7">See calculation</a></article>
+<article class="kpi"><h3>Retail gallons</h3><p class="kpi-value">55 gal</p><a href="#e-9412acbaaa676e59b0657ac70677d86780a704265d03ab9d3647058d1bc9adfb">See calculation</a></article>
+<article class="kpi"><h3>Net revenue</h3><p class="kpi-value">$1,290.02</p><a href="#e-f24fc5388d997e60319d17457ccb2e60668e73f268ae5af27af0aa4decdc64e2">See calculation</a></article>
+<article class="kpi"><h3>Accounts receivable</h3><p class="kpi-value">$810.01</p><a href="#e-677f11a710d75a6c089d94a38630273009684f9a5d271b0425ee6f22d9684a8e">See calculation</a></article>
+</div><p class="report-note">Prior business day comparisons are not computed.</p><p>Total gallons sold: 655 gal. Measurement basis: US gallons at 60°F.</p></section><section id="today"><h2>Needs attention today</h2>
+<article class="attention-card high"><span class="priority">high priority</span><h3>Delivery #1042 to Rio Grande Ranch: delivered gallons remain unbilled in QuickBooks</h3><p>100 gal delivered but not allocated to billing. Approximately $200.00 not billed at the effective list price (estimate before discounts; not booked revenue).</p><p><strong>Next step:</strong> Check the delivery ticket and confirm billing with the office.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-56731ffe6daff073d1d4ac23d8a77fc9fa8e7054afc27805ce696ccf5362bc3a">cargas:delivery:D-MISSING</a> <a href="#e-50c06a9e84d1704951485c628982336ffac2dd9c0a1a0f1daa2e64a4d740621e">cargas:meter_ticket:MT-D-MISSING</a> <a href="#e-0ee060fa5d17783cf5c39500ed0f1c8e38901d4f6cb8e4213f906978874f6cd1">identity:customer:CUSTOMER-1</a> <a href="#e-f781edc56efc111350b83356bb59f12b5c1a6679c86f40290229ae9e6a9078c5">identity:item:ITEM-1</a> <a href="#e-9c88aae1cf85f4c81e19e245b4df74644749c829880d792126c9d791da09b166">prices:price:PRICE-BASE</a> <a href="#e-16c5b94bee324f8b08293790ca0687473c0beb21b385e5087bf3731d3c9d3bd7">qbo:Customer:C-1</a></p></details><small>Rule C01</small></article>
+<article class="attention-card high"><span class="priority">high priority</span><h3>Receipt #2081 for Rio Grande Ranch; Receipt #2082 for Rio Grande Ranch: possible duplicate sale records</h3><p>2 records share a source or external transaction reference. Confirm whether this is a repeated import or a duplicate sale. Potential duplicate net sales: $20.00, pending review.</p><p><strong>Next step:</strong> Compare both source records before reversing any sale.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-178ea131caf8bfb9688369b7bf0e5e0f43be78731b8531a1d63ea4bc467596a2">pos:POS:T-DUP-A:1</a> <a href="#e-6ea04f8d6cf2f8ce1b740bd42f4e0cd27206f34086d392ef2fae0885f93b58c3">pos:POS:T-DUP-B:1</a> <a href="#e-4242fbcceb0fd556a56f94e66ae1b9619d20c025c5824e658604f06cf5a6cfe6">pos:external_reference:EXT-DUP</a></p></details><small>Rule C03</small></article>
+<article class="attention-card high"><span class="priority">high priority</span><h3>Card batch #5042 at Rio Grande counter; Deposit #8142 for card sales: card settlement differs from the QuickBooks deposit</h3><p>Deposit is $10.00 below the expected amount.</p><p><strong>Next step:</strong> Compare the processor statement, fees and bank deposit with accounting.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a> <a href="#e-d75bf7e059ec716a08eeddd9ee01a1538b74a7d25edb56bc76f69c27e5df2f0e">pos:POS:T-BATCH:1</a> <a href="#e-13fb115e516deaa7b1f1b8c84eaeef7e49bf7b06632f7c4c3a49a7e216f5dc44">pos:POS:T-REFUND:1</a> <a href="#e-456f93cf2f2a9375683616703d847e0b96f0b79d058eff47d908ec52080789de">pos:batch:B-SETTLED</a> <a href="#e-2f0632c9d4709a74ff2d774887cacda1f2f47baeb6263556636b3df7a774455b">pos:fee:B-SETTLED:fees</a> <a href="#e-26f2ad174222e3b79c6c51280da8f052a9949077a93cf448aae7deef75bfed7b">qbo:Deposit:DEP-SHORT:1</a> <a href="#e-124bdcffe2921eb8d722b55c9b75a467fb6582beca961b6e8574d4a5fa83d527">qbo:Deposit:DEP-SHORT:2</a> <a href="#e-99857e8f9a4f45315e033d0467fd42f562671cfd41baac0604e09b8bc3f60d56">qbo:Deposit:DEP-SHORT:3</a> <a href="#e-d23a333f5dc636856dea749ea5658793178de5dc6334b90d32c698f5814c17e5">qbo:Deposit:DEP-SHORT:4</a> <a href="#e-920162b28fd5229790ce42d0b6408fd4600caff372e2e1a6212698c014a9fb82">qbo:RefundReceipt:RR-BATCH</a> <a href="#e-c4954c8f852c5916d0180035bd427a715c52cbf2b8f71ebf244f5fb78a40696e">qbo:SalesReceipt:SR-BATCH</a></p></details><small>Rule C07</small></article>
+<article class="attention-card high"><span class="priority">high priority</span><h3>South yard bulk tank at Rio Grande Depot: tank inventory needs review</h3><p>Tank reading is 30 gal below the expected amount. No unit cost is supplied; dollar value is unavailable.</p><p><strong>Next step:</strong> Verify the tank readings and movement log with operations.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-484266954b5481f5b995ce394dfdaf38c436279adffe3b91efdeef6577f74e8a">cargas:delivery:D-OUT</a> <a href="#e-31c79b2f0c84bc08db92a7560846c57268490b65713619398bf4b8013797206b">cargas:meter_ticket:MT-D-OUT</a> <a href="#e-09588f16a6e0884bf07615716964e8335aee31e47b6cb188e485bb56f89aef4e">cargas:reading:R-CLOSE</a> <a href="#e-2553188599bc889bc69d98ac334426e786d22e7d141fc201ecce3cc15831997a">cargas:reading:R-OPEN</a> <a href="#e-c5a00bba17ef74e90602b44c064efce1bd9b279280742f4c581d81d7c3d33026">inventory:movement:M-OUT</a> <a href="#e-0258e414a50ba6818105b93295b76478c44c2207c32a750e9523853e590da935">inventory:movement:M-PURCHASE</a> <a href="#e-24861b540fdfa278e0c8f327b0fdc16078ba30ba90b3c41d487a04051a9584cc">inventory:movement:M-RETAIL</a> <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a> <a href="#e-702873907c6e9e85972343b92d441e524c2f13761f076289cd8f5c7896de820e">pos:POS:T-RETAIL:1</a></p></details><small>Rule C08</small></article>
+<article class="attention-card medium"><span class="priority">medium priority</span><h3>Credit #3105 for Rio Grande Ranch: credit, refund or discount needs review</h3><p>$150.00 adjustment flagged for review.</p><p><strong>Next step:</strong> Confirm the original sale and approval with the accounting team.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-54e1f9680e93d65c843e10f240644ba309e9ac642a7a5a4864c14d04ceeb2b1b">identity:approval:APP-CREDIT</a> <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a> <a href="#e-dc7c27abef75f5be03cccca67ad13058032f254022196939584834c4de0dbdf0">qbo:CreditMemo:CM-UNUSUAL:1</a> <a href="#e-bf9ce9248dc4e99173830ddd6e1f28a59f63bb84b1e311c9621a899f48f1900e">qbo:Invoice:I-CREDIT</a></p></details><small>Rule C05</small></article>
+</section><section id="data-status"><h2>Data status</h2><p>Last updated and coverage times in America/Denver. A fresh export does not guarantee up-to-date coverage. Supporting tables and individual imports are in Technical details.</p><ul class="source-list">
+<li><span><strong>QuickBooks</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 06:12 AM MST<br><small>Covered through Nov 04, 2026 12:00 AM MST</small></span></li>
+<li><span><strong>Cargas</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 05:55 AM MST<br><small>Covered through Nov 04, 2026 12:00 AM MST</small></span></li>
+<li><span><strong>POS</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 06:01 AM MST<br><small>Covered through Nov 04, 2026 12:00 AM MST</small></span></li>
+<li><span><strong>Card processor</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 06:17 AM MST<br><small>Covered through Nov 04, 2026 12:00 AM MST</small></span></li>
+<li><span><strong>Tank readings</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 05:50 AM MST<br><small>Covered through Nov 04, 2026 12:00 AM MST</small></span></li>
 </ul></section><details class="technical" id="technical"><summary>Technical details — checks, calculations and immutable evidence</summary>
 <h2>Run and evidence record</h2>
 <p>Business date: 2026-11-03 · America/Denver · synthetic data only</p>
 <p class="status complete">Run status: COMPLETE</p>
-<p>Run: synthetic-20261104-2026-11-03-showcase<br>As of: 2026-11-04T00:00:00-07:00<br>Source digest: be8351e830cd005236fdda9c5ab7e2598575ee3cdd98fc6c3e80c7af6c40ac63</p>
+<p>Run: synthetic-20261104-2026-11-03-showcase<br>As of: 2026-11-04T06:30:00-07:00<br>Source digest: 4c7fcb8bca93ef300fdef3cd91285f2a77a9260b9c4096016205752dae71c19f</p>
 <nav aria-label="Report sections"><a href="#alerts">Alerts</a><a href="#kpis">KPIs</a><a href="#exceptions">Exceptions</a><a href="#coverage">Coverage</a><a href="#worksheets">Worksheets</a><a href="#evidence">Evidence</a></nav>
 <section id="alerts"><h2>Source alerts</h2>
 <p>No source alerts.</p>
@@ -101,27 +97,29 @@ footer{margin-top:3rem;color:#405954;font-size:.9rem}
 <dt>Other retail gallons</dt><dd>55.000 US gallons — complete<br><a href="#e-9412acbaaa676e59b0657ac70677d86780a704265d03ab9d3647058d1bc9adfb">Inspect calculation</a></dd>
 <dt>Total gallons sold</dt><dd>655.005 US gallons — complete<br><a href="#e-21d9208217e89f883c9b67b8081e36507d980d301e148bf5f6fd766fcc23fcff">Inspect calculation</a></dd>
 <dt>Net revenue</dt><dd>1290.02 USD — complete<br><a href="#e-f24fc5388d997e60319d17457ccb2e60668e73f268ae5af27af0aa4decdc64e2">Inspect calculation</a></dd>
-<dt>Accounts receivable</dt><dd>860.01 USD — complete<br><a href="#e-677f11a710d75a6c089d94a38630273009684f9a5d271b0425ee6f22d9684a8e">Inspect calculation</a></dd>
-</dl></section><section><h2>Computed summary</h2><p>Deterministic results remain authoritative.</p><pre>Complete synthetic run. 4 findings; 0 source alerts. 20 check scopes evaluated; 0 not evaluated. Review critical and high exceptions first, then inspect their source evidence. Offline computed summary; deterministic calculations only.
+<dt>Accounts receivable</dt><dd>810.01 USD — complete<br><a href="#e-677f11a710d75a6c089d94a38630273009684f9a5d271b0425ee6f22d9684a8e">Inspect calculation</a></dd>
+</dl></section><section><h2>Computed summary</h2><p>Deterministic results remain authoritative.</p><pre>Complete synthetic run. 5 findings; 0 source alerts. 20 check scopes evaluated; 0 not evaluated. Review critical and high exceptions first, then inspect their source evidence. Offline computed summary; deterministic calculations only.
 delivered: 600.005 US gallons (complete).
 retail: 55.000 US gallons (complete).
 total_gallons: 655.005 US gallons (complete).
 revenue: 1290.02 USD (complete).
-AR: 860.01 USD (complete).
+AR: 810.01 USD (complete).
 [C01|cargas:delivery:D-MISSING] high; delta 100.000; threshold 0.001.
 [C03|pos:POS:T-DUP-A:1|pos:POS:T-DUP-B:1] high; delta 1; threshold 1.
 [C07|pos:batch:B-SETTLED|qbo:Deposit:DEP-SHORT:1] high; delta -10.00; threshold 0.01.
-[C08|cargas:reading:R-CLOSE|cargas:reading:R-OPEN] high; delta -30.000; threshold 6.000.</pre></section><section id="exceptions"><h2>Prioritized exceptions</h2>
-<aside><h2>Optional narrative</h2><p>Narrative status: computed_fallback · disabled_offline</p><p>AI-generated text is untrusted; illustrative text is not a live Claude response. Only shape and cited finding IDs are validated, not sentence accuracy, numbers, causes or remedies. Computed results remain authoritative.</p><pre>Complete synthetic run. 4 findings; 0 source alerts. 20 check scopes evaluated; 0 not evaluated. Review critical and high exceptions first, then inspect their source evidence. Offline computed summary; deterministic calculations only.
+[C08|cargas:reading:R-CLOSE|cargas:reading:R-OPEN] high; delta -30.000; threshold 6.000.
+[C05|qbo:CreditMemo:CM-UNUSUAL:1] medium; delta 50.00; threshold 100.00.</pre></section><section id="exceptions"><h2>Prioritized exceptions</h2>
+<aside><h2>Optional narrative</h2><p>Narrative status: computed_fallback · disabled_offline</p><p>AI-generated text is untrusted; illustrative text is not a live Claude response. Only shape and cited finding IDs are validated, not sentence accuracy, numbers, causes or remedies. Computed results remain authoritative.</p><pre>Complete synthetic run. 5 findings; 0 source alerts. 20 check scopes evaluated; 0 not evaluated. Review critical and high exceptions first, then inspect their source evidence. Offline computed summary; deterministic calculations only.
 delivered: 600.005 US gallons (complete).
 retail: 55.000 US gallons (complete).
 total_gallons: 655.005 US gallons (complete).
 revenue: 1290.02 USD (complete).
-AR: 860.01 USD (complete).
+AR: 810.01 USD (complete).
 [C01|cargas:delivery:D-MISSING] high; delta 100.000; threshold 0.001.
 [C03|pos:POS:T-DUP-A:1|pos:POS:T-DUP-B:1] high; delta 1; threshold 1.
 [C07|pos:batch:B-SETTLED|qbo:Deposit:DEP-SHORT:1] high; delta -10.00; threshold 0.01.
-[C08|cargas:reading:R-CLOSE|cargas:reading:R-OPEN] high; delta -30.000; threshold 6.000.</pre></aside>
+[C08|cargas:reading:R-CLOSE|cargas:reading:R-OPEN] high; delta -30.000; threshold 6.000.
+[C05|qbo:CreditMemo:CM-UNUSUAL:1] medium; delta 50.00; threshold 100.00.</pre></aside>
 <article class="high"><h3>HIGH · C01 · exception</h3><p>Delivery has unallocated billable volume after grace.</p><p>Finding: C01|cargas:delivery:D-MISSING</p>
 <p>actual: 100.000 · expected: 0.000 · delta: 100.000 · threshold: 0.001</p><p><a href="#e-56731ffe6daff073d1d4ac23d8a77fc9fa8e7054afc27805ce696ccf5362bc3a">cargas:delivery:D-MISSING</a> <a href="#e-50c06a9e84d1704951485c628982336ffac2dd9c0a1a0f1daa2e64a4d740621e">cargas:meter_ticket:MT-D-MISSING</a></p>
 <p>Missing reference: {&quot;lookup_key&quot;: &quot;delivery:D-MISSING&quot;, &quot;system&quot;: &quot;qbo&quot;, &quot;type&quot;: &quot;Invoice.Line&quot;}</p>
@@ -135,7 +133,10 @@ AR: 860.01 USD (complete).
 <article class="high"><h3>HIGH · C08 · exception</h3><p>Observed closing inventory differs from the signed worksheet.</p><p>Finding: C08|cargas:reading:R-CLOSE|cargas:reading:R-OPEN</p>
 <p>actual: 1020.000 · expected: 1050.000 · delta: -30.000 · threshold: 6.000</p><p><a href="#e-484266954b5481f5b995ce394dfdaf38c436279adffe3b91efdeef6577f74e8a">cargas:delivery:D-OUT</a> <a href="#e-31c79b2f0c84bc08db92a7560846c57268490b65713619398bf4b8013797206b">cargas:meter_ticket:MT-D-OUT</a> <a href="#e-09588f16a6e0884bf07615716964e8335aee31e47b6cb188e485bb56f89aef4e">cargas:reading:R-CLOSE</a> <a href="#e-2553188599bc889bc69d98ac334426e786d22e7d141fc201ecce3cc15831997a">cargas:reading:R-OPEN</a> <a href="#e-c5a00bba17ef74e90602b44c064efce1bd9b279280742f4c581d81d7c3d33026">inventory:movement:M-OUT</a> <a href="#e-0258e414a50ba6818105b93295b76478c44c2207c32a750e9523853e590da935">inventory:movement:M-PURCHASE</a> <a href="#e-24861b540fdfa278e0c8f327b0fdc16078ba30ba90b3c41d487a04051a9584cc">inventory:movement:M-RETAIL</a> <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a> <a href="#e-702873907c6e9e85972343b92d441e524c2f13761f076289cd8f5c7896de820e">pos:POS:T-RETAIL:1</a></p>
 </article>
-</section><section id="coverage"><h2>Check coverage and freshness</h2><p>{&quot;core_checks&quot;: 12, &quot;evaluated&quot;: 20, &quot;not_evaluated&quot;: 0, &quot;passed&quot;: 10}</p><p>Rule version: 1 · Policy version: 1</p>
+<article class="medium"><h3>MEDIUM · C05 · exception</h3><p>Adjustment exceeds policy or lacks required evidence.</p><p>Finding: C05|qbo:CreditMemo:CM-UNUSUAL:1</p>
+<p>actual: 150.00 · expected: 100.00 · delta: 50.00 · threshold: 100.00</p><p><a href="#e-54e1f9680e93d65c843e10f240644ba309e9ac642a7a5a4864c14d04ceeb2b1b">identity:approval:APP-CREDIT</a> <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a> <a href="#e-dc7c27abef75f5be03cccca67ad13058032f254022196939584834c4de0dbdf0">qbo:CreditMemo:CM-UNUSUAL:1</a> <a href="#e-bf9ce9248dc4e99173830ddd6e1f28a59f63bb84b1e311c9621a899f48f1900e">qbo:Invoice:I-CREDIT</a></p>
+</article>
+</section><section id="coverage"><h2>Check coverage and freshness</h2><p>{&quot;core_checks&quot;: 12, &quot;evaluated&quot;: 20, &quot;not_evaluated&quot;: 0, &quot;passed&quot;: 8}</p><p>Rule version: 1 · Policy version: 1</p>
 <p><strong>C01</strong>: evaluated  </p>
 <p><strong>C02</strong>: evaluated  </p>
 <p><strong>C03:pos</strong>: evaluated  </p>
@@ -157,17 +158,17 @@ AR: 860.01 USD (complete).
 <p><strong>C11</strong>: evaluated  </p>
 <p><strong>C12</strong>: evaluated  </p>
 <table><caption>Source windows and coverage watermarks (America/Denver)</caption><thead><tr><th scope="col">Source</th><th scope="col">State</th><th scope="col">Window / watermark / extracted</th></tr></thead><tbody>
-<tr><th scope="row"><a href="#e-b501698016f03d335ff2b863edd64f8f09e6900e95af0be2f682064ed7f7d0b2">manifest:CARGAS-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00</td></tr>
-<tr><th scope="row"><a href="#e-86f4a1ca6c1654038f4a681dd25f031ad9fb13876fb5e38328ecf391d5314ef5">manifest:EMPTY-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00</td></tr>
-<tr><th scope="row"><a href="#e-3ef177f09afaaea4e299854e45e67bd49b10b7e7386c087f61fe95df746efd2b">manifest:IDENTITY-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00</td></tr>
-<tr><th scope="row"><a href="#e-2e5c7741a01e4fdcf02c0de760702e18dc6e3c2941998b8262e0b158566cc3a7">manifest:INVENTORY-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00</td></tr>
-<tr><th scope="row"><a href="#e-3fb943e99fd04add09b3d35884808d9db6ca35ba4146e1372e6a8c53a08a7f15">manifest:AR-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00</td></tr>
-<tr><th scope="row"><a href="#e-dcff57163bc9f94a8af544a4ab5d5ed2e8e1d963b511a3b8e5321981a5e4877c">manifest:POS-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00</td></tr>
-<tr><th scope="row"><a href="#e-486b6eebed3a66bc02cc0c2d48b6b2205e10446bd8fbf2e347534dda023ad923">manifest:PRICES-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00</td></tr>
-<tr><th scope="row"><a href="#e-601311e630fbab1edb4c7280a839c2466b83b49ecd555620a1c487151905d4f3">manifest:QBO-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00</td></tr>
-<tr><th scope="row"><a href="#e-edc189f971c9f1e6161f1ee85086ab88479ce26636395cc7de7dba79cfe0bec5">manifest:READINGS-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00</td></tr>
-<tr><th scope="row"><a href="#e-1ebc9ff15e1746a4c78c95cfc73d6a70c6f3034f0338ca10255ea4850e212659">manifest:SETTLEMENTS-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00</td></tr>
-<tr><th scope="row"><a href="#e-25c1d9b626a3274aa4fa0fc5f1a38e343e0bff07362390b7205c57a9f1a52952">manifest:UPDATES-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00</td></tr>
+<tr><th scope="row"><a href="#e-b501698016f03d335ff2b863edd64f8f09e6900e95af0be2f682064ed7f7d0b2">manifest:CARGAS-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T05:55:00-07:00</td></tr>
+<tr><th scope="row"><a href="#e-86f4a1ca6c1654038f4a681dd25f031ad9fb13876fb5e38328ecf391d5314ef5">manifest:EMPTY-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T05:38:00-07:00</td></tr>
+<tr><th scope="row"><a href="#e-3ef177f09afaaea4e299854e45e67bd49b10b7e7386c087f61fe95df746efd2b">manifest:IDENTITY-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T05:40:00-07:00</td></tr>
+<tr><th scope="row"><a href="#e-2e5c7741a01e4fdcf02c0de760702e18dc6e3c2941998b8262e0b158566cc3a7">manifest:INVENTORY-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T05:50:00-07:00</td></tr>
+<tr><th scope="row"><a href="#e-3fb943e99fd04add09b3d35884808d9db6ca35ba4146e1372e6a8c53a08a7f15">manifest:AR-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T05:47:00-07:00</td></tr>
+<tr><th scope="row"><a href="#e-dcff57163bc9f94a8af544a4ab5d5ed2e8e1d963b511a3b8e5321981a5e4877c">manifest:POS-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T06:01:00-07:00</td></tr>
+<tr><th scope="row"><a href="#e-486b6eebed3a66bc02cc0c2d48b6b2205e10446bd8fbf2e347534dda023ad923">manifest:PRICES-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T05:45:00-07:00</td></tr>
+<tr><th scope="row"><a href="#e-601311e630fbab1edb4c7280a839c2466b83b49ecd555620a1c487151905d4f3">manifest:QBO-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T06:12:00-07:00</td></tr>
+<tr><th scope="row"><a href="#e-edc189f971c9f1e6161f1ee85086ab88479ce26636395cc7de7dba79cfe0bec5">manifest:READINGS-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T06:22:00-07:00</td></tr>
+<tr><th scope="row"><a href="#e-1ebc9ff15e1746a4c78c95cfc73d6a70c6f3034f0338ca10255ea4850e212659">manifest:SETTLEMENTS-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T06:17:00-07:00</td></tr>
+<tr><th scope="row"><a href="#e-25c1d9b626a3274aa4fa0fc5f1a38e343e0bff07362390b7205c57a9f1a52952">manifest:UPDATES-OK</a></th><td>success</td><td>2026-10-26T01:00:00-06:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T00:00:00-07:00<br>2026-11-04T06:24:00-07:00</td></tr>
 </tbody></table></section><section id="worksheets"><h2>Signed calculation worksheets</h2>
 <article id="e-bfd6f9b9fb0344c4cc92d82f545c673b639db9d995f4fc1f0c9e33dd81b72ec7"><h3>Delivered gallons — complete</h3><p>Known contributions: 600.005 US gallons</p>
 <p>completed_delivery: 20.000 <a href="#e-265f05cb72e0ed28e0fa30079d70ae3e3a77b4f557fa663f763d710d042595d8">cargas:delivery:D-COMB-A</a> <a href="#e-0ee060fa5d17783cf5c39500ed0f1c8e38901d4f6cb8e4213f906978874f6cd1">identity:customer:CUSTOMER-1</a> <a href="#e-f781edc56efc111350b83356bb59f12b5c1a6679c86f40290229ae9e6a9078c5">identity:item:ITEM-1</a> <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a></p>
@@ -247,14 +248,13 @@ AR: 860.01 USD (complete).
 <p>net_sale: 0.00 <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a> <a href="#e-332e45aa35a03629a4640f21d3c515be3c983513e714bc54fdaee6bd1a9d54c3">qbo:Item:SERVICE</a> <a href="#e-0b146ef32ced134dfd8e1ad6dd94f35925cb0ad5e957dd7facc8d2c2df3d4181">qbo:SalesReceipt:SR-ZERO</a> <a href="#e-2d841d8d41d69af44c801f17b7c2f3b6d9d0c402dd5991454e5943f6ac29384e">qbo:SalesReceipt:SR-ZERO:1</a></p>
 <p>net_adjustment: -100.00 <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a> <a href="#e-332e45aa35a03629a4640f21d3c515be3c983513e714bc54fdaee6bd1a9d54c3">qbo:Item:SERVICE</a> <a href="#e-9b5096bdd83710e15f390f10230ada066af2ba458736ee3c166677df8b8910e4">qbo:RefundReceipt:RR-BOUNDARY</a> <a href="#e-e351d1842e47db2bf418c29e43df5630e539559277a15dd4aa7bf0e0b9dbec52">qbo:RefundReceipt:RR-BOUNDARY:1</a> <a href="#e-8626ab573894cbe7e14034e56f356e22083afd760ee800269348a76a703d9d0c">qbo:SalesReceipt:SR-ORIGINAL</a></p>
 </article>
-<article id="e-677f11a710d75a6c089d94a38630273009684f9a5d271b0425ee6f22d9684a8e"><h3>Accounts receivable — complete</h3><p>Known contributions: 860.01 USD</p>
+<article id="e-677f11a710d75a6c089d94a38630273009684f9a5d271b0425ee6f22d9684a8e"><h3>Accounts receivable — complete</h3><p>Known contributions: 810.01 USD</p>
 <p>opening_AR: 0.00 <a href="#e-68852834304ed0459b20c4287afccc0b263f13e7009abd61e21dfb1eb76f2ff3">ar:snapshot:AR-OPEN</a></p>
 <p>invoice_gross: 200.00 <a href="#e-bf9ce9248dc4e99173830ddd6e1f28a59f63bb84b1e311c9621a899f48f1900e">qbo:Invoice:I-CREDIT</a></p>
 <p>invoice_gross: 100.00 <a href="#e-003b649300c4e65529e641087b732069a5d6c02d32c9cfcc9c67bc1b4e47e9d9">qbo:Invoice:I-PAID</a></p>
 <p>invoice_gross: 100.00 <a href="#e-b4deea40e7ac7e93caa0e0aee1738d64f5930bcbe6f1259e5a11fc90866a678a">qbo:Invoice:I-PAY</a></p>
-<p>applied_credit: -100.00 <a href="#e-53fd5c545f06d4a2265977e800972c27ddf9bfb0d1896978213dec0536c71bfc">qbo:CreditMemo:CM-BOUNDARY</a> <a href="#e-bf9ce9248dc4e99173830ddd6e1f28a59f63bb84b1e311c9621a899f48f1900e">qbo:Invoice:I-CREDIT</a></p>
+<p>applied_credit: -150.00 <a href="#e-250a694a3a02171331d4d28fd0f5c797a15d0c361ab78653721a17d63f94b3ca">qbo:CreditMemo:CM-UNUSUAL</a> <a href="#e-bf9ce9248dc4e99173830ddd6e1f28a59f63bb84b1e311c9621a899f48f1900e">qbo:Invoice:I-CREDIT</a></p>
 <p>allocated_cash: -100.00 <a href="#e-003b649300c4e65529e641087b732069a5d6c02d32c9cfcc9c67bc1b4e47e9d9">qbo:Invoice:I-PAID</a> <a href="#e-eb7b28be33e2158375b86c08bade7bc525ee728bc6e3b5ab04db9f9fbc67b4e3">qbo:Payment:PAY-APPLIED:1</a></p>
-<p>invoice_gross: 200.00 <a href="#e-ef038b148ca5504f2e0a580a0b1a482768e2a9efcd6d0701689a0423edaba4b5">qbo:Invoice:I-GRACE</a></p>
 <p>invoice_gross: 100.00 <a href="#e-12f3a92dd244135ca2b57a8a969a7e622269c780364c00144916c7ce9659d910">qbo:Invoice:I-COMBINED</a></p>
 <p>invoice_gross: 20.00 <a href="#e-ce868e647bbb91c4a8b4e0686c80c6b0e1eedffd953d45ad32492f67e24a835b">qbo:Invoice:I-EQUAL-A</a></p>
 <p>invoice_gross: 20.00 <a href="#e-1aecf2e18e98c9c2b566596f1f0fee3717e6a003483e5bfba37427e3a8705222">qbo:Invoice:I-EQUAL-B</a></p>
@@ -265,16 +265,17 @@ AR: 860.01 USD (complete).
 <p>invoice_gross: 40.00 <a href="#e-fad9da8893885ca81682e70e35a6f9e1427c1a190acc84a81627b6ebd15db5ef">qbo:Invoice:I-SPLIT-A</a></p>
 <p>invoice_gross: 60.00 <a href="#e-5e09ad662ad114ecb77e5fe72072eacddcd1ce3e1df9d83202fa01459c39f81c">qbo:Invoice:I-SPLIT-B</a></p>
 <p>allocated_cash: -200.00 <a href="#e-3eba60f0df52dacd37602c3cc4e2942d225f4021433d2cdaa58fad8b49a8000a">qbo:Invoice:I-OUT</a> <a href="#e-96fe7e654ba84d61ed6bbcdd84ef2147a2551f4a3d04e9559d531202b43980e7">qbo:Payment:PAY-DELIVERY:1</a></p>
+<p>invoice_gross: 200.00 <a href="#e-ef038b148ca5504f2e0a580a0b1a482768e2a9efcd6d0701689a0423edaba4b5">qbo:Invoice:I-GRACE</a></p>
 <h4>unapplied_cash (separate)</h4><p>25.01 USD</p>
 <p>0.00 <a href="#e-e9e8b9e72b75ea36e975d9045d39721ec1307f3f2564b1a105a3914bc4064aa5">qbo:Payment:PAY-APPLIED</a></p>
 <p>0.01 <a href="#e-54c0f0182c32a14afe1e304c24d0f471ea79ff5822dc2b02274bb41aa1e5b511">qbo:Payment:PAY-UNAPPLIED</a></p>
-<p>25.00 <a href="#e-10cb2fec74618e2253121682d9a7ec586a801747a246aaaecf2ec0cb29172456">qbo:Payment:PAY-GRACE</a></p>
 <p>0.00 <a href="#e-269a2a974af2533676e7dce09e8c6484a020dc7c35add2578a9d779fbcff0313">qbo:Payment:PAY-DELIVERY</a></p>
+<p>25.00 <a href="#e-10cb2fec74618e2253121682d9a7ec586a801747a246aaaecf2ec0cb29172456">qbo:Payment:PAY-GRACE</a></p>
 <h4>unapplied_credits (separate)</h4><p>0.00 USD</p>
-<p>0.00 <a href="#e-53fd5c545f06d4a2265977e800972c27ddf9bfb0d1896978213dec0536c71bfc">qbo:CreditMemo:CM-BOUNDARY</a></p>
+<p>0.00 <a href="#e-250a694a3a02171331d4d28fd0f5c797a15d0c361ab78653721a17d63f94b3ca">qbo:CreditMemo:CM-UNUSUAL</a></p>
 <h4>Reported Balance comparison (never added to AR)</h4>
 <p>{&quot;computed&quot;: &quot;100.00&quot;, &quot;delta&quot;: &quot;0.00&quot;, &quot;reported&quot;: &quot;100.00&quot;, &quot;status&quot;: &quot;complete&quot;} <a href="#e-12f3a92dd244135ca2b57a8a969a7e622269c780364c00144916c7ce9659d910">qbo:Invoice:I-COMBINED</a></p>
-<p>{&quot;computed&quot;: &quot;100.00&quot;, &quot;delta&quot;: &quot;0.00&quot;, &quot;reported&quot;: &quot;100.00&quot;, &quot;status&quot;: &quot;complete&quot;} <a href="#e-bf9ce9248dc4e99173830ddd6e1f28a59f63bb84b1e311c9621a899f48f1900e">qbo:Invoice:I-CREDIT</a></p>
+<p>{&quot;computed&quot;: &quot;50.00&quot;, &quot;delta&quot;: &quot;0.00&quot;, &quot;reported&quot;: &quot;50.00&quot;, &quot;status&quot;: &quot;complete&quot;} <a href="#e-bf9ce9248dc4e99173830ddd6e1f28a59f63bb84b1e311c9621a899f48f1900e">qbo:Invoice:I-CREDIT</a></p>
 <p>{&quot;computed&quot;: &quot;20.00&quot;, &quot;delta&quot;: &quot;0.00&quot;, &quot;reported&quot;: &quot;20.00&quot;, &quot;status&quot;: &quot;complete&quot;} <a href="#e-ce868e647bbb91c4a8b4e0686c80c6b0e1eedffd953d45ad32492f67e24a835b">qbo:Invoice:I-EQUAL-A</a></p>
 <p>{&quot;computed&quot;: &quot;20.00&quot;, &quot;delta&quot;: &quot;0.00&quot;, &quot;reported&quot;: &quot;20.00&quot;, &quot;status&quot;: &quot;complete&quot;} <a href="#e-1aecf2e18e98c9c2b566596f1f0fee3717e6a003483e5bfba37427e3a8705222">qbo:Invoice:I-EQUAL-B</a></p>
 <p>{&quot;computed&quot;: &quot;0.01&quot;, &quot;delta&quot;: &quot;0.00&quot;, &quot;reported&quot;: &quot;0.01&quot;, &quot;status&quot;: &quot;complete&quot;} <a href="#e-44a65bff33e30fd366ef7a6d580e0c835d4cf6df7c9f159eab8768dfa0d4b6c2">qbo:Invoice:I-FRACTION</a></p>
@@ -864,7 +865,7 @@ AR: 860.01 USD (complete).
   &quot;pointer&quot;: &quot;:row:12&quot;,
   &quot;raw&quot;: {
     &quot;customer_id&quot;: &quot;CE-C1&quot;,
-    &quot;delivered_at&quot;: &quot;2026-11-03T07:00:00+00:00&quot;,
+    &quot;delivered_at&quot;: &quot;2026-11-03T13:30:00+00:00&quot;,
     &quot;external_invoice_id&quot;: &quot;&quot;,
     &quot;gallon_basis&quot;: &quot;net_60F&quot;,
     &quot;gallons&quot;: &quot;100.000&quot;,
@@ -1349,6 +1350,14 @@ AR: 860.01 USD (complete).
     &quot;uncertainty_gallons&quot;: &quot;0.500&quot;
   }
 }</pre></details>
+<details id="e-54e1f9680e93d65c843e10f240644ba309e9ac642a7a5a4864c14d04ceeb2b1b"><summary>identity:approval:APP-CREDIT</summary><pre>{
+  &quot;file_id&quot;: &quot;identity.json&quot;,
+  &quot;pointer&quot;: &quot;#/approvals/0&quot;,
+  &quot;raw&quot;: {
+    &quot;approval_id&quot;: &quot;APP-CREDIT&quot;,
+    &quot;policy_id&quot;: &quot;POLICY-1&quot;
+  }
+}</pre></details>
 <details id="e-0ee060fa5d17783cf5c39500ed0f1c8e38901d4f6cb8e4213f906978874f6cd1"><summary>identity:customer:CUSTOMER-1</summary><pre>{
   &quot;file_id&quot;: &quot;identity.json&quot;,
   &quot;pointer&quot;: &quot;#/customers/0&quot;,
@@ -1695,7 +1704,7 @@ AR: 860.01 USD (complete).
     &quot;error_code&quot;: &quot;&quot;,
     &quot;expected_window_end&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
     &quot;expected_window_start&quot;: &quot;2026-10-26T07:00:00+00:00&quot;,
-    &quot;extracted_at&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
+    &quot;extracted_at&quot;: &quot;2026-11-04T12:47:00+00:00&quot;,
     &quot;file_id&quot;: &quot;opening_ar.json&quot;,
     &quot;manifest_id&quot;: &quot;AR-OK&quot;,
     &quot;row_count&quot;: &quot;3&quot;,
@@ -1715,7 +1724,7 @@ AR: 860.01 USD (complete).
     &quot;error_code&quot;: &quot;&quot;,
     &quot;expected_window_end&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
     &quot;expected_window_start&quot;: &quot;2026-10-26T07:00:00+00:00&quot;,
-    &quot;extracted_at&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
+    &quot;extracted_at&quot;: &quot;2026-11-04T12:55:00+00:00&quot;,
     &quot;file_id&quot;: &quot;deliveries.csv&quot;,
     &quot;manifest_id&quot;: &quot;CARGAS-OK&quot;,
     &quot;row_count&quot;: &quot;12&quot;,
@@ -1735,7 +1744,7 @@ AR: 860.01 USD (complete).
     &quot;error_code&quot;: &quot;&quot;,
     &quot;expected_window_end&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
     &quot;expected_window_start&quot;: &quot;2026-10-26T07:00:00+00:00&quot;,
-    &quot;extracted_at&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
+    &quot;extracted_at&quot;: &quot;2026-11-04T12:38:00+00:00&quot;,
     &quot;file_id&quot;: &quot;empty.json&quot;,
     &quot;manifest_id&quot;: &quot;EMPTY-OK&quot;,
     &quot;row_count&quot;: &quot;0&quot;,
@@ -1755,7 +1764,7 @@ AR: 860.01 USD (complete).
     &quot;error_code&quot;: &quot;&quot;,
     &quot;expected_window_end&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
     &quot;expected_window_start&quot;: &quot;2026-10-26T07:00:00+00:00&quot;,
-    &quot;extracted_at&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
+    &quot;extracted_at&quot;: &quot;2026-11-04T12:40:00+00:00&quot;,
     &quot;file_id&quot;: &quot;identity.json&quot;,
     &quot;manifest_id&quot;: &quot;IDENTITY-OK&quot;,
     &quot;row_count&quot;: &quot;8&quot;,
@@ -1775,7 +1784,7 @@ AR: 860.01 USD (complete).
     &quot;error_code&quot;: &quot;&quot;,
     &quot;expected_window_end&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
     &quot;expected_window_start&quot;: &quot;2026-10-26T07:00:00+00:00&quot;,
-    &quot;extracted_at&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
+    &quot;extracted_at&quot;: &quot;2026-11-04T12:50:00+00:00&quot;,
     &quot;file_id&quot;: &quot;movements.csv&quot;,
     &quot;manifest_id&quot;: &quot;INVENTORY-OK&quot;,
     &quot;row_count&quot;: &quot;13&quot;,
@@ -1795,7 +1804,7 @@ AR: 860.01 USD (complete).
     &quot;error_code&quot;: &quot;&quot;,
     &quot;expected_window_end&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
     &quot;expected_window_start&quot;: &quot;2026-10-26T07:00:00+00:00&quot;,
-    &quot;extracted_at&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
+    &quot;extracted_at&quot;: &quot;2026-11-04T13:01:00+00:00&quot;,
     &quot;file_id&quot;: &quot;pos.csv&quot;,
     &quot;manifest_id&quot;: &quot;POS-OK&quot;,
     &quot;row_count&quot;: &quot;13&quot;,
@@ -1815,7 +1824,7 @@ AR: 860.01 USD (complete).
     &quot;error_code&quot;: &quot;&quot;,
     &quot;expected_window_end&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
     &quot;expected_window_start&quot;: &quot;2026-10-26T07:00:00+00:00&quot;,
-    &quot;extracted_at&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
+    &quot;extracted_at&quot;: &quot;2026-11-04T12:45:00+00:00&quot;,
     &quot;file_id&quot;: &quot;prices.csv&quot;,
     &quot;manifest_id&quot;: &quot;PRICES-OK&quot;,
     &quot;row_count&quot;: &quot;6&quot;,
@@ -1835,7 +1844,7 @@ AR: 860.01 USD (complete).
     &quot;error_code&quot;: &quot;&quot;,
     &quot;expected_window_end&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
     &quot;expected_window_start&quot;: &quot;2026-10-26T07:00:00+00:00&quot;,
-    &quot;extracted_at&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
+    &quot;extracted_at&quot;: &quot;2026-11-04T13:12:00+00:00&quot;,
     &quot;file_id&quot;: &quot;qbo.json&quot;,
     &quot;manifest_id&quot;: &quot;QBO-OK&quot;,
     &quot;row_count&quot;: &quot;43&quot;,
@@ -1855,7 +1864,7 @@ AR: 860.01 USD (complete).
     &quot;error_code&quot;: &quot;&quot;,
     &quot;expected_window_end&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
     &quot;expected_window_start&quot;: &quot;2026-10-26T07:00:00+00:00&quot;,
-    &quot;extracted_at&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
+    &quot;extracted_at&quot;: &quot;2026-11-04T13:22:00+00:00&quot;,
     &quot;file_id&quot;: &quot;readings.csv&quot;,
     &quot;manifest_id&quot;: &quot;READINGS-OK&quot;,
     &quot;row_count&quot;: &quot;10&quot;,
@@ -1875,7 +1884,7 @@ AR: 860.01 USD (complete).
     &quot;error_code&quot;: &quot;&quot;,
     &quot;expected_window_end&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
     &quot;expected_window_start&quot;: &quot;2026-10-26T07:00:00+00:00&quot;,
-    &quot;extracted_at&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
+    &quot;extracted_at&quot;: &quot;2026-11-04T13:17:00+00:00&quot;,
     &quot;file_id&quot;: &quot;settlements.csv&quot;,
     &quot;manifest_id&quot;: &quot;SETTLEMENTS-OK&quot;,
     &quot;row_count&quot;: &quot;1&quot;,
@@ -1895,7 +1904,7 @@ AR: 860.01 USD (complete).
     &quot;error_code&quot;: &quot;&quot;,
     &quot;expected_window_end&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
     &quot;expected_window_start&quot;: &quot;2026-10-26T07:00:00+00:00&quot;,
-    &quot;extracted_at&quot;: &quot;2026-11-04T07:00:00+00:00&quot;,
+    &quot;extracted_at&quot;: &quot;2026-11-04T13:24:00+00:00&quot;,
     &quot;file_id&quot;: &quot;updates.json&quot;,
     &quot;manifest_id&quot;: &quot;UPDATES-OK&quot;,
     &quot;row_count&quot;: &quot;2&quot;,
@@ -2268,21 +2277,36 @@ AR: 860.01 USD (complete).
     }
   ]
 }</pre></details>
-<details id="e-53fd5c545f06d4a2265977e800972c27ddf9bfb0d1896978213dec0536c71bfc"><summary>qbo:CreditMemo:CM-BOUNDARY</summary><pre>{
+<details id="e-9c88aae1cf85f4c81e19e245b4df74644749c829880d792126c9d791da09b166"><summary>prices:price:PRICE-BASE</summary><pre>{
+  &quot;file_id&quot;: &quot;prices.csv&quot;,
+  &quot;pointer&quot;: &quot;:row:2&quot;,
+  &quot;raw&quot;: {
+    &quot;approved_discount_pct&quot;: &quot;0.00&quot;,
+    &quot;customer_class&quot;: &quot;standard&quot;,
+    &quot;effective_from&quot;: &quot;2019-01-01&quot;,
+    &quot;effective_to&quot;: &quot;2035-01-01&quot;,
+    &quot;gallon_basis&quot;: &quot;net_60F&quot;,
+    &quot;item_id&quot;: &quot;LPG-DELIVERY&quot;,
+    &quot;price_id&quot;: &quot;PRICE-BASE&quot;,
+    &quot;unit&quot;: &quot;gallon&quot;,
+    &quot;unit_price&quot;: &quot;2.00&quot;
+  }
+}</pre></details>
+<details id="e-250a694a3a02171331d4d28fd0f5c797a15d0c361ab78653721a17d63f94b3ca"><summary>qbo:CreditMemo:CM-UNUSUAL</summary><pre>{
   &quot;file_id&quot;: &quot;qbo.json&quot;,
   &quot;pointer&quot;: &quot;#/CreditMemo/0&quot;,
   &quot;raw&quot;: {
-    &quot;AppliedAmount&quot;: &quot;100.00&quot;,
+    &quot;AppliedAmount&quot;: &quot;150.00&quot;,
     &quot;ApprovalRef&quot;: &quot;APP-CREDIT&quot;,
     &quot;CustomerRef&quot;: {
       &quot;value&quot;: &quot;C-1&quot;
     },
-    &quot;DocNumber&quot;: &quot;CM-BOUNDARY&quot;,
+    &quot;DocNumber&quot;: &quot;CM-UNUSUAL&quot;,
     &quot;EventAt&quot;: &quot;2026-11-03T02:00:00+00:00&quot;,
-    &quot;Id&quot;: &quot;CM-BOUNDARY&quot;,
+    &quot;Id&quot;: &quot;CM-UNUSUAL&quot;,
     &quot;Line&quot;: [
       {
-        &quot;Amount&quot;: &quot;100.00&quot;,
+        &quot;Amount&quot;: &quot;150.00&quot;,
         &quot;DetailType&quot;: &quot;SalesItemLineDetail&quot;,
         &quot;Id&quot;: &quot;1&quot;,
         &quot;SalesItemLineDetail&quot;: {
@@ -2293,7 +2317,7 @@ AR: 860.01 USD (complete).
           &quot;TaxCodeRef&quot;: {
             &quot;value&quot;: &quot;NON&quot;
           },
-          &quot;UnitPrice&quot;: &quot;100.00&quot;
+          &quot;UnitPrice&quot;: &quot;150.00&quot;
         }
       }
     ],
@@ -2307,8 +2331,40 @@ AR: 860.01 USD (complete).
       &quot;LastUpdatedTime&quot;: &quot;2026-11-04T06:00:00+00:00&quot;
     },
     &quot;SyncToken&quot;: &quot;0&quot;,
-    &quot;TotalAmt&quot;: &quot;100.00&quot;,
+    &quot;TotalAmt&quot;: &quot;150.00&quot;,
     &quot;TxnDate&quot;: &quot;2026-11-02&quot;
+  }
+}</pre></details>
+<details id="e-dc7c27abef75f5be03cccca67ad13058032f254022196939584834c4de0dbdf0"><summary>qbo:CreditMemo:CM-UNUSUAL:1</summary><pre>{
+  &quot;file_id&quot;: &quot;qbo.json&quot;,
+  &quot;pointer&quot;: &quot;#/CreditMemo/0/Line/0&quot;,
+  &quot;raw&quot;: {
+    &quot;Amount&quot;: &quot;150.00&quot;,
+    &quot;DetailType&quot;: &quot;SalesItemLineDetail&quot;,
+    &quot;Id&quot;: &quot;1&quot;,
+    &quot;SalesItemLineDetail&quot;: {
+      &quot;ItemRef&quot;: {
+        &quot;value&quot;: &quot;SERVICE&quot;
+      },
+      &quot;Qty&quot;: &quot;1.000&quot;,
+      &quot;TaxCodeRef&quot;: {
+        &quot;value&quot;: &quot;NON&quot;
+      },
+      &quot;UnitPrice&quot;: &quot;150.00&quot;
+    }
+  }
+}</pre></details>
+<details id="e-16c5b94bee324f8b08293790ca0687473c0beb21b385e5087bf3731d3c9d3bd7"><summary>qbo:Customer:C-1</summary><pre>{
+  &quot;file_id&quot;: &quot;updates.json&quot;,
+  &quot;pointer&quot;: &quot;#/records/1&quot;,
+  &quot;raw&quot;: {
+    &quot;CustomerClass&quot;: &quot;standard&quot;,
+    &quot;DisplayName&quot;: &quot;Rio Grande Ranch&quot;,
+    &quot;Id&quot;: &quot;C-1&quot;,
+    &quot;MetaData&quot;: {
+      &quot;LastUpdatedTime&quot;: &quot;2026-11-04T06:00:00+00:00&quot;
+    },
+    &quot;SyncToken&quot;: &quot;1&quot;
   }
 }</pre></details>
 <details id="e-26f2ad174222e3b79c6c51280da8f052a9949077a93cf448aae7deef75bfed7b"><summary>qbo:Deposit:DEP-SHORT:1</summary><pre>{
@@ -2427,7 +2483,7 @@ AR: 860.01 USD (complete).
   &quot;file_id&quot;: &quot;qbo.json&quot;,
   &quot;pointer&quot;: &quot;#/Invoice/1&quot;,
   &quot;raw&quot;: {
-    &quot;Balance&quot;: &quot;100.00&quot;,
+    &quot;Balance&quot;: &quot;50.00&quot;,
     &quot;CustomerRef&quot;: {
       &quot;value&quot;: &quot;C-1&quot;
     },
@@ -2637,7 +2693,7 @@ AR: 860.01 USD (complete).
       &quot;value&quot;: &quot;C-1&quot;
     },
     &quot;DocNumber&quot;: &quot;I-GRACE&quot;,
-    &quot;EventAt&quot;: &quot;2026-11-03T07:00:00+00:00&quot;,
+    &quot;EventAt&quot;: &quot;2026-11-03T13:30:00+00:00&quot;,
     &quot;Id&quot;: &quot;I-GRACE&quot;,
     &quot;Line&quot;: [
       {
@@ -3215,7 +3271,7 @@ AR: 860.01 USD (complete).
     &quot;CustomerRef&quot;: {
       &quot;value&quot;: &quot;C-1&quot;
     },
-    &quot;EventAt&quot;: &quot;2026-11-03T07:00:00+00:00&quot;,
+    &quot;EventAt&quot;: &quot;2026-11-03T13:30:00+00:00&quot;,
     &quot;Id&quot;: &quot;PAY-GRACE&quot;,
     &quot;Line&quot;: [],
     &quot;LinkedTxn&quot;: [],
@@ -4064,4 +4120,24 @@ AR: 860.01 USD (complete).
     }
   }
 }</pre></details>
-</section><footer><p>Synthetic decision-support demonstration. Fictional policies require client confirmation before real use. No certified audit, accounting writes or live integrations.</p><a href="#top">Back to top</a></footer></details></main></body></html>
+</section><footer><p>Synthetic decision-support demonstration. Fictional policies require client confirmation before real use. No certified audit, accounting writes or live integrations.</p><a href="#top">Back to top</a></footer><section><h2>Exposure estimates — not KPI totals</h2><pre>{
+  &quot;C01|cargas:delivery:D-MISSING&quot;: {
+    &quot;kind&quot;: &quot;unbilled_at_list_price&quot;,
+    &quot;source_refs&quot;: [
+      &quot;cargas:delivery:D-MISSING&quot;,
+      &quot;identity:customer:CUSTOMER-1&quot;,
+      &quot;identity:item:ITEM-1&quot;,
+      &quot;prices:price:PRICE-BASE&quot;,
+      &quot;qbo:Customer:C-1&quot;
+    ],
+    &quot;value&quot;: &quot;200.00&quot;
+  },
+  &quot;C03|pos:POS:T-DUP-A:1|pos:POS:T-DUP-B:1&quot;: {
+    &quot;kind&quot;: &quot;possible_duplicate_net_sales&quot;,
+    &quot;source_refs&quot;: [
+      &quot;pos:POS:T-DUP-A:1&quot;,
+      &quot;pos:POS:T-DUP-B:1&quot;
+    ],
+    &quot;value&quot;: &quot;20.00&quot;
+  }
+}</pre></section></details></main></body></html>

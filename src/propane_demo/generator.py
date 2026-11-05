@@ -54,6 +54,11 @@ def generate(scenario="clean", seed=DEFAULT_SEED, business_date=DEFAULT_DATE):
                 rows.append(patch["append"])
             else:
                 rows[patch["index"]].update(patch["changes"])
+    if scenario == "showcase":
+        for patch in template["mutations"]["P05"][:2]:
+            data[patch["file"]][patch["collection"]][patch["index"]].update(
+                patch["changes"]
+            )
     for manifest in data["manifests.json"]:
         if manifest["status"] == "success":
             content = data[manifest["file_id"]]
@@ -93,6 +98,29 @@ def generate(scenario="clean", seed=DEFAULT_SEED, business_date=DEFAULT_DATE):
         return value
 
     data = materialize(data)
+    if scenario == "showcase":
+        settings = template["showcase"]
+        data["run.json"]["report_labels"] = settings["report_labels"]
+        data["run.json"]["as_of"] = (end + timedelta(minutes=390)).isoformat()
+        for manifest in data["manifests.json"]:
+            manifest["extracted_at"] = (
+                end
+                + timedelta(minutes=settings["extracted_minutes"][manifest["source"]])
+            ).isoformat()
+        for customer in [
+            *data["qbo.json"]["Customer"],
+            *data["updates.json"]["records"],
+        ]:
+            customer["DisplayName"] = settings["customer_name"]
+        # Preserve the three exact-24-hour grace controls at the morning cutoff.
+        grace = (end - timedelta(minutes=1050)).isoformat()
+        for delivery in data["deliveries.csv"]:
+            if delivery["ticket_id"] == "D-GRACE":
+                delivery["delivered_at"] = grace
+        for entity, key in (("Invoice", "I-GRACE"), ("Payment", "PAY-GRACE")):
+            for row in data["qbo.json"][entity]:
+                if row["Id"] == key:
+                    row["EventAt"] = grace
     output = {}
     for name, content in sorted(data.items()):
         if name in CSV_FIELDS:

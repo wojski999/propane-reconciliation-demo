@@ -18,6 +18,7 @@ ALLOWED_INTERNAL_IMPORTS = {
     "rules": set(),
     "kpis": {"rules"},
     "report": set(),
+    "presentation": set(),
     "narrative": {"report"},
     "business": {
         "contracts",
@@ -25,6 +26,7 @@ ALLOWED_INTERNAL_IMPORTS = {
         "ingestion",
         "kpis",
         "narrative",
+        "presentation",
         "report",
         "rule_inputs",
     },
@@ -48,7 +50,7 @@ def check_application_dependency_direction():
                     "Use absolute imports for dependency enforcement"
                 )
                 imports = [node.module or ""]
-            if module in {"rules", "kpis"}:
+            if module in {"rules", "kpis", "presentation"}:
                 assert all(
                     name
                     in {
@@ -66,7 +68,9 @@ def check_application_dependency_direction():
                     assert target in ALLOWED_INTERNAL_IMPORTS[module], (
                         f"Forbidden dependency: {module} -> {target}"
                     )
-            if module in {"rules", "kpis"} and isinstance(node, ast.Call):
+            if module in {"rules", "kpis", "presentation"} and isinstance(
+                node, ast.Call
+            ):
                 assert not (
                     isinstance(node.func, ast.Name)
                     and node.func.id in {"open", "exec", "eval", "compile"}

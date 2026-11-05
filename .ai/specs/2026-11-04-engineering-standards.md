@@ -127,3 +127,23 @@ remain pinned to SHAs. This exception permits static Pages deployment, never
 repository-settings changes, accounting writes, real data or production access.
 Owner enables Pages after merge. Browser screenshots are author evidence from
 an isolated Chromium context on the VPS, not independent QA sign-off.
+
+
+## Owner-directed business presentation refinement (issue #18)
+
+`business -> presentation -> standard library` adds pure, evidence-bound exposure
+estimates, separately from KPI totals. It resolves unbilled volume against one
+fresh effective price and values possible distinct POS duplicates from computed
+record counts and validated net amounts. Missing/ambiguous price support withholds
+the estimate; repeat imports are never valued as duplicate revenue. These estimates
+do not alter rules, thresholds, KPI calculations or accounting records. The pure
+import allowlist also covers presentation. Optional run report_labels are validated
+text metadata for synthetic customer/location/ticket display, never matching keys.
+
+Showcase includes credit-only P05 alongside P01/P03/P07/P08, with a 06:30 Denver
+cutoff and distinct morning extraction timestamps. The three exact-grace controls
+retain their 24-hour age. Other scenarios retain their original source fixtures.
+Business gallons round to whole units; exact worksheets remain unchanged. Sources
+group by business system conservatively; individual manifests remain technical.
+A single note, rather than four empty comparisons, discloses the absence of
+computed prior-day comparisons (the owner's explicitly allowed alternative).

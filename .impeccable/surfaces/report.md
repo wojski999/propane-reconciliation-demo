@@ -12,8 +12,8 @@ OWN-WORLD: A plain financial working paper: white surfaces on pale office-gray p
 links, red incomplete-state notices; system UI text and tabular numeric columns.
 This is a daytime office reading surface, including printing and narrow screens.
 
-STRUCTURE: Business headline, four KPI tiles, priority action cards and per-manifest
-source status. The full prior report, including check coverage, freshness table,
+STRUCTURE: Business headline, four KPI tiles, priority action cards and five grouped business-system
+source rows with conservative status and timestamps. The full prior report, including check coverage, freshness table,
 signed worksheets and raw evidence, stays in a bottom technical disclosure.
 Native details/summary controls keep raw data available without overwhelming scan.
 
@@ -25,3 +25,9 @@ wrapping and print styles. No script or animation is needed for this document.
 
 VALIDATION: Exact financial and oracle tests, hostile-text escaping, anchor closure,
 offline artifact inspection and parent-owned independent static-report QA.
+
+Owner visual review: synthetic business labels replace raw IDs in closed card
+titles. Whole gallons support scanning; exact worksheet quantities stay available.
+The showcase has four high and one medium item. Evidence-bound dollar exposures
+are marked as estimates separately from KPIs; no inventory cost is inferred. A
+single comparison note replaces repeated unavailable comparisons.

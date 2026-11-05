@@ -271,6 +271,28 @@
         "threshold": "1"
       },
       {
+        "actual": "150.00",
+        "business_date": "2026-11-03",
+        "check_id": "C05",
+        "delta": "50.00",
+        "expected": "100.00",
+        "explanation": "Adjustment exceeds policy or lacks required evidence.",
+        "finding_id": "C05|qbo:CreditMemo:CM-UNUSUAL:1",
+        "missing_reference": null,
+        "related_refs": [
+          "identity:approval:APP-CREDIT",
+          "policy:POLICY-1",
+          "qbo:Invoice:I-CREDIT"
+        ],
+        "rule_version": "1",
+        "severity": "medium",
+        "source_refs": [
+          "qbo:CreditMemo:CM-UNUSUAL:1"
+        ],
+        "status": "exception",
+        "threshold": "100.00"
+      },
+      {
         "actual": "460.00",
         "business_date": "2026-11-03",
         "check_id": "C07",
@@ -658,13 +680,34 @@
     "core_checks": 12,
     "evaluated": 20,
     "not_evaluated": 0,
-    "passed": 10
+    "passed": 8
   },
-  "display_as_of": "2026-11-04T00:00:00-07:00",
+  "display_as_of": "2026-11-04T06:30:00-07:00",
+  "exposure_estimates": {
+    "C01|cargas:delivery:D-MISSING": {
+      "kind": "unbilled_at_list_price",
+      "source_refs": [
+        "cargas:delivery:D-MISSING",
+        "identity:customer:CUSTOMER-1",
+        "identity:item:ITEM-1",
+        "prices:price:PRICE-BASE",
+        "qbo:Customer:C-1"
+      ],
+      "value": "200.00"
+    },
+    "C03|pos:POS:T-DUP-A:1|pos:POS:T-DUP-B:1": {
+      "kind": "possible_duplicate_net_sales",
+      "source_refs": [
+        "pos:POS:T-DUP-A:1",
+        "pos:POS:T-DUP-B:1"
+      ],
+      "value": "20.00"
+    }
+  },
   "freshness": [
     {
       "covered_through": "2026-11-04T00:00:00-07:00",
-      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T05:55:00-07:00",
       "source": "cargas",
       "source_refs": [
         "manifest:CARGAS-OK"
@@ -675,7 +718,7 @@
     },
     {
       "covered_through": "2026-11-04T00:00:00-07:00",
-      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T05:38:00-07:00",
       "source": "optional_empty",
       "source_refs": [
         "manifest:EMPTY-OK"
@@ -686,7 +729,7 @@
     },
     {
       "covered_through": "2026-11-04T00:00:00-07:00",
-      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T05:40:00-07:00",
       "source": "identity",
       "source_refs": [
         "manifest:IDENTITY-OK"
@@ -697,7 +740,7 @@
     },
     {
       "covered_through": "2026-11-04T00:00:00-07:00",
-      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T05:50:00-07:00",
       "source": "inventory",
       "source_refs": [
         "manifest:INVENTORY-OK"
@@ -708,7 +751,7 @@
     },
     {
       "covered_through": "2026-11-04T00:00:00-07:00",
-      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T05:47:00-07:00",
       "source": "ar",
       "source_refs": [
         "manifest:AR-OK"
@@ -719,7 +762,7 @@
     },
     {
       "covered_through": "2026-11-04T00:00:00-07:00",
-      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T06:01:00-07:00",
       "source": "pos",
       "source_refs": [
         "manifest:POS-OK"
@@ -730,7 +773,7 @@
     },
     {
       "covered_through": "2026-11-04T00:00:00-07:00",
-      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T05:45:00-07:00",
       "source": "prices",
       "source_refs": [
         "manifest:PRICES-OK"
@@ -741,7 +784,7 @@
     },
     {
       "covered_through": "2026-11-04T00:00:00-07:00",
-      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T06:12:00-07:00",
       "source": "qbo",
       "source_refs": [
         "manifest:QBO-OK"
@@ -752,7 +795,7 @@
     },
     {
       "covered_through": "2026-11-04T00:00:00-07:00",
-      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T06:22:00-07:00",
       "source": "readings",
       "source_refs": [
         "manifest:READINGS-OK"
@@ -763,7 +806,7 @@
     },
     {
       "covered_through": "2026-11-04T00:00:00-07:00",
-      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T06:17:00-07:00",
       "source": "settlements",
       "source_refs": [
         "manifest:SETTLEMENTS-OK"
@@ -774,7 +817,7 @@
     },
     {
       "covered_through": "2026-11-04T00:00:00-07:00",
-      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T06:24:00-07:00",
       "source": "qbo",
       "source_refs": [
         "manifest:UPDATES-OK"
@@ -817,10 +860,10 @@
           ]
         },
         {
-          "amount": "-100.00",
+          "amount": "-150.00",
           "kind": "applied_credit",
           "source_refs": [
-            "qbo:CreditMemo:CM-BOUNDARY",
+            "qbo:CreditMemo:CM-UNUSUAL",
             "qbo:Invoice:I-CREDIT"
           ]
         },
@@ -830,13 +873,6 @@
           "source_refs": [
             "qbo:Invoice:I-PAID",
             "qbo:Payment:PAY-APPLIED:1"
-          ]
-        },
-        {
-          "amount": "200.00",
-          "kind": "invoice_gross",
-          "source_refs": [
-            "qbo:Invoice:I-GRACE"
           ]
         },
         {
@@ -909,10 +945,17 @@
             "qbo:Invoice:I-OUT",
             "qbo:Payment:PAY-DELIVERY:1"
           ]
+        },
+        {
+          "amount": "200.00",
+          "kind": "invoice_gross",
+          "source_refs": [
+            "qbo:Invoice:I-GRACE"
+          ]
         }
       ],
       "gaps": [],
-      "known_value": "860.01",
+      "known_value": "810.01",
       "opening_cutoff": "2026-10-26T07:00:00+00:00",
       "reported_balance_comparisons": [
         {
@@ -925,9 +968,9 @@
           "status": "complete"
         },
         {
-          "computed": "100.00",
+          "computed": "50.00",
           "delta": "0.00",
-          "reported": "100.00",
+          "reported": "50.00",
           "source_refs": [
             "qbo:Invoice:I-CREDIT"
           ],
@@ -1051,17 +1094,17 @@
             ]
           },
           {
-            "amount": "25.00",
-            "kind": "unapplied_cash",
-            "source_refs": [
-              "qbo:Payment:PAY-GRACE"
-            ]
-          },
-          {
             "amount": "0.00",
             "kind": "unapplied_cash",
             "source_refs": [
               "qbo:Payment:PAY-DELIVERY"
+            ]
+          },
+          {
+            "amount": "25.00",
+            "kind": "unapplied_cash",
+            "source_refs": [
+              "qbo:Payment:PAY-GRACE"
             ]
           }
         ],
@@ -1077,7 +1120,7 @@
             "amount": "0.00",
             "kind": "unapplied_credit",
             "source_refs": [
-              "qbo:CreditMemo:CM-BOUNDARY"
+              "qbo:CreditMemo:CM-UNUSUAL"
             ]
           }
         ],
@@ -1088,7 +1131,7 @@
         "value": "0.00"
       },
       "unit": "USD",
-      "value": "860.01"
+      "value": "810.01"
     },
     "delivered": {
       "contributions": [
@@ -1922,17 +1965,49 @@
       ],
       "status": "exception",
       "threshold": "6.000"
+    },
+    {
+      "actual": "150.00",
+      "business_date": "2026-11-03",
+      "check_id": "C05",
+      "delta": "50.00",
+      "expected": "100.00",
+      "explanation": "Adjustment exceeds policy or lacks required evidence.",
+      "finding_id": "C05|qbo:CreditMemo:CM-UNUSUAL:1",
+      "missing_reference": null,
+      "related_refs": [
+        "identity:approval:APP-CREDIT",
+        "policy:POLICY-1",
+        "qbo:Invoice:I-CREDIT"
+      ],
+      "rule_version": "1",
+      "severity": "medium",
+      "source_refs": [
+        "qbo:CreditMemo:CM-UNUSUAL:1"
+      ],
+      "status": "exception",
+      "threshold": "100.00"
     }
   ],
   "rule_version": "1",
   "run": {
-    "as_of": "2026-11-04T07:00:00+00:00",
+    "as_of": "2026-11-04T13:30:00+00:00",
     "business_date": "2026-11-03",
     "contract_version": "1",
+    "report_labels": {
+      "cargas:delivery:D-MISSING": "Delivery #1042 to Rio Grande Ranch",
+      "cargas:reading:R-CLOSE": "South yard bulk tank at Rio Grande Depot",
+      "cargas:reading:R-OPEN": "South yard bulk tank at Rio Grande Depot",
+      "pos:POS:T-DUP-A:1": "Receipt #2081 for Rio Grande Ranch",
+      "pos:POS:T-DUP-B:1": "Receipt #2082 for Rio Grande Ranch",
+      "pos:batch:B-SETTLED": "Card batch #5042 at Rio Grande counter",
+      "qbo:CreditMemo:CM-UNUSUAL:1": "Credit #3105 for Rio Grande Ranch",
+      "qbo:Deposit:DEP-SHORT:1": "Deposit #8142 for card sales"
+    },
     "run_id": "synthetic-20261104-2026-11-03-showcase",
     "window_end": "2026-11-04T07:00:00+00:00",
     "window_start": "2026-11-03T07:00:00+00:00"
   },
-  "source_digest": "be8351e830cd005236fdda9c5ab7e2598575ee3cdd98fc6c3e80c7af6c40ac63",
+  "source_digest": "4c7fcb8bca93ef300fdef3cd91285f2a77a9260b9c4096016205752dae71c19f",
   "status": "complete"
 }

@@ -594,6 +594,7 @@ footer{margin-top:3rem;color:#405954;font-size:.9rem}
 @media(max-width:40rem){main{padding:1.5rem 1rem}h1{font-size:1.9rem}
 .headline{font-size:1.2rem}.kpi-grid{grid-template-columns:1fr}
 .source-list li{display:block}.source-list strong{display:block;min-width:0}
+.source-list li>span{display:block}.source-list li>span+span{margin-top:.25rem}
 .attention-card{padding:1rem}}
 @media print{body{background:#fff}.kpi-grid{grid-template-columns:repeat(4,1fr)}
 .kpi-value{font-size:1.4rem}.attention-card,.kpi{break-inside:avoid}
@@ -607,7 +608,7 @@ def formatted(value, unit):
     return (
         (f"-${abs(number):,.2f}" if number < 0 else f"${number:,.2f}")
         if unit == "USD"
-        else f"{number:,.3f} gal"
+        else f"{number:,.0f} gal"
     )
 
 
@@ -653,29 +654,6 @@ def headline(result):
     return text.strip()
 
 
-def record_context(finding, raw_evidence):
-    """Use source identifiers verbatim; do not guess customer names or mappings."""
-    context = []
-    for ref in finding["source_refs"]:
-        raw = raw_evidence.get(ref, {}).get("raw", {})
-        if isinstance(raw, dict):
-            name = (
-                ref.split(":")[2]
-                if len(ref.split(":")) >= 3
-                else raw.get("Id", raw.get("transaction_id", ""))
-            )
-            if ref.startswith("manifest:"):
-                source = raw.get("source", "Source records")
-                name = SYSTEMS.get(source, source)
-            party = raw.get("customer_id", raw.get("asset_id", ""))
-            if not party:
-                party = raw.get("CustomerRef", {}).get("value", "")
-            text = " · ".join(str(v) for v in (name, party) if v)
-            if text and text not in context:
-                context.append(text)
-    return "; ".join(context) or "; ".join(finding["source_refs"])
-
-
 def impact(finding):
     check, delta = finding["check_id"], finding["delta"]
     if delta is None:
@@ -698,7 +676,81 @@ def impact(finding):
         return formatted(delta, "USD") + " difference in the computed reconciliation."
     if check == "C09":
         return "Source coverage is incomplete. Affected totals are unavailable."
+    if check == "C03":
+        return (
+            f"{finding['actual']} records share a source or external "
+            "transaction reference. "
+            "Confirm whether this is a repeated import or a duplicate sale."
+        )
     return finding["explanation"]
+
+
+def denver_time(instant, fallback="time unavailable"):
+    """Use the same local, labeled display for extraction and coverage timestamps."""
+    return (
+        datetime.fromisoformat(instant)
+        .astimezone(ZoneInfo("America/Denver"))
+        .strftime("%b %d, %Y %I:%M %p %Z")
+        if instant
+        else fallback
+    )
+
+
+def business_title(finding, result):
+    labels = result["run"].get("report_labels", {})
+    names = list(
+        dict.fromkeys(labels[ref] for ref in finding["source_refs"] if ref in labels)
+    )
+    if not names:
+        names = [
+            SYSTEMS.get(source["source"], source["source"])
+            for source in result["freshness"]
+            if set(source["source_refs"]) & set(finding["source_refs"])
+        ]
+    title = TITLES[finding["check_id"]]
+    return "; ".join(names) + ": " + title[0].lower() + title[1:] if names else title
+
+
+def business_impact(finding, result):
+    text = impact(finding)
+    estimate = result.get("exposure_estimates", {}).get(finding["finding_id"])
+    if estimate:
+        amount = formatted(estimate["value"], "USD")
+        text += (
+            f" Approximately {amount} not billed at the effective list price "
+            "(estimate before discounts; not booked revenue)."
+            if estimate["kind"] == "unbilled_at_list_price"
+            else f" Potential duplicate net sales: {amount}, pending review."
+        )
+    if finding["check_id"] == "C08" and finding["delta"] is not None:
+        text += " No unit cost is supplied; dollar value is unavailable."
+    return text
+
+
+def source_groups(result):
+    groups = {
+        "QuickBooks": {"qbo"},
+        "Cargas": {"cargas"},
+        "POS": {"pos"},
+        "Card processor": {"settlements"},
+        "Tank readings": {"readings", "inventory"},
+    }
+    output = []
+    for label, systems in groups.items():
+        members = [s for s in result["freshness"] if s["source"] in systems]
+        if not members:
+            continue
+        state = max(
+            members, key=lambda s: {"success": 0, "stale": 1}.get(s["status"], 2)
+        )
+        group = {"label": label, "status": state["status"]}
+        for field in ("extracted_at", "covered_through"):
+            values = [s.get(field) for s in members]
+            group[field] = (
+                min(values, key=datetime.fromisoformat) if all(values) else None
+            )
+        output.append(group)
+    return output
 
 
 def business_sections(result, raw_evidence):
@@ -730,8 +782,7 @@ def business_sections(result, raw_evidence):
             + state
             + '">'
             + escaped(text)
-            + '</p><p class="report-note">'
-            'Prior business day comparison not computed.</p><a href="#'
+            + '</p><a href="#'
             + anchor("worksheet:" + key)
             + '">See calculation</a></article>'
         )
@@ -742,10 +793,17 @@ def business_sections(result, raw_evidence):
         else formatted(total["value"], total["unit"])
     )
     out.append(
-        "</div><p>Total gallons sold: "
+        '</div><p class="report-note">'
+        "Prior business day comparisons are not computed.</p>"
+        "<p>Total gallons sold: "
         + escaped(total_text)
         + ". Measurement basis: "
-        + escaped(result["gallon_basis"])
+        + escaped(
+            {
+                "net_60F": "US gallons at 60°F",
+                "observed": "US gallons at observed temperature",
+            }.get(result["gallon_basis"], result["gallon_basis"])
+        )
         + ".</p></section>"
         '<section id="today"><h2>Needs attention today</h2>'
     )
@@ -761,16 +819,20 @@ def business_sections(result, raw_evidence):
             '<span class="priority">'
             + escaped(finding["severity"])
             + " priority</span><h3>"
-            + escaped(TITLES[check])
-            + ": "
-            + escaped(record_context(finding, raw_evidence))
+            + escaped(business_title(finding, result))
             + "</h3><p>"
-            + escaped(impact(finding))
+            + escaped(business_impact(finding, result))
             + "</p><p><strong>Next step:</strong> "
             + escaped(ACTIONS[check])
             + '</p><details class="disclosure"><summary>'
             "See source records</summary><p>"
-            + links(finding["source_refs"] + finding["related_refs"])
+            + links(
+                finding["source_refs"]
+                + finding["related_refs"]
+                + result.get("exposure_estimates", {})
+                .get(finding["finding_id"], {})
+                .get("source_refs", [])
+            )
             + "</p></details><small>Rule "
             + escaped(check)
             + "</small></article>"
@@ -778,26 +840,21 @@ def business_sections(result, raw_evidence):
     out.append(
         '</section><section id="data-status"><h2>Data status</h2>'
         "<p>Last updated and coverage times in America/Denver. "
-        "A fresh export does not guarantee up-to-date coverage.</p>"
+        "A fresh export does not guarantee up-to-date coverage. "
+        "Supporting tables and individual imports are in Technical details.</p>"
         '<ul class="source-list">'
     )
-    for source in result["freshness"]:
+    for source in source_groups(result):
         status = source["status"]
         state = {"success": "Up to date", "stale": "Out of date"}.get(
             status, "Import failed"
         )
-        instant = source.get("extracted_at")
-        updated = (
-            datetime.fromisoformat(instant)
-            .astimezone(ZoneInfo("America/Denver"))
-            .strftime("%b %d, %Y %I:%M %p %Z")
-            if instant
-            else "time unavailable"
-        )
-        coverage = source.get("covered_through", "not available")
+        updated = denver_time(source.get("extracted_at"))
+        coverage = denver_time(source.get("covered_through"), "not available")
+        label = source["label"]
         out.append(
             "<li><span><strong>"
-            + escaped(SYSTEMS.get(source["source"], source["source"]))
+            + escaped(label)
             + '</strong> <span class="state '
             + escaped(status)
             + '">'
@@ -824,4 +881,11 @@ def render(result, raw_evidence, *, narrative_status=None):
         "checks, calculations and immutable evidence</summary>",
         1,
     )
-    return document.replace("</main>", "</details></main>", 1)
+    estimates = (
+        "<section><h2>Exposure estimates — not KPI totals</h2><pre>"
+        + escaped(
+            json.dumps(result.get("exposure_estimates", {}), indent=2, sort_keys=True)
+        )
+        + "</pre></section>"
+    )
+    return document.replace("</main>", estimates + "</details></main>", 1)

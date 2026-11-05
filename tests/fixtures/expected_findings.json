@@ -800,6 +800,28 @@
           "explanation": "Distinct sale IDs share EXT-DUP and match customer, type and amount."
         },
         {
+          "finding_id": "C05|qbo:CreditMemo:CM-UNUSUAL:1",
+          "check_id": "C05",
+          "severity": "medium",
+          "status": "exception",
+          "business_date": "2026-11-03",
+          "rule_version": "1",
+          "actual": "150.00",
+          "expected": "100.00",
+          "delta": "50.00",
+          "threshold": "100.00",
+          "source_refs": [
+            "qbo:CreditMemo:CM-UNUSUAL:1"
+          ],
+          "related_refs": [
+            "identity:approval:APP-CREDIT",
+            "policy:POLICY-1",
+            "qbo:Invoice:I-CREDIT"
+          ],
+          "missing_reference": null,
+          "explanation": "150.00 credit exceeds 100.00 by 50.00; valid original and approval."
+        },
+        {
           "finding_id": "C07|pos:batch:B-SETTLED|qbo:Deposit:DEP-SHORT:1",
           "check_id": "C07",
           "severity": "high",

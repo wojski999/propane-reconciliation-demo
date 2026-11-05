@@ -31,6 +31,7 @@ from propane_demo.validation import (
     ref,
     require,
     scaled,
+    text,
     timestamps,
 )
 
@@ -153,6 +154,11 @@ def control(read_file):
                 "contract_version",
             ],
         )
+        labels = run.get("report_labels", {})
+        require(isinstance(labels, dict))
+        for key, label in labels.items():
+            text(key)
+            text(label)
         identifier(run["run_id"])
         require(run["contract_version"] == "1", "CONTRACT_VERSION")
         start, end = business_window(day(run["business_date"]))

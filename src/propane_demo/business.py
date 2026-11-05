@@ -15,6 +15,7 @@ from propane_demo.generator import DEFAULT_DATE, DEFAULT_SEED, generate
 from propane_demo.ingestion import ingest
 from propane_demo.kpis import calculate
 from propane_demo.narrative import build
+from propane_demo.presentation import exposures
 from propane_demo.report import collect_refs, evidence, render, summary
 from propane_demo.rule_inputs import from_database, reconcile_database
 
@@ -95,6 +96,7 @@ def compute(db):
         "rule_version": inputs["policy"]["version"],
         "policy_version": inputs["policy"]["version"],
         "gallon_basis": inputs["policy"]["basis"],
+        "exposure_estimates": exposures(inputs, checks),
         "checks": checks,
         "kpis": kpis,
         "alerts": checks["alerts"],

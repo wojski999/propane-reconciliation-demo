@@ -1,0 +1,18 @@
+[
+  {
+    "scenario": "showcase",
+    "viewport_width": 390,
+    "all_status_time_rows_separated": true,
+    "grouped_business_systems": 5,
+    "formatted_denver_coverage": true,
+    "no_horizontal_overflow": true
+  },
+  {
+    "scenario": "issues",
+    "viewport_width": 390,
+    "all_status_time_rows_separated": true,
+    "grouped_business_systems": 5,
+    "formatted_denver_coverage": true,
+    "no_horizontal_overflow": true
+  }
+]

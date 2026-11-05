@@ -3114,5 +3114,31 @@
         "collection": "JournalEntry"
       }
     ]
+  },
+  "showcase": {
+    "customer_name": "Rio Grande Ranch",
+    "report_labels": {
+      "cargas:delivery:D-MISSING": "Delivery #1042 to Rio Grande Ranch",
+      "pos:POS:T-DUP-A:1": "Receipt #2081 for Rio Grande Ranch",
+      "pos:POS:T-DUP-B:1": "Receipt #2082 for Rio Grande Ranch",
+      "pos:batch:B-SETTLED": "Card batch #5042 at Rio Grande counter",
+      "qbo:Deposit:DEP-SHORT:1": "Deposit #8142 for card sales",
+      "cargas:reading:R-CLOSE": "South yard bulk tank at Rio Grande Depot",
+      "cargas:reading:R-OPEN": "South yard bulk tank at Rio Grande Depot",
+      "qbo:CreditMemo:CM-UNUSUAL:1": "Credit #3105 for Rio Grande Ranch"
+    },
+    "extracted_minutes": {
+      "qbo": 372,
+      "cargas": 355,
+      "pos": 361,
+      "settlements": 377,
+      "readings": 382,
+      "inventory": 350,
+      "prices": 345,
+      "identity": 340,
+      "ar": 347,
+      "optional_empty": 338,
+      "qbo_updates": 384
+    }
   }
 }

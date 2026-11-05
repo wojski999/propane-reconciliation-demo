@@ -19,11 +19,11 @@ def test_business_reader_sections_preserve_computed_evidence(scenario):
     front, technical = text.split('<details class="technical"', 1)
     assert (result, raw) == before
     assert "Needs attention today" in front and "Your business at a glance" in front
-    assert "Data status" in front and "Last updated Nov 04, 2026 12:00 AM MST" in front
+    assert "Data status" in front and "Last updated Nov 04, 2026" in front
     assert "America/Denver" in front
     assert front.count('<article class="kpi">') == 4
     assert front.count("See source records") == len(result["checks"]["findings"])
-    assert "Prior business day comparison not computed" in front
+    assert front.count("Prior business day comparisons are not computed") == 1
     for key in ("delivered", "retail", "revenue", "AR"):
         sheet = result["kpis"][key]
         assert (
@@ -44,7 +44,7 @@ def test_business_reader_sections_preserve_computed_evidence(scenario):
     assert text.count("<h1>") == 1
 
 
-def test_showcase_independent_four_exception_oracle_and_totals():
+def test_showcase_independent_five_exception_oracle_and_totals():
     result, _ = run(generate("showcase"))
     assert result["status"] == "complete"
     assert result["alerts"] == []
@@ -59,20 +59,21 @@ def test_showcase_independent_four_exception_oracle_and_totals():
         ("C03", "2", "1", "1"),
         ("C07", "460.00", "470.00", "-10.00"),
         ("C08", "1020.000", "1050.000", "-30.000"),
+        ("C05", "150.00", "100.00", "50.00"),
     ]
     assert {k: s["value"] for k, s in result["kpis"].items()} == {
         "delivered": "600.005",
         "retail": "55.000",
         "total_gallons": "655.005",
         "revenue": "1290.02",
-        "AR": "860.01",
+        "AR": "810.01",
     }
     text = report.render(result, run(generate("showcase"))[1])
     assert (
-        "Tuesday, Nov 3: 4 items need your attention. All sources up to date." in text
+        "Tuesday, Nov 3: 5 items need your attention. All sources up to date." in text
     )
-    assert "D-MISSING · CE-C1" in text
-    assert "$1,290.02" in text and "30.000 gal below" in text
+    assert "Delivery #1042 to Rio Grande Ranch" in text
+    assert "$1,290.02" in text and "30 gal below" in text
 
 
 def test_unavailable_is_not_replaced_by_known_contributions():
@@ -108,21 +109,6 @@ def test_missing_times_unknown_sources_and_hostile_record_text():
         and "Covered through not available" in front
     )
     assert "<img" not in front and "&lt;img" in front
-    finding = {"source_refs": ["one", "two", "three", "four", "five", "six"]}
-    records = {
-        "one": {"raw": {"Id": "I-X", "CustomerRef": {"value": "<script>bad</script>"}}},
-        "two": {"raw": []},
-        "three": {"raw": {}},
-        "four": {
-            "raw": {"Id": "I-X", "CustomerRef": {"value": "<script>bad</script>"}}
-        },
-        "five": {"raw": {"transaction_id": "T-1", "customer_id": "C-1"}},
-        "six": {"raw": {"reading_id": "R-1", "asset_id": "TANK-1"}},
-    }
-    assert report.record_context(finding, records).count("I-X") == 1
-    assert "T-1 · C-1" in report.record_context(finding, records)
-    assert "TANK-1" in report.record_context(finding, records)
-    assert report.record_context({"source_refs": ["missing"]}, {}) == "missing"
     result, raw = run(generate("P01"))
     raw[result["prioritized_findings"][0]["source_refs"][0]]["raw"]["customer_id"] = (
         "<script>alert(1)</script>"
@@ -132,7 +118,7 @@ def test_missing_times_unknown_sources_and_hostile_record_text():
 
 def test_money_impact_uses_computed_delta_and_no_invented_total():
     assert report.formatted("1234567.89", "USD") == "$1,234,567.89"
-    assert report.formatted("-30.000", "gal") == "-30.000 gal"
+    assert report.formatted("-30.000", "gal") == "-30 gal"
     for check in ("C04", "C06", "C12"):
         assert report.impact({"check_id": check, "delta": "-10.00"}).startswith(
             "-$10.00"
@@ -166,7 +152,7 @@ def test_committed_samples_are_deterministic():
 
 def test_directional_inventory_and_deposit_impact():
     assert report.impact({"check_id": "C08", "delta": "30.000"}) == (
-        "Tank reading is 30.000 gal above the expected amount."
+        "Tank reading is 30 gal above the expected amount."
     )
     assert report.impact({"check_id": "C07", "delta": "10.00"}) == (
         "Deposit is $10.00 above the expected amount."
@@ -196,13 +182,114 @@ def test_repeated_manifest_failure_is_explained_once():
 def test_source_failure_cards_name_the_business_system():
     result, raw = run(generate("issues"))
     text = report.business_sections(result, raw)
-    assert "Source import failed: POS</h3>" in text
-    assert "Source coverage is out of date: QuickBooks</h3>" in text
+    assert "POS: source import failed</h3>" in text
+    assert "QuickBooks: source coverage is out of date</h3>" in text
     assert "manifest:POS-FAILED</h3>" not in text
     assert "manifest:QBO-STALE</h3>" not in text
-    assert (
-        report.record_context(
-            {"source_refs": ["manifest:UNKNOWN"]}, {"manifest:UNKNOWN": {"raw": {}}}
-        )
-        == "Source records"
+
+
+def test_source_status_labels_and_consistent_denver_times():
+    result, raw = run(generate("showcase"))
+    status = report.business_sections(result, raw).split('<section id="data-status">')[
+        1
+    ]
+    assert status.count("QuickBooks</strong>") == 1
+    assert status.count("<li>") == 5
+    assert "Covered through Nov 04, 2026 12:00 AM MST" in status
+    assert "Last updated Nov 04, 2026 06:12 AM MST" in status
+    assert "2026-11-04T00:00:00-07:00" not in status
+    assert report.denver_time("2026-07-04T07:00:00+00:00") == (
+        "Jul 04, 2026 01:00 AM MDT"
     )
+    assert report.denver_time(None) == "time unavailable"
+    assert report.denver_time(None, "not available") == "not available"
+
+
+def test_duplicate_card_uses_computed_record_count_without_inventing_money():
+    result, raw = run(generate("showcase"))
+    finding = next(f for f in result["prioritized_findings"] if f["check_id"] == "C03")
+    assert report.impact(finding).startswith("2 records share a source or external")
+    assert "$" not in report.impact(finding)
+    assert report.impact(finding) in report.business_sections(result, raw)
+
+
+def test_detector_evidence_uses_existing_repository_relative_paths():
+    root = Path(__file__).resolve().parents[1]
+    records = json.loads(
+        (root / ".ai/qa/2026-11-05-report/design-detector.json").read_text()
+    )
+    assert len(records) == 5
+    for record in records:
+        path = Path(record["file"])
+        assert not path.is_absolute()
+        assert ".." not in path.parts
+        assert (root / path).is_file()
+
+
+def test_owner_showcase_readability_and_no_raw_identifiers_in_closed_cards():
+    result, raw = run(generate("showcase"))
+    assert [f["severity"] for f in result["prioritized_findings"]] == ["high"] * 4 + [
+        "medium"
+    ]
+    text = report.business_sections(result, raw)
+    assert "600 gal" in text and "55 gal" in text
+    assert "Approximately $200.00 not billed" in text
+    assert "Potential duplicate net sales: $20.00" in text
+    assert "No unit cost is supplied" in text
+    assert "Credit #3105 for Rio Grande Ranch" in text
+    for title in text.split("<h3>")[1:]:
+        title = title.split("</h3>")[0]
+        assert not any(
+            raw_id in title
+            for raw_id in (
+                "D-MISSING",
+                "CE-C1",
+                "T-DUP-A",
+                "POS-C1",
+                "R-CLOSE",
+                "BULK-A",
+            )
+        )
+    assert "600.005" in report.render(result, raw)  # Exact worksheet stays available.
+    assert report.formatted("12345.6", "US gallons") == "12,346 gal"
+
+
+def test_grouped_sources_keep_worst_state_and_oldest_known_watermark():
+    result, _ = run()
+    result["freshness"] = [
+        {
+            "source": "qbo",
+            "status": "success",
+            "extracted_at": "2026-11-04T06:20:00-07:00",
+            "covered_through": "2026-11-04T00:00:00-07:00",
+        },
+        {
+            "source": "qbo",
+            "status": "stale",
+            "extracted_at": "2026-11-04T06:10:00-07:00",
+            "covered_through": "2026-11-02T23:00:00-07:00",
+        },
+    ]
+    assert report.source_groups(result) == [
+        {
+            "label": "QuickBooks",
+            "status": "stale",
+            "extracted_at": "2026-11-04T06:10:00-07:00",
+            "covered_through": "2026-11-02T23:00:00-07:00",
+        }
+    ]
+    result["freshness"][0]["status"] = "failed"
+    assert report.source_groups(result)[0]["status"] == "failed"
+
+
+@pytest.mark.parametrize("labels", [[], {"one": 1}, {"": "name"}])
+def test_invalid_fixture_display_labels_are_rejected(labels):
+    from propane_demo.ingestion import ingest
+    from propane_demo.validation import Invalid
+
+    files = generate("clean")
+    control = json.loads(files["run.json"])
+    control["report_labels"] = labels
+    files["run.json"] = json.dumps(control).encode()
+    with pytest.raises(Invalid):
+        ingest(files.__getitem__)
