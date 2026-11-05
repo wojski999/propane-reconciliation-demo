@@ -61,6 +61,7 @@ def test_all_scenarios_exact_end_to_end_oracle_and_html(tmp_path, scenario):
     assert set(result["checks"]["not_evaluated"]) == set(expected["not_evaluated"])
     expected_exits = {
         "clean": 0,
+        "showcase": 0,
         "issues": 2,
         "P01": 0,
         "P02": 0,

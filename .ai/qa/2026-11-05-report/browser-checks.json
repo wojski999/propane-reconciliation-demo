@@ -1,0 +1,34 @@
+[
+  {
+    "scenario": "showcase",
+    "viewport": "desktop",
+    "width": 1440,
+    "overflow": false,
+    "disclosure": true,
+    "calculation_anchor_opens_technical": true
+  },
+  {
+    "scenario": "showcase",
+    "viewport": "mobile",
+    "width": 390,
+    "overflow": false,
+    "disclosure": true,
+    "calculation_anchor_opens_technical": true
+  },
+  {
+    "scenario": "issues",
+    "viewport": "desktop",
+    "width": 1440,
+    "overflow": false,
+    "disclosure": true,
+    "calculation_anchor_opens_technical": true
+  },
+  {
+    "scenario": "issues",
+    "viewport": "mobile",
+    "width": 390,
+    "overflow": false,
+    "disclosure": true,
+    "calculation_anchor_opens_technical": true
+  }
+]

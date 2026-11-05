@@ -27,8 +27,65 @@ nav{display:flex;flex-wrap:wrap;gap:1rem}section{scroll-margin-top:1rem}
 dd{margin-bottom:1rem}
 table,tbody,tr,th,td{display:block}thead{display:none}tr{margin-bottom:1.5rem}}
 @media print{main{max-width:none;padding:0}details{break-inside:avoid}a{color:inherit}}
-</style><body><main id="top">
-<h1>Propane morning report</h1>
+
+body{background:#f3f5f4;color:#172d2b}main{max-width:78rem;padding:3rem 2rem}
+h1{font-size:2.4rem;line-height:1.3;letter-spacing:-.025em;margin:0 0 .75rem}
+h2{letter-spacing:-.015em}h3{line-height:1.4}a{color:#005d74}
+.morning-header{border-bottom:1px solid #b8c7c2;padding-bottom:1.5rem}
+.headline{font-size:1.45rem;line-height:1.5;max-width:64ch;margin:1rem 0}
+.report-note{color:#405954;font-size:.9rem}.kpi-grid{display:grid;
+grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin:1rem 0}
+.kpi{background:#fff;padding:1.25rem;border:1px solid #b8c7c2;border-radius:12px}
+.kpi h3{font-size:1rem;margin:0}.kpi-value{font-size:2rem;line-height:1.3;
+font-weight:700;font-variant-numeric:tabular-nums;margin:.8rem 0}
+.kpi-value.unavailable{font-size:1.15rem;color:#8e1717;line-height:1.5}
+.kpi p:last-child{margin-bottom:0}.attention-card{background:#fff;
+border:1px solid #b8c7c2;border-radius:12px;padding:1.5rem;margin:1rem 0}
+.attention-card h3{margin:.4rem 0 .8rem;font-size:1.3rem;max-width:65ch}
+.priority{font-size:.85rem;font-weight:700;text-transform:uppercase;color:#8e1717}
+.attention-card.medium .priority{color:#765200}.attention-card p{color:#172d2b}
+.attention-card small{font-size:.8rem}.source-list{padding:0;list-style:none;
+background:#fff;border-top:1px solid #b8c7c2}
+.source-list li{display:flex;justify-content:space-between;gap:1rem;
+padding:.65rem 0;border-bottom:1px solid #b8c7c2}
+.source-list strong{display:inline-block;min-width:16rem}.state{font-weight:650}
+.state.success{color:#226044}.state.stale{color:#765200}
+.state.failed{color:#8e1717}.technical{margin-top:3rem;border-top:1px solid #b8c7c2;
+padding-top:1.5rem}.technical>summary{font-size:1.25rem}
+.disclosure{margin-top:1rem}.technical .status{font-size:1rem}
+footer{margin-top:3rem;color:#405954;font-size:.9rem}
+@media(max-width:60rem){.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:40rem){main{padding:1.5rem 1rem}h1{font-size:1.9rem}
+.headline{font-size:1.2rem}.kpi-grid{grid-template-columns:1fr}
+.source-list li{display:block}.source-list strong{display:block;min-width:0}
+.attention-card{padding:1rem}}
+@media print{body{background:#fff}.kpi-grid{grid-template-columns:repeat(4,1fr)}
+.kpi-value{font-size:1.4rem}.attention-card,.kpi{break-inside:avoid}
+.technical{font-size:.85rem}nav{display:none}}
+</style><body><main id="top"><header class="morning-header"><h1>Propane morning report</h1>
+<p class="headline">Tuesday, Nov 3: 0 items need your attention. All sources up to date.</p>
+<p class="report-note">Synthetic demonstration · 2026-11-03 · America/Denver. No live integrations or accounting writes.</p>
+<nav aria-label="Morning report"><a href="#today">Needs attention today</a><a href="#data-status">Data status</a><a href="#technical">Technical details</a></nav></header><section aria-labelledby="numbers"><h2 id="numbers">Your business at a glance</h2><div class="kpi-grid">
+<article class="kpi"><h3>Delivered gallons</h3><p class="kpi-value">600.005 gal</p><p class="report-note">Prior business day comparison not computed.</p><a href="#e-bfd6f9b9fb0344c4cc92d82f545c673b639db9d995f4fc1f0c9e33dd81b72ec7">See calculation</a></article>
+<article class="kpi"><h3>Retail gallons</h3><p class="kpi-value">55.000 gal</p><p class="report-note">Prior business day comparison not computed.</p><a href="#e-9412acbaaa676e59b0657ac70677d86780a704265d03ab9d3647058d1bc9adfb">See calculation</a></article>
+<article class="kpi"><h3>Net revenue</h3><p class="kpi-value">$1,250.02</p><p class="report-note">Prior business day comparison not computed.</p><a href="#e-f24fc5388d997e60319d17457ccb2e60668e73f268ae5af27af0aa4decdc64e2">See calculation</a></article>
+<article class="kpi"><h3>Accounts receivable</h3><p class="kpi-value">$860.01</p><p class="report-note">Prior business day comparison not computed.</p><a href="#e-677f11a710d75a6c089d94a38630273009684f9a5d271b0425ee6f22d9684a8e">See calculation</a></article>
+</div><p>Total gallons sold: 655.005 gal. Measurement basis: net_60F.</p></section><section id="today"><h2>Needs attention today</h2>
+<p>No business exceptions found. Review data status for source coverage.</p>
+</section><section id="data-status"><h2>Data status</h2><p>Last updated and coverage times in America/Denver. A fresh export does not guarantee up-to-date coverage.</p><ul class="source-list">
+<li><span><strong>Cargas deliveries</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>Optional supporting records</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>Customer and item mappings</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>Inventory movements</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>Opening receivables</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>POS</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>Price list</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>QuickBooks</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>Tank readings</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>Card settlements</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>QuickBooks</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+</ul></section><details class="technical" id="technical"><summary>Technical details — checks, calculations and immutable evidence</summary>
+<h2>Run and evidence record</h2>
 <p>Business date: 2026-11-03 · America/Denver · synthetic data only</p>
 <p class="status complete">Run status: COMPLETE</p>
 <p>Run: synthetic-20261104-2026-11-03-clean<br>As of: 2026-11-04T00:00:00-07:00<br>Source digest: 50df9d820c2a946362ff1431ebee3262fa40a4a2a032ef65fa1762f78a985c56</p>
@@ -3483,4 +3540,4 @@ AR: 860.01 USD (complete).</pre></aside>
     }
   }
 }</pre></details>
-</section><footer><p>Synthetic decision-support demonstration. Fictional policies require client confirmation before real use. No certified audit, accounting writes or live integrations.</p><a href="#top">Back to top</a></footer></main></body></html>
+</section><footer><p>Synthetic decision-support demonstration. Fictional policies require client confirmation before real use. No certified audit, accounting writes or live integrations.</p><a href="#top">Back to top</a></footer></details></main></body></html>

@@ -1,0 +1,1938 @@
+{
+  "alerts": [],
+  "check_scopes": {
+    "C01": {
+      "status": "evaluated"
+    },
+    "C02": {
+      "status": "evaluated"
+    },
+    "C03:pos": {
+      "status": "evaluated"
+    },
+    "C03:qbo": {
+      "status": "evaluated"
+    },
+    "C04:pos": {
+      "status": "evaluated"
+    },
+    "C04:qbo": {
+      "status": "evaluated"
+    },
+    "C05:pos": {
+      "status": "evaluated"
+    },
+    "C05:qbo": {
+      "status": "evaluated"
+    },
+    "C06": {
+      "status": "evaluated"
+    },
+    "C07": {
+      "status": "evaluated"
+    },
+    "C08": {
+      "status": "evaluated"
+    },
+    "C08:BOUNDARY": {
+      "status": "evaluated"
+    },
+    "C08:BULK-A": {
+      "status": "evaluated"
+    },
+    "C08:DEPOT": {
+      "status": "evaluated"
+    },
+    "C08:ISOLATED": {
+      "status": "evaluated"
+    },
+    "C08:TRUCK-A": {
+      "status": "evaluated"
+    },
+    "C09": {
+      "status": "evaluated"
+    },
+    "C10": {
+      "status": "evaluated"
+    },
+    "C11": {
+      "status": "evaluated"
+    },
+    "C12": {
+      "status": "evaluated"
+    }
+  },
+  "checks": {
+    "alerts": [],
+    "consolidation": {
+      "contributions": [
+        {
+          "asset_id": "BOUNDARY",
+          "gallons": "1000.000",
+          "kind": "opening",
+          "source_refs": [
+            "cargas:reading:R-BOUNDARY-OPEN"
+          ]
+        },
+        {
+          "asset_id": "BULK-A",
+          "gallons": "1000.000",
+          "kind": "opening",
+          "source_refs": [
+            "cargas:reading:R-OPEN"
+          ]
+        },
+        {
+          "asset_id": "BULK-A",
+          "gallons": "-100.000",
+          "kind": "customer_delivery",
+          "source_refs": [
+            "cargas:delivery:D-OUT",
+            "cargas:meter_ticket:MT-D-OUT",
+            "inventory:movement:M-OUT"
+          ]
+        },
+        {
+          "asset_id": "BULK-A",
+          "gallons": "200.000",
+          "kind": "purchase",
+          "source_refs": [
+            "inventory:movement:M-PURCHASE"
+          ]
+        },
+        {
+          "asset_id": "BULK-A",
+          "gallons": "-50.000",
+          "kind": "retail_sale",
+          "source_refs": [
+            "inventory:movement:M-RETAIL",
+            "pos:POS:T-RETAIL:1"
+          ]
+        },
+        {
+          "asset_id": "DEPOT",
+          "gallons": "500.000",
+          "kind": "opening",
+          "source_refs": [
+            "cargas:reading:R-DEPOT-OPEN"
+          ]
+        },
+        {
+          "asset_id": "ISOLATED",
+          "gallons": "1000.000",
+          "kind": "opening",
+          "source_refs": [
+            "cargas:reading:R-ISOLATED-OPEN"
+          ]
+        },
+        {
+          "asset_id": "ISOLATED",
+          "gallons": "-5.000",
+          "kind": "retail_sale",
+          "source_refs": [
+            "identity:fill:CYLINDER",
+            "inventory:movement:M-CYLINDER",
+            "pos:POS:T-CYLINDER:1"
+          ]
+        },
+        {
+          "asset_id": "ISOLATED",
+          "gallons": "-20.000",
+          "kind": "customer_delivery",
+          "source_refs": [
+            "cargas:delivery:D-COMB-A",
+            "cargas:meter_ticket:MT-D-COMB-A",
+            "inventory:movement:M-D-COMB-A"
+          ]
+        },
+        {
+          "asset_id": "ISOLATED",
+          "gallons": "-30.000",
+          "kind": "customer_delivery",
+          "source_refs": [
+            "cargas:delivery:D-COMB-B",
+            "cargas:meter_ticket:MT-D-COMB-B",
+            "inventory:movement:M-D-COMB-B"
+          ]
+        },
+        {
+          "asset_id": "ISOLATED",
+          "gallons": "-100.000",
+          "kind": "customer_delivery",
+          "source_refs": [
+            "cargas:delivery:D-CREDIT",
+            "cargas:meter_ticket:MT-D-CREDIT",
+            "inventory:movement:M-D-CREDIT"
+          ]
+        },
+        {
+          "asset_id": "ISOLATED",
+          "gallons": "-50.000",
+          "kind": "customer_delivery",
+          "source_refs": [
+            "cargas:delivery:D-PAID",
+            "cargas:meter_ticket:MT-D-PAID",
+            "inventory:movement:M-D-PAID"
+          ]
+        },
+        {
+          "asset_id": "ISOLATED",
+          "gallons": "-50.000",
+          "kind": "customer_delivery",
+          "source_refs": [
+            "cargas:delivery:D-PAY",
+            "cargas:meter_ticket:MT-D-PAY",
+            "inventory:movement:M-D-PAY"
+          ]
+        },
+        {
+          "asset_id": "ISOLATED",
+          "gallons": "-100.000",
+          "kind": "customer_delivery",
+          "source_refs": [
+            "cargas:delivery:D-PRICE",
+            "cargas:meter_ticket:MT-D-PRICE",
+            "inventory:movement:M-D-PRICE"
+          ]
+        },
+        {
+          "asset_id": "ISOLATED",
+          "gallons": "-50.000",
+          "kind": "customer_delivery",
+          "source_refs": [
+            "cargas:delivery:D-SPLIT",
+            "cargas:meter_ticket:MT-D-SPLIT",
+            "inventory:movement:M-D-SPLIT"
+          ]
+        },
+        {
+          "asset_id": "TRUCK-A",
+          "gallons": "100.000",
+          "kind": "opening",
+          "source_refs": [
+            "cargas:reading:R-TRUCK-OPEN"
+          ]
+        }
+      ],
+      "delta": "-25.000",
+      "eliminated_transfers": [
+        "inventory:movement:M-TRANSFER-IN",
+        "inventory:movement:M-TRANSFER-OUT"
+      ],
+      "expected": "3245.000",
+      "gallon_basis": "net_60F",
+      "observed": "3220.000",
+      "status": "evaluated"
+    },
+    "findings": [
+      {
+        "actual": "100.000",
+        "business_date": "2026-11-03",
+        "check_id": "C01",
+        "delta": "100.000",
+        "expected": "0.000",
+        "explanation": "Delivery has unallocated billable volume after grace.",
+        "finding_id": "C01|cargas:delivery:D-MISSING",
+        "missing_reference": {
+          "lookup_key": "delivery:D-MISSING",
+          "system": "qbo",
+          "type": "Invoice.Line"
+        },
+        "related_refs": [
+          "cargas:meter_ticket:MT-D-MISSING"
+        ],
+        "rule_version": "1",
+        "severity": "high",
+        "source_refs": [
+          "cargas:delivery:D-MISSING"
+        ],
+        "status": "exception",
+        "threshold": "0.001"
+      },
+      {
+        "actual": "2",
+        "business_date": "2026-11-03",
+        "check_id": "C03",
+        "delta": "1",
+        "expected": "1",
+        "explanation": "Repeated source or external transaction identity needs review.",
+        "finding_id": "C03|pos:POS:T-DUP-A:1|pos:POS:T-DUP-B:1",
+        "missing_reference": null,
+        "related_refs": [
+          "pos:external_reference:EXT-DUP"
+        ],
+        "rule_version": "1",
+        "severity": "high",
+        "source_refs": [
+          "pos:POS:T-DUP-A:1",
+          "pos:POS:T-DUP-B:1"
+        ],
+        "status": "exception",
+        "threshold": "1"
+      },
+      {
+        "actual": "460.00",
+        "business_date": "2026-11-03",
+        "check_id": "C07",
+        "delta": "-10.00",
+        "expected": "470.00",
+        "explanation": "Settled batch, deposit or linked transaction amounts differ.",
+        "finding_id": "C07|pos:batch:B-SETTLED|qbo:Deposit:DEP-SHORT:1",
+        "missing_reference": null,
+        "related_refs": [
+          "policy:POLICY-1",
+          "pos:POS:T-BATCH:1",
+          "pos:POS:T-REFUND:1",
+          "pos:fee:B-SETTLED:fees",
+          "qbo:Deposit:DEP-SHORT:2",
+          "qbo:Deposit:DEP-SHORT:3",
+          "qbo:Deposit:DEP-SHORT:4",
+          "qbo:RefundReceipt:RR-BATCH",
+          "qbo:SalesReceipt:SR-BATCH"
+        ],
+        "rule_version": "1",
+        "severity": "high",
+        "source_refs": [
+          "pos:batch:B-SETTLED",
+          "qbo:Deposit:DEP-SHORT:1"
+        ],
+        "status": "exception",
+        "threshold": "0.01"
+      },
+      {
+        "actual": "1020.000",
+        "business_date": "2026-11-03",
+        "check_id": "C08",
+        "delta": "-30.000",
+        "expected": "1050.000",
+        "explanation": "Observed closing inventory differs from the signed worksheet.",
+        "finding_id": "C08|cargas:reading:R-CLOSE|cargas:reading:R-OPEN",
+        "missing_reference": null,
+        "related_refs": [
+          "cargas:delivery:D-OUT",
+          "cargas:meter_ticket:MT-D-OUT",
+          "inventory:movement:M-OUT",
+          "inventory:movement:M-PURCHASE",
+          "inventory:movement:M-RETAIL",
+          "policy:POLICY-1",
+          "pos:POS:T-RETAIL:1"
+        ],
+        "rule_version": "1",
+        "severity": "high",
+        "source_refs": [
+          "cargas:reading:R-CLOSE",
+          "cargas:reading:R-OPEN"
+        ],
+        "status": "exception",
+        "threshold": "6.000"
+      }
+    ],
+    "freshness_evaluated": true,
+    "inventory": {
+      "BOUNDARY": {
+        "asset_id": "BOUNDARY",
+        "contributions": [
+          {
+            "gallons": "1000.000",
+            "kind": "opening",
+            "source_refs": [
+              "cargas:reading:R-BOUNDARY-OPEN"
+            ]
+          }
+        ],
+        "delta": "5.000",
+        "expected": "1000.000",
+        "gallon_basis": "net_60F",
+        "ledger_inputs": [],
+        "observed": "1005.000",
+        "source_refs": [
+          "cargas:reading:R-BOUNDARY-CLOSE",
+          "cargas:reading:R-BOUNDARY-OPEN"
+        ],
+        "status": "evaluated",
+        "tolerance": "5.000"
+      },
+      "BULK-A": {
+        "asset_id": "BULK-A",
+        "contributions": [
+          {
+            "gallons": "1000.000",
+            "kind": "opening",
+            "source_refs": [
+              "cargas:reading:R-OPEN"
+            ]
+          },
+          {
+            "gallons": "-100.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "cargas:delivery:D-OUT",
+              "cargas:meter_ticket:MT-D-OUT",
+              "inventory:movement:M-OUT"
+            ]
+          },
+          {
+            "gallons": "200.000",
+            "kind": "purchase",
+            "source_refs": [
+              "inventory:movement:M-PURCHASE"
+            ]
+          },
+          {
+            "gallons": "-50.000",
+            "kind": "retail_sale",
+            "source_refs": [
+              "inventory:movement:M-RETAIL",
+              "pos:POS:T-RETAIL:1"
+            ]
+          }
+        ],
+        "delta": "-30.000",
+        "expected": "1050.000",
+        "gallon_basis": "net_60F",
+        "ledger_inputs": [
+          {
+            "gallons": "-100.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-OUT"
+            ]
+          },
+          {
+            "gallons": "200.000",
+            "kind": "purchase",
+            "source_refs": [
+              "inventory:movement:M-PURCHASE"
+            ]
+          },
+          {
+            "gallons": "-50.000",
+            "kind": "retail_sale",
+            "source_refs": [
+              "inventory:movement:M-RETAIL"
+            ]
+          }
+        ],
+        "observed": "1020.000",
+        "source_refs": [
+          "cargas:reading:R-CLOSE",
+          "cargas:reading:R-OPEN"
+        ],
+        "status": "evaluated",
+        "tolerance": "6.000"
+      },
+      "DEPOT": {
+        "asset_id": "DEPOT",
+        "contributions": [
+          {
+            "gallons": "500.000",
+            "kind": "opening",
+            "source_refs": [
+              "cargas:reading:R-DEPOT-OPEN"
+            ]
+          },
+          {
+            "gallons": "-50.000",
+            "kind": "transfer_out",
+            "source_refs": [
+              "inventory:movement:M-TRANSFER-IN",
+              "inventory:movement:M-TRANSFER-OUT"
+            ]
+          }
+        ],
+        "delta": "0.000",
+        "expected": "450.000",
+        "gallon_basis": "net_60F",
+        "ledger_inputs": [
+          {
+            "gallons": "-50.000",
+            "kind": "transfer_out",
+            "source_refs": [
+              "inventory:movement:M-TRANSFER-OUT"
+            ]
+          }
+        ],
+        "observed": "450.000",
+        "source_refs": [
+          "cargas:reading:R-DEPOT-CLOSE",
+          "cargas:reading:R-DEPOT-OPEN"
+        ],
+        "status": "evaluated",
+        "tolerance": "2.500"
+      },
+      "ISOLATED": {
+        "asset_id": "ISOLATED",
+        "contributions": [
+          {
+            "gallons": "1000.000",
+            "kind": "opening",
+            "source_refs": [
+              "cargas:reading:R-ISOLATED-OPEN"
+            ]
+          },
+          {
+            "gallons": "-5.000",
+            "kind": "retail_sale",
+            "source_refs": [
+              "identity:fill:CYLINDER",
+              "inventory:movement:M-CYLINDER",
+              "pos:POS:T-CYLINDER:1"
+            ]
+          },
+          {
+            "gallons": "-20.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "cargas:delivery:D-COMB-A",
+              "cargas:meter_ticket:MT-D-COMB-A",
+              "inventory:movement:M-D-COMB-A"
+            ]
+          },
+          {
+            "gallons": "-30.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "cargas:delivery:D-COMB-B",
+              "cargas:meter_ticket:MT-D-COMB-B",
+              "inventory:movement:M-D-COMB-B"
+            ]
+          },
+          {
+            "gallons": "-100.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "cargas:delivery:D-CREDIT",
+              "cargas:meter_ticket:MT-D-CREDIT",
+              "inventory:movement:M-D-CREDIT"
+            ]
+          },
+          {
+            "gallons": "-50.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "cargas:delivery:D-PAID",
+              "cargas:meter_ticket:MT-D-PAID",
+              "inventory:movement:M-D-PAID"
+            ]
+          },
+          {
+            "gallons": "-50.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "cargas:delivery:D-PAY",
+              "cargas:meter_ticket:MT-D-PAY",
+              "inventory:movement:M-D-PAY"
+            ]
+          },
+          {
+            "gallons": "-100.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "cargas:delivery:D-PRICE",
+              "cargas:meter_ticket:MT-D-PRICE",
+              "inventory:movement:M-D-PRICE"
+            ]
+          },
+          {
+            "gallons": "-50.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "cargas:delivery:D-SPLIT",
+              "cargas:meter_ticket:MT-D-SPLIT",
+              "inventory:movement:M-D-SPLIT"
+            ]
+          }
+        ],
+        "delta": "0.000",
+        "expected": "595.000",
+        "gallon_basis": "net_60F",
+        "ledger_inputs": [
+          {
+            "gallons": "-5.000",
+            "kind": "retail_sale",
+            "source_refs": [
+              "inventory:movement:M-CYLINDER"
+            ]
+          },
+          {
+            "gallons": "-20.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-D-COMB-A"
+            ]
+          },
+          {
+            "gallons": "-30.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-D-COMB-B"
+            ]
+          },
+          {
+            "gallons": "-100.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-D-CREDIT"
+            ]
+          },
+          {
+            "gallons": "-50.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-D-PAID"
+            ]
+          },
+          {
+            "gallons": "-50.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-D-PAY"
+            ]
+          },
+          {
+            "gallons": "-100.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-D-PRICE"
+            ]
+          },
+          {
+            "gallons": "-50.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-D-SPLIT"
+            ]
+          }
+        ],
+        "observed": "595.000",
+        "source_refs": [
+          "cargas:reading:R-ISOLATED-CLOSE",
+          "cargas:reading:R-ISOLATED-OPEN"
+        ],
+        "status": "evaluated",
+        "tolerance": "5.000"
+      },
+      "TRUCK-A": {
+        "asset_id": "TRUCK-A",
+        "contributions": [
+          {
+            "gallons": "100.000",
+            "kind": "opening",
+            "source_refs": [
+              "cargas:reading:R-TRUCK-OPEN"
+            ]
+          },
+          {
+            "gallons": "50.000",
+            "kind": "transfer_in",
+            "source_refs": [
+              "inventory:movement:M-TRANSFER-IN",
+              "inventory:movement:M-TRANSFER-OUT"
+            ]
+          }
+        ],
+        "delta": "0.000",
+        "expected": "150.000",
+        "gallon_basis": "net_60F",
+        "ledger_inputs": [
+          {
+            "gallons": "50.000",
+            "kind": "transfer_in",
+            "source_refs": [
+              "inventory:movement:M-TRANSFER-IN"
+            ]
+          }
+        ],
+        "observed": "150.000",
+        "source_refs": [
+          "cargas:reading:R-TRUCK-OPEN",
+          "cargas:reading:R-UNCERTAIN"
+        ],
+        "status": "evaluated",
+        "tolerance": "2.000"
+      }
+    },
+    "not_evaluated": {}
+  },
+  "coverage": {
+    "core_checks": 12,
+    "evaluated": 20,
+    "not_evaluated": 0,
+    "passed": 10
+  },
+  "display_as_of": "2026-11-04T00:00:00-07:00",
+  "freshness": [
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "cargas",
+      "source_refs": [
+        "manifest:CARGAS-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "optional_empty",
+      "source_refs": [
+        "manifest:EMPTY-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "identity",
+      "source_refs": [
+        "manifest:IDENTITY-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "inventory",
+      "source_refs": [
+        "manifest:INVENTORY-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "ar",
+      "source_refs": [
+        "manifest:AR-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "pos",
+      "source_refs": [
+        "manifest:POS-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "prices",
+      "source_refs": [
+        "manifest:PRICES-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "qbo",
+      "source_refs": [
+        "manifest:QBO-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "readings",
+      "source_refs": [
+        "manifest:READINGS-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "settlements",
+      "source_refs": [
+        "manifest:SETTLEMENTS-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "qbo",
+      "source_refs": [
+        "manifest:UPDATES-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    }
+  ],
+  "gallon_basis": "net_60F",
+  "kpis": {
+    "AR": {
+      "contributions": [
+        {
+          "amount": "0.00",
+          "kind": "opening_AR",
+          "source_refs": [
+            "ar:snapshot:AR-OPEN"
+          ]
+        },
+        {
+          "amount": "200.00",
+          "kind": "invoice_gross",
+          "source_refs": [
+            "qbo:Invoice:I-CREDIT"
+          ]
+        },
+        {
+          "amount": "100.00",
+          "kind": "invoice_gross",
+          "source_refs": [
+            "qbo:Invoice:I-PAID"
+          ]
+        },
+        {
+          "amount": "100.00",
+          "kind": "invoice_gross",
+          "source_refs": [
+            "qbo:Invoice:I-PAY"
+          ]
+        },
+        {
+          "amount": "-100.00",
+          "kind": "applied_credit",
+          "source_refs": [
+            "qbo:CreditMemo:CM-BOUNDARY",
+            "qbo:Invoice:I-CREDIT"
+          ]
+        },
+        {
+          "amount": "-100.00",
+          "kind": "allocated_cash",
+          "source_refs": [
+            "qbo:Invoice:I-PAID",
+            "qbo:Payment:PAY-APPLIED:1"
+          ]
+        },
+        {
+          "amount": "200.00",
+          "kind": "invoice_gross",
+          "source_refs": [
+            "qbo:Invoice:I-GRACE"
+          ]
+        },
+        {
+          "amount": "100.00",
+          "kind": "invoice_gross",
+          "source_refs": [
+            "qbo:Invoice:I-COMBINED"
+          ]
+        },
+        {
+          "amount": "20.00",
+          "kind": "invoice_gross",
+          "source_refs": [
+            "qbo:Invoice:I-EQUAL-A"
+          ]
+        },
+        {
+          "amount": "20.00",
+          "kind": "invoice_gross",
+          "source_refs": [
+            "qbo:Invoice:I-EQUAL-B"
+          ]
+        },
+        {
+          "amount": "0.01",
+          "kind": "invoice_gross",
+          "source_refs": [
+            "qbo:Invoice:I-FRACTION"
+          ]
+        },
+        {
+          "amount": "200.00",
+          "kind": "invoice_gross",
+          "source_refs": [
+            "qbo:Invoice:I-OUT"
+          ]
+        },
+        {
+          "amount": "200.00",
+          "kind": "invoice_gross",
+          "source_refs": [
+            "qbo:Invoice:I-PRICE"
+          ]
+        },
+        {
+          "amount": "20.00",
+          "kind": "invoice_gross",
+          "source_refs": [
+            "qbo:Invoice:I-SERVICE"
+          ]
+        },
+        {
+          "amount": "40.00",
+          "kind": "invoice_gross",
+          "source_refs": [
+            "qbo:Invoice:I-SPLIT-A"
+          ]
+        },
+        {
+          "amount": "60.00",
+          "kind": "invoice_gross",
+          "source_refs": [
+            "qbo:Invoice:I-SPLIT-B"
+          ]
+        },
+        {
+          "amount": "-200.00",
+          "kind": "allocated_cash",
+          "source_refs": [
+            "qbo:Invoice:I-OUT",
+            "qbo:Payment:PAY-DELIVERY:1"
+          ]
+        }
+      ],
+      "gaps": [],
+      "known_value": "860.01",
+      "opening_cutoff": "2026-10-26T07:00:00+00:00",
+      "reported_balance_comparisons": [
+        {
+          "computed": "100.00",
+          "delta": "0.00",
+          "reported": "100.00",
+          "source_refs": [
+            "qbo:Invoice:I-COMBINED"
+          ],
+          "status": "complete"
+        },
+        {
+          "computed": "100.00",
+          "delta": "0.00",
+          "reported": "100.00",
+          "source_refs": [
+            "qbo:Invoice:I-CREDIT"
+          ],
+          "status": "complete"
+        },
+        {
+          "computed": "20.00",
+          "delta": "0.00",
+          "reported": "20.00",
+          "source_refs": [
+            "qbo:Invoice:I-EQUAL-A"
+          ],
+          "status": "complete"
+        },
+        {
+          "computed": "20.00",
+          "delta": "0.00",
+          "reported": "20.00",
+          "source_refs": [
+            "qbo:Invoice:I-EQUAL-B"
+          ],
+          "status": "complete"
+        },
+        {
+          "computed": "0.01",
+          "delta": "0.00",
+          "reported": "0.01",
+          "source_refs": [
+            "qbo:Invoice:I-FRACTION"
+          ],
+          "status": "complete"
+        },
+        {
+          "computed": "200.00",
+          "delta": "0.00",
+          "reported": "200.00",
+          "source_refs": [
+            "qbo:Invoice:I-GRACE"
+          ],
+          "status": "complete"
+        },
+        {
+          "computed": "0.00",
+          "delta": "0.00",
+          "reported": "0.00",
+          "source_refs": [
+            "qbo:Invoice:I-OUT"
+          ],
+          "status": "complete"
+        },
+        {
+          "computed": "0.00",
+          "delta": "0.00",
+          "reported": "0.00",
+          "source_refs": [
+            "qbo:Invoice:I-PAID"
+          ],
+          "status": "complete"
+        },
+        {
+          "computed": "100.00",
+          "delta": "0.00",
+          "reported": "100.00",
+          "source_refs": [
+            "qbo:Invoice:I-PAY"
+          ],
+          "status": "complete"
+        },
+        {
+          "computed": "200.00",
+          "delta": "0.00",
+          "reported": "200.00",
+          "source_refs": [
+            "qbo:Invoice:I-PRICE"
+          ],
+          "status": "complete"
+        },
+        {
+          "computed": "20.00",
+          "delta": "0.00",
+          "reported": "20.00",
+          "source_refs": [
+            "qbo:Invoice:I-SERVICE"
+          ],
+          "status": "complete"
+        },
+        {
+          "computed": "40.00",
+          "delta": "0.00",
+          "reported": "40.00",
+          "source_refs": [
+            "qbo:Invoice:I-SPLIT-A"
+          ],
+          "status": "complete"
+        },
+        {
+          "computed": "60.00",
+          "delta": "0.00",
+          "reported": "60.00",
+          "source_refs": [
+            "qbo:Invoice:I-SPLIT-B"
+          ],
+          "status": "complete"
+        }
+      ],
+      "status": "complete",
+      "unapplied_cash": {
+        "contributions": [
+          {
+            "amount": "0.00",
+            "kind": "unapplied_cash",
+            "source_refs": [
+              "qbo:Payment:PAY-APPLIED"
+            ]
+          },
+          {
+            "amount": "0.01",
+            "kind": "unapplied_cash",
+            "source_refs": [
+              "qbo:Payment:PAY-UNAPPLIED"
+            ]
+          },
+          {
+            "amount": "25.00",
+            "kind": "unapplied_cash",
+            "source_refs": [
+              "qbo:Payment:PAY-GRACE"
+            ]
+          },
+          {
+            "amount": "0.00",
+            "kind": "unapplied_cash",
+            "source_refs": [
+              "qbo:Payment:PAY-DELIVERY"
+            ]
+          }
+        ],
+        "gaps": [],
+        "known_value": "25.01",
+        "status": "complete",
+        "unit": "USD",
+        "value": "25.01"
+      },
+      "unapplied_credits": {
+        "contributions": [
+          {
+            "amount": "0.00",
+            "kind": "unapplied_credit",
+            "source_refs": [
+              "qbo:CreditMemo:CM-BOUNDARY"
+            ]
+          }
+        ],
+        "gaps": [],
+        "known_value": "0.00",
+        "status": "complete",
+        "unit": "USD",
+        "value": "0.00"
+      },
+      "unit": "USD",
+      "value": "860.01"
+    },
+    "delivered": {
+      "contributions": [
+        {
+          "amount": "20.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-COMB-A",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "30.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-COMB-B",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "100.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-CREDIT",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "0.005",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-FRACTION",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "100.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-GRACE",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "100.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-OUT",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "50.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-PAID",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "50.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-PAY",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "100.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-PRICE",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "50.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-SPLIT",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        }
+      ],
+      "gaps": [],
+      "known_value": "600.005",
+      "status": "complete",
+      "unit": "US gallons",
+      "value": "600.005"
+    },
+    "retail": {
+      "contributions": [
+        {
+          "amount": "5.000",
+          "kind": "explicit_cylinder_fill",
+          "source_refs": [
+            "identity:fill:CYLINDER",
+            "identity:pos_event:EVENT-T-CYLINDER",
+            "policy:POLICY-1",
+            "pos:POS:T-CYLINDER:1",
+            "qbo:Item:CYLINDER"
+          ]
+        },
+        {
+          "amount": "0.000",
+          "kind": "represented_delivery_excluded",
+          "source_refs": [
+            "cargas:delivery:D-OUT",
+            "identity:pos_event:EVENT-DELIVERY",
+            "policy:POLICY-1",
+            "pos:POS:T-DELIVERY:1"
+          ]
+        },
+        {
+          "amount": "0.000",
+          "kind": "nonvolume_sale_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-DISCOUNT",
+            "policy:POLICY-1",
+            "pos:POS:T-DISCOUNT:1",
+            "qbo:Item:DISCOUNT-SERVICE"
+          ]
+        },
+        {
+          "amount": "0.000",
+          "kind": "nonvolume_sale_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-DUP-A",
+            "policy:POLICY-1",
+            "pos:POS:T-DUP-A:1",
+            "qbo:Item:SERVICE"
+          ]
+        },
+        {
+          "amount": "0.000",
+          "kind": "nonvolume_sale_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-DUP-B",
+            "policy:POLICY-1",
+            "pos:POS:T-DUP-B:1",
+            "qbo:Item:SERVICE"
+          ]
+        },
+        {
+          "amount": "0.000",
+          "kind": "nonvolume_sale_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-EQUAL-A",
+            "policy:POLICY-1",
+            "pos:POS:T-EQUAL-A:1",
+            "qbo:Item:SERVICE"
+          ]
+        },
+        {
+          "amount": "0.000",
+          "kind": "nonvolume_sale_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-EQUAL-B",
+            "policy:POLICY-1",
+            "pos:POS:T-EQUAL-B:1",
+            "qbo:Item:SERVICE"
+          ]
+        },
+        {
+          "amount": "50.000",
+          "kind": "retail_gallons",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-RETAIL",
+            "policy:POLICY-1",
+            "pos:POS:T-RETAIL:1"
+          ]
+        },
+        {
+          "amount": "0.000",
+          "kind": "nonvolume_sale_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-TAX",
+            "policy:POLICY-1",
+            "pos:POS:T-TAX:1",
+            "qbo:Item:SERVICE"
+          ]
+        }
+      ],
+      "gaps": [],
+      "known_value": "55.000",
+      "status": "complete",
+      "unit": "US gallons",
+      "value": "55.000"
+    },
+    "revenue": {
+      "contributions": [
+        {
+          "amount": "0.00",
+          "kind": "represented_POS_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-CYLINDER",
+            "pos:POS:T-CYLINDER:1",
+            "qbo:SalesReceipt:SR-CYLINDER"
+          ]
+        },
+        {
+          "amount": "0.00",
+          "kind": "represented_POS_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-DELIVERY",
+            "pos:POS:T-DELIVERY:1",
+            "qbo:Invoice:I-OUT"
+          ]
+        },
+        {
+          "amount": "0.00",
+          "kind": "represented_POS_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-DISCOUNT",
+            "pos:POS:T-DISCOUNT:1",
+            "qbo:SalesReceipt:SR-DISCOUNT"
+          ]
+        },
+        {
+          "amount": "0.00",
+          "kind": "represented_POS_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-DUP-A",
+            "pos:POS:T-DUP-A:1",
+            "qbo:SalesReceipt:SR-T-DUP-A"
+          ]
+        },
+        {
+          "amount": "0.00",
+          "kind": "represented_POS_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-DUP-B",
+            "pos:POS:T-DUP-B:1",
+            "qbo:SalesReceipt:SR-T-DUP-B"
+          ]
+        },
+        {
+          "amount": "0.00",
+          "kind": "represented_POS_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-EQUAL-A",
+            "pos:POS:T-EQUAL-A:1",
+            "qbo:SalesReceipt:SR-T-EQUAL-A"
+          ]
+        },
+        {
+          "amount": "0.00",
+          "kind": "represented_POS_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-EQUAL-B",
+            "pos:POS:T-EQUAL-B:1",
+            "qbo:SalesReceipt:SR-T-EQUAL-B"
+          ]
+        },
+        {
+          "amount": "0.00",
+          "kind": "represented_POS_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-RETAIL",
+            "pos:POS:T-RETAIL:1",
+            "qbo:SalesReceipt:SR-RETAIL"
+          ]
+        },
+        {
+          "amount": "0.00",
+          "kind": "represented_POS_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-TAX",
+            "pos:POS:T-TAX:1",
+            "qbo:SalesReceipt:SR-TAX"
+          ]
+        },
+        {
+          "amount": "100.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Invoice:I-COMBINED",
+            "qbo:Invoice:I-COMBINED:1",
+            "qbo:Item:LPG-DELIVERY"
+          ]
+        },
+        {
+          "amount": "20.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Invoice:I-EQUAL-A",
+            "qbo:Invoice:I-EQUAL-A:1",
+            "qbo:Item:SERVICE"
+          ]
+        },
+        {
+          "amount": "20.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Invoice:I-EQUAL-B",
+            "qbo:Invoice:I-EQUAL-B:1",
+            "qbo:Item:SERVICE"
+          ]
+        },
+        {
+          "amount": "0.01",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Invoice:I-FRACTION",
+            "qbo:Invoice:I-FRACTION:1",
+            "qbo:Item:LPG-DELIVERY"
+          ]
+        },
+        {
+          "amount": "200.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Invoice:I-GRACE",
+            "qbo:Invoice:I-GRACE:1",
+            "qbo:Item:LPG-DELIVERY"
+          ]
+        },
+        {
+          "amount": "200.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Invoice:I-OUT",
+            "qbo:Invoice:I-OUT:1",
+            "qbo:Item:LPG-DELIVERY"
+          ]
+        },
+        {
+          "amount": "200.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Invoice:I-PRICE",
+            "qbo:Invoice:I-PRICE:1",
+            "qbo:Item:LPG-DELIVERY"
+          ]
+        },
+        {
+          "amount": "20.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Invoice:I-SERVICE",
+            "qbo:Invoice:I-SERVICE:1",
+            "qbo:Item:SERVICE"
+          ]
+        },
+        {
+          "amount": "40.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Invoice:I-SPLIT-A",
+            "qbo:Invoice:I-SPLIT-A:1",
+            "qbo:Item:LPG-DELIVERY"
+          ]
+        },
+        {
+          "amount": "60.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Invoice:I-SPLIT-B",
+            "qbo:Invoice:I-SPLIT-B:1",
+            "qbo:Item:LPG-DELIVERY"
+          ]
+        },
+        {
+          "amount": "0.00",
+          "kind": "container_deposit_excluded",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Item:CONTAINER",
+            "qbo:SalesReceipt:SR-CONTAINER",
+            "qbo:SalesReceipt:SR-CONTAINER:1"
+          ]
+        },
+        {
+          "amount": "20.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Item:CYLINDER",
+            "qbo:SalesReceipt:SR-CYLINDER",
+            "qbo:SalesReceipt:SR-CYLINDER:1"
+          ]
+        },
+        {
+          "amount": "90.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Item:DISCOUNT-SERVICE",
+            "qbo:SalesReceipt:SR-DISCOUNT",
+            "qbo:SalesReceipt:SR-DISCOUNT:1"
+          ]
+        },
+        {
+          "amount": "200.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Item:SERVICE",
+            "qbo:SalesReceipt:SR-ORIGINAL",
+            "qbo:SalesReceipt:SR-ORIGINAL:1"
+          ]
+        },
+        {
+          "amount": "20.01",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Item:SERVICE",
+            "qbo:SalesReceipt:SR-PRICE-BOUNDARY",
+            "qbo:SalesReceipt:SR-PRICE-BOUNDARY:1"
+          ]
+        },
+        {
+          "amount": "100.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Item:RETAIL",
+            "qbo:SalesReceipt:SR-RETAIL",
+            "qbo:SalesReceipt:SR-RETAIL:1"
+          ]
+        },
+        {
+          "amount": "20.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Item:SERVICE",
+            "qbo:SalesReceipt:SR-T-DUP-A",
+            "qbo:SalesReceipt:SR-T-DUP-A:1"
+          ]
+        },
+        {
+          "amount": "20.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Item:SERVICE",
+            "qbo:SalesReceipt:SR-T-DUP-B",
+            "qbo:SalesReceipt:SR-T-DUP-B:1"
+          ]
+        },
+        {
+          "amount": "20.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Item:SERVICE",
+            "qbo:SalesReceipt:SR-T-EQUAL-A",
+            "qbo:SalesReceipt:SR-T-EQUAL-A:1"
+          ]
+        },
+        {
+          "amount": "20.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Item:SERVICE",
+            "qbo:SalesReceipt:SR-T-EQUAL-B",
+            "qbo:SalesReceipt:SR-T-EQUAL-B:1"
+          ]
+        },
+        {
+          "amount": "20.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Item:SERVICE",
+            "qbo:SalesReceipt:SR-TAX",
+            "qbo:SalesReceipt:SR-TAX:1"
+          ]
+        },
+        {
+          "amount": "0.00",
+          "kind": "net_sale",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Item:SERVICE",
+            "qbo:SalesReceipt:SR-ZERO",
+            "qbo:SalesReceipt:SR-ZERO:1"
+          ]
+        },
+        {
+          "amount": "-100.00",
+          "kind": "net_adjustment",
+          "source_refs": [
+            "policy:POLICY-1",
+            "qbo:Item:SERVICE",
+            "qbo:RefundReceipt:RR-BOUNDARY",
+            "qbo:RefundReceipt:RR-BOUNDARY:1",
+            "qbo:SalesReceipt:SR-ORIGINAL"
+          ]
+        }
+      ],
+      "gaps": [],
+      "known_value": "1290.02",
+      "status": "complete",
+      "unit": "USD",
+      "value": "1290.02"
+    },
+    "total_gallons": {
+      "contributions": [
+        {
+          "amount": "20.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-COMB-A",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "30.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-COMB-B",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "100.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-CREDIT",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "0.005",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-FRACTION",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "100.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-GRACE",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "100.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-OUT",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "50.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-PAID",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "50.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-PAY",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "100.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-PRICE",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "50.000",
+          "kind": "completed_delivery",
+          "source_refs": [
+            "cargas:delivery:D-SPLIT",
+            "identity:customer:CUSTOMER-1",
+            "identity:item:ITEM-1",
+            "policy:POLICY-1"
+          ]
+        },
+        {
+          "amount": "5.000",
+          "kind": "explicit_cylinder_fill",
+          "source_refs": [
+            "identity:fill:CYLINDER",
+            "identity:pos_event:EVENT-T-CYLINDER",
+            "policy:POLICY-1",
+            "pos:POS:T-CYLINDER:1",
+            "qbo:Item:CYLINDER"
+          ]
+        },
+        {
+          "amount": "0.000",
+          "kind": "represented_delivery_excluded",
+          "source_refs": [
+            "cargas:delivery:D-OUT",
+            "identity:pos_event:EVENT-DELIVERY",
+            "policy:POLICY-1",
+            "pos:POS:T-DELIVERY:1"
+          ]
+        },
+        {
+          "amount": "0.000",
+          "kind": "nonvolume_sale_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-DISCOUNT",
+            "policy:POLICY-1",
+            "pos:POS:T-DISCOUNT:1",
+            "qbo:Item:DISCOUNT-SERVICE"
+          ]
+        },
+        {
+          "amount": "0.000",
+          "kind": "nonvolume_sale_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-DUP-A",
+            "policy:POLICY-1",
+            "pos:POS:T-DUP-A:1",
+            "qbo:Item:SERVICE"
+          ]
+        },
+        {
+          "amount": "0.000",
+          "kind": "nonvolume_sale_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-DUP-B",
+            "policy:POLICY-1",
+            "pos:POS:T-DUP-B:1",
+            "qbo:Item:SERVICE"
+          ]
+        },
+        {
+          "amount": "0.000",
+          "kind": "nonvolume_sale_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-EQUAL-A",
+            "policy:POLICY-1",
+            "pos:POS:T-EQUAL-A:1",
+            "qbo:Item:SERVICE"
+          ]
+        },
+        {
+          "amount": "0.000",
+          "kind": "nonvolume_sale_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-EQUAL-B",
+            "policy:POLICY-1",
+            "pos:POS:T-EQUAL-B:1",
+            "qbo:Item:SERVICE"
+          ]
+        },
+        {
+          "amount": "50.000",
+          "kind": "retail_gallons",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-RETAIL",
+            "policy:POLICY-1",
+            "pos:POS:T-RETAIL:1"
+          ]
+        },
+        {
+          "amount": "0.000",
+          "kind": "nonvolume_sale_excluded",
+          "source_refs": [
+            "identity:pos_event:EVENT-T-TAX",
+            "policy:POLICY-1",
+            "pos:POS:T-TAX:1",
+            "qbo:Item:SERVICE"
+          ]
+        }
+      ],
+      "gaps": [],
+      "known_value": "655.005",
+      "status": "complete",
+      "unit": "US gallons",
+      "value": "655.005"
+    }
+  },
+  "policy_version": "1",
+  "prioritized_alerts": [],
+  "prioritized_findings": [
+    {
+      "actual": "100.000",
+      "business_date": "2026-11-03",
+      "check_id": "C01",
+      "delta": "100.000",
+      "expected": "0.000",
+      "explanation": "Delivery has unallocated billable volume after grace.",
+      "finding_id": "C01|cargas:delivery:D-MISSING",
+      "missing_reference": {
+        "lookup_key": "delivery:D-MISSING",
+        "system": "qbo",
+        "type": "Invoice.Line"
+      },
+      "related_refs": [
+        "cargas:meter_ticket:MT-D-MISSING"
+      ],
+      "rule_version": "1",
+      "severity": "high",
+      "source_refs": [
+        "cargas:delivery:D-MISSING"
+      ],
+      "status": "exception",
+      "threshold": "0.001"
+    },
+    {
+      "actual": "2",
+      "business_date": "2026-11-03",
+      "check_id": "C03",
+      "delta": "1",
+      "expected": "1",
+      "explanation": "Repeated source or external transaction identity needs review.",
+      "finding_id": "C03|pos:POS:T-DUP-A:1|pos:POS:T-DUP-B:1",
+      "missing_reference": null,
+      "related_refs": [
+        "pos:external_reference:EXT-DUP"
+      ],
+      "rule_version": "1",
+      "severity": "high",
+      "source_refs": [
+        "pos:POS:T-DUP-A:1",
+        "pos:POS:T-DUP-B:1"
+      ],
+      "status": "exception",
+      "threshold": "1"
+    },
+    {
+      "actual": "460.00",
+      "business_date": "2026-11-03",
+      "check_id": "C07",
+      "delta": "-10.00",
+      "expected": "470.00",
+      "explanation": "Settled batch, deposit or linked transaction amounts differ.",
+      "finding_id": "C07|pos:batch:B-SETTLED|qbo:Deposit:DEP-SHORT:1",
+      "missing_reference": null,
+      "related_refs": [
+        "policy:POLICY-1",
+        "pos:POS:T-BATCH:1",
+        "pos:POS:T-REFUND:1",
+        "pos:fee:B-SETTLED:fees",
+        "qbo:Deposit:DEP-SHORT:2",
+        "qbo:Deposit:DEP-SHORT:3",
+        "qbo:Deposit:DEP-SHORT:4",
+        "qbo:RefundReceipt:RR-BATCH",
+        "qbo:SalesReceipt:SR-BATCH"
+      ],
+      "rule_version": "1",
+      "severity": "high",
+      "source_refs": [
+        "pos:batch:B-SETTLED",
+        "qbo:Deposit:DEP-SHORT:1"
+      ],
+      "status": "exception",
+      "threshold": "0.01"
+    },
+    {
+      "actual": "1020.000",
+      "business_date": "2026-11-03",
+      "check_id": "C08",
+      "delta": "-30.000",
+      "expected": "1050.000",
+      "explanation": "Observed closing inventory differs from the signed worksheet.",
+      "finding_id": "C08|cargas:reading:R-CLOSE|cargas:reading:R-OPEN",
+      "missing_reference": null,
+      "related_refs": [
+        "cargas:delivery:D-OUT",
+        "cargas:meter_ticket:MT-D-OUT",
+        "inventory:movement:M-OUT",
+        "inventory:movement:M-PURCHASE",
+        "inventory:movement:M-RETAIL",
+        "policy:POLICY-1",
+        "pos:POS:T-RETAIL:1"
+      ],
+      "rule_version": "1",
+      "severity": "high",
+      "source_refs": [
+        "cargas:reading:R-CLOSE",
+        "cargas:reading:R-OPEN"
+      ],
+      "status": "exception",
+      "threshold": "6.000"
+    }
+  ],
+  "rule_version": "1",
+  "run": {
+    "as_of": "2026-11-04T07:00:00+00:00",
+    "business_date": "2026-11-03",
+    "contract_version": "1",
+    "run_id": "synthetic-20261104-2026-11-03-showcase",
+    "window_end": "2026-11-04T07:00:00+00:00",
+    "window_start": "2026-11-03T07:00:00+00:00"
+  },
+  "source_digest": "be8351e830cd005236fdda9c5ab7e2598575ee3cdd98fc6c3e80c7af6c40ac63",
+  "status": "complete"
+}

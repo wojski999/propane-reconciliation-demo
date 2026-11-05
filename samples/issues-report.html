@@ -27,8 +27,69 @@ nav{display:flex;flex-wrap:wrap;gap:1rem}section{scroll-margin-top:1rem}
 dd{margin-bottom:1rem}
 table,tbody,tr,th,td{display:block}thead{display:none}tr{margin-bottom:1.5rem}}
 @media print{main{max-width:none;padding:0}details{break-inside:avoid}a{color:inherit}}
-</style><body><main id="top">
-<h1>Propane morning report</h1>
+
+body{background:#f3f5f4;color:#172d2b}main{max-width:78rem;padding:3rem 2rem}
+h1{font-size:2.4rem;line-height:1.3;letter-spacing:-.025em;margin:0 0 .75rem}
+h2{letter-spacing:-.015em}h3{line-height:1.4}a{color:#005d74}
+.morning-header{border-bottom:1px solid #b8c7c2;padding-bottom:1.5rem}
+.headline{font-size:1.45rem;line-height:1.5;max-width:64ch;margin:1rem 0}
+.report-note{color:#405954;font-size:.9rem}.kpi-grid{display:grid;
+grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin:1rem 0}
+.kpi{background:#fff;padding:1.25rem;border:1px solid #b8c7c2;border-radius:12px}
+.kpi h3{font-size:1rem;margin:0}.kpi-value{font-size:2rem;line-height:1.3;
+font-weight:700;font-variant-numeric:tabular-nums;margin:.8rem 0}
+.kpi-value.unavailable{font-size:1.15rem;color:#8e1717;line-height:1.5}
+.kpi p:last-child{margin-bottom:0}.attention-card{background:#fff;
+border:1px solid #b8c7c2;border-radius:12px;padding:1.5rem;margin:1rem 0}
+.attention-card h3{margin:.4rem 0 .8rem;font-size:1.3rem;max-width:65ch}
+.priority{font-size:.85rem;font-weight:700;text-transform:uppercase;color:#8e1717}
+.attention-card.medium .priority{color:#765200}.attention-card p{color:#172d2b}
+.attention-card small{font-size:.8rem}.source-list{padding:0;list-style:none;
+background:#fff;border-top:1px solid #b8c7c2}
+.source-list li{display:flex;justify-content:space-between;gap:1rem;
+padding:.65rem 0;border-bottom:1px solid #b8c7c2}
+.source-list strong{display:inline-block;min-width:16rem}.state{font-weight:650}
+.state.success{color:#226044}.state.stale{color:#765200}
+.state.failed{color:#8e1717}.technical{margin-top:3rem;border-top:1px solid #b8c7c2;
+padding-top:1.5rem}.technical>summary{font-size:1.25rem}
+.disclosure{margin-top:1rem}.technical .status{font-size:1rem}
+footer{margin-top:3rem;color:#405954;font-size:.9rem}
+@media(max-width:60rem){.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:40rem){main{padding:1.5rem 1rem}h1{font-size:1.9rem}
+.headline{font-size:1.2rem}.kpi-grid{grid-template-columns:1fr}
+.source-list li{display:block}.source-list strong{display:block;min-width:0}
+.attention-card{padding:1rem}}
+@media print{body{background:#fff}.kpi-grid{grid-template-columns:repeat(4,1fr)}
+.kpi-value{font-size:1.4rem}.attention-card,.kpi{break-inside:avoid}
+.technical{font-size:.85rem}nav{display:none}}
+</style><body><main id="top"><header class="morning-header"><h1>Propane morning report</h1>
+<p class="headline">Tuesday, Nov 3: 5 items need your attention. POS import failed; QuickBooks coverage is out of date. Totals unavailable: Delivered gallons, Retail gallons, Total gallons sold, Net revenue, Accounts receivable. Report incomplete; some checks could not reach a conclusion.</p>
+<p class="report-note">Synthetic demonstration · 2026-11-03 · America/Denver. No live integrations or accounting writes.</p>
+<nav aria-label="Morning report"><a href="#today">Needs attention today</a><a href="#data-status">Data status</a><a href="#technical">Technical details</a></nav></header><section aria-labelledby="numbers"><h2 id="numbers">Your business at a glance</h2><div class="kpi-grid">
+<article class="kpi"><h3>Delivered gallons</h3><p class="kpi-value unavailable">Required source records or mappings are missing</p><p class="report-note">Prior business day comparison not computed.</p><a href="#e-bfd6f9b9fb0344c4cc92d82f545c673b639db9d995f4fc1f0c9e33dd81b72ec7">See calculation</a></article>
+<article class="kpi"><h3>Retail gallons</h3><p class="kpi-value unavailable">POS import failed; QuickBooks coverage is out of date</p><p class="report-note">Prior business day comparison not computed.</p><a href="#e-9412acbaaa676e59b0657ac70677d86780a704265d03ab9d3647058d1bc9adfb">See calculation</a></article>
+<article class="kpi"><h3>Net revenue</h3><p class="kpi-value unavailable">POS import failed; QuickBooks coverage is out of date</p><p class="report-note">Prior business day comparison not computed.</p><a href="#e-f24fc5388d997e60319d17457ccb2e60668e73f268ae5af27af0aa4decdc64e2">See calculation</a></article>
+<article class="kpi"><h3>Accounts receivable</h3><p class="kpi-value unavailable">QuickBooks coverage is out of date</p><p class="report-note">Prior business day comparison not computed.</p><a href="#e-677f11a710d75a6c089d94a38630273009684f9a5d271b0425ee6f22d9684a8e">See calculation</a></article>
+</div><p>Total gallons sold: POS import failed; QuickBooks coverage is out of date. Measurement basis: net_60F.</p></section><section id="today"><h2>Needs attention today</h2>
+<article class="attention-card critical"><span class="priority">critical priority</span><h3>Source import failed: POS</h3><p>No dollar or gallon conclusion is supported by the available records.</p><p><strong>Next step:</strong> Repair or re-export the source file, then rerun the report.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-fa4f46049f14d7d7b9ebb5e9dea94db531867bef8c0c01f13fc8d415ee3690f2">file:pos.csv:row:2</a> <a href="#e-889ea208c27c8f30677f2650ff6faa0718960b8a7e33eb23c2da7ec9f634b809">manifest:POS-FAILED</a></p></details><small>Rule C10</small></article>
+<article class="attention-card high"><span class="priority">high priority</span><h3>Source coverage is out of date: QuickBooks</h3><p>Source coverage is incomplete. Affected totals are unavailable.</p><p><strong>Next step:</strong> Refresh the source export, then rerun the report.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-7c0d66680db950752643f191d45f7d684594328617b560e59509f5dd1d495014">file:qbo.json</a> <a href="#e-4120cea0bc059b34015d3f5687fa5dd01a1ec4b9966dc25c9563ee4cf56fb658">manifest:QBO-STALE</a> <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a></p></details><small>Rule C09</small></article>
+<article class="attention-card high"><span class="priority">high priority</span><h3>Supporting records are missing: D-NO-MAPPING · UNKNOWN</h3><p>No dollar or gallon conclusion is supported by the available records.</p><p><strong>Next step:</strong> Supply the missing records or mapping, then rerun the report.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-de175b6e328a619226971c72b368a2a2a3d0aa0869da72d8b2e84a6dea450f69">cargas:delivery:D-NO-MAPPING</a> <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a></p></details><small>Rule C11</small></article>
+<article class="attention-card high"><span class="priority">high priority</span><h3>Supporting records are missing: R-NO-READING-OPEN · TRUCK-NO-READING; ASSET-NO-READING · TRUCK-NO-READING</h3><p>No dollar or gallon conclusion is supported by the available records.</p><p><strong>Next step:</strong> Supply the missing records or mapping, then rerun the report.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-c6d93b525bb73ca4859d2141e903b18f1f4678d68a376273a661fc44d0e50751">cargas:reading:R-NO-READING-OPEN</a> <a href="#e-bb988c31b11ecd954e3345315f64b429280d53283b7e8415eb0c3772e16df481">identity:asset:ASSET-NO-READING</a> <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a></p></details><small>Rule C11</small></article>
+<article class="attention-card medium"><span class="priority">medium priority</span><h3>Tank inventory needs review: R-TRUCK-OPEN · TRUCK-A; R-UNCERTAIN · TRUCK-A</h3><p>No dollar or gallon conclusion is supported by the available records.</p><p><strong>Next step:</strong> Verify the tank readings and movement log with operations.</p><details class="disclosure"><summary>See source records</summary><p><a href="#e-9965a130036dbc1f95c9e5ec615226dcad3b22c70d29a9ef1790f32a13da236b">cargas:reading:R-TRUCK-OPEN</a> <a href="#e-10539c96c8a7c089de83479a6104a07ef42cc442d9f191f960d9f53cd2286491">cargas:reading:R-UNCERTAIN</a> <a href="#e-b61228658d529b3a54efd72d0d1b3e68fffbea383fb5412a3b0eabc45f72c229">inventory:movement:M-TRANSFER-IN</a> <a href="#e-fa5d1357decca237364749b50cdbd8eaf2d80890e7ab1eb1707512d22d83850f">inventory:movement:M-TRANSFER-OUT</a> <a href="#e-29db1e4f076194987f35e5ff020c857eacd3ce9da5940988e3db5b9d638d5121">policy:POLICY-1</a></p></details><small>Rule C08</small></article>
+</section><section id="data-status"><h2>Data status</h2><p>Last updated and coverage times in America/Denver. A fresh export does not guarantee up-to-date coverage.</p><ul class="source-list">
+<li><span><strong>Cargas deliveries</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>Optional supporting records</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>Customer and item mappings</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>Inventory movements</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>Opening receivables</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>POS</strong> <span class="state failed">Import failed</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>Price list</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>QuickBooks</strong> <span class="state stale">Out of date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-02T23:00:00-07:00</small></span></li>
+<li><span><strong>Tank readings</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>Card settlements</strong> <span class="state success">Up to date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+<li><span><strong>QuickBooks</strong> <span class="state stale">Out of date</span></span><span>Last updated Nov 04, 2026 12:00 AM MST<br><small>Covered through 2026-11-04T00:00:00-07:00</small></span></li>
+</ul></section><details class="technical" id="technical"><summary>Technical details — checks, calculations and immutable evidence</summary>
+<h2>Run and evidence record</h2>
 <p>Business date: 2026-11-03 · America/Denver · synthetic data only</p>
 <p class="status incomplete">Run status: INCOMPLETE</p>
 <p>Run: synthetic-20261104-2026-11-03-issues<br>As of: 2026-11-04T00:00:00-07:00<br>Source digest: d7376dbadfa5132530ed1d336d0fa4f3077095cf170d3ce49ae9026bd76922c2</p>
@@ -1009,4 +1070,4 @@ Quality warning: STALE_COVERAGE.</pre></section><section id="exceptions"><h2>Pri
   &quot;pointer&quot;: &quot;#&quot;,
   &quot;raw&quot;: &quot;{\n  \&quot;basis\&quot;: \&quot;net_60F\&quot;,\n  \&quot;billing_grace_hours\&quot;: 24,\n  \&quot;business_days\&quot;: \&quot;Mon-Fri; no holidays\&quot;,\n  \&quot;credit_limit\&quot;: \&quot;100.00\&quot;,\n  \&quot;currency\&quot;: \&quot;USD\&quot;,\n  \&quot;discount_limit_pct\&quot;: \&quot;10.00\&quot;,\n  \&quot;fictional\&quot;: true,\n  \&quot;future_max_minutes\&quot;: 5,\n  \&quot;gallon_places\&quot;: 3,\n  \&quot;inventory_min_gallons\&quot;: \&quot;2.000\&quot;,\n  \&quot;inventory_pct\&quot;: \&quot;0.005\&quot;,\n  \&quot;money_places\&quot;: 2,\n  \&quot;money_rounding\&quot;: \&quot;ROUND_HALF_UP\&quot;,\n  \&quot;opening_ar_cutoff\&quot;: \&quot;2026-10-26T07:00:00+00:00\&quot;,\n  \&quot;optional\&quot;: null,\n  \&quot;payment_grace_hours\&quot;: 24,\n  \&quot;policy_id\&quot;: \&quot;POLICY-1\&quot;,\n  \&quot;price_tolerance\&quot;: \&quot;0.01\&quot;,\n  \&quot;reading_max_minutes\&quot;: 60,\n  \&quot;revenue_policy\&quot;: \&quot;Distinct nonvoid sale events less net adjustments; exclude tax/container deposits; payment/deposit not revenue\&quot;,\n  \&quot;settlement_grace_business_days\&quot;: 2,\n  \&quot;source_max_hours\&quot;: 24,\n  \&quot;synthetic\&quot;: true,\n  \&quot;timezone\&quot;: \&quot;America/Denver\&quot;,\n  \&quot;unmeasured_assets\&quot;: [\n    \&quot;UNMEASURED\&quot;\n  ],\n  \&quot;version\&quot;: \&quot;1\&quot;\n}\n&quot;
 }</pre></details>
-</section><footer><p>Synthetic decision-support demonstration. Fictional policies require client confirmation before real use. No certified audit, accounting writes or live integrations.</p><a href="#top">Back to top</a></footer></main></body></html>
+</section><footer><p>Synthetic decision-support demonstration. Fictional policies require client confirmation before real use. No certified audit, accounting writes or live integrations.</p><a href="#top">Back to top</a></footer></details></main></body></html>

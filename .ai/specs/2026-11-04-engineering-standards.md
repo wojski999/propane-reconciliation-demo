@@ -116,3 +116,14 @@ The requirement-to-evidence table reflects business steps 1–6 on this branch.
 Business validation includes exact 18-scenario oracles, import rollback, pure
 financial/inventory worksheets, source evidence closure, safe exits, hostile HTML
 and optional adapter success/failure tests. Independent review and QA own sign-off.
+
+
+## Static sample publication (issue #18)
+
+A push-to-main Pages workflow publishes only committed synthetic samples, with
+the showcase copied to index.html. Its build has contents: read; only the deploy
+job has pages: write and id-token: write in the github-pages environment. Actions
+remain pinned to SHAs. This exception permits static Pages deployment, never
+repository-settings changes, accounting writes, real data or production access.
+Owner enables Pages after merge. Browser screenshots are author evidence from
+an isolated Chromium context on the VPS, not independent QA sign-off.

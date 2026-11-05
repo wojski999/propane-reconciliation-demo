@@ -4,8 +4,9 @@
 import hashlib
 import html
 import json
-from datetime import timedelta
+from datetime import date, datetime, timedelta
 from decimal import Decimal
+from zoneinfo import ZoneInfo
 
 
 def escaped(value):
@@ -220,7 +221,7 @@ def result_digest(result):
     ).hexdigest()
 
 
-def render(result, raw_evidence, *, narrative_status=None):
+def technical_report(result, raw_evidence, *, narrative_status=None):
     """Escape source text, keys and optional untrusted narrative."""
     if narrative_status is not None and narrative_status["digest"] != result_digest(
         result
@@ -242,7 +243,7 @@ def render(result, raw_evidence, *, narrative_status=None):
         ),
         "<title>Synthetic propane morning report</title>",
         f'<style>{STYLE}</style><body><main id="top">',
-        "<h1>Propane morning report</h1>",
+        "<h2>Run and evidence record</h2>",
         f"<p>Business date: {escaped(run['business_date'])} "
         f"· America/Denver · synthetic data only</p>",
         f'<p class="status {escaped(result["status"])}">Run '
@@ -513,3 +514,314 @@ def render(result, raw_evidence, *, narrative_status=None):
         "Back to top</a></footer></main></body></html>"
     )
     return "\n".join(out) + "\n"
+
+
+LABELS = {
+    "delivered": "Delivered gallons",
+    "retail": "Retail gallons",
+    "total_gallons": "Total gallons sold",
+    "revenue": "Net revenue",
+    "AR": "Accounts receivable",
+}
+SYSTEMS = {
+    "qbo": "QuickBooks",
+    "cargas": "Cargas deliveries",
+    "pos": "POS",
+    "readings": "Tank readings",
+    "inventory": "Inventory movements",
+    "settlements": "Card settlements",
+    "prices": "Price list",
+    "identity": "Customer and item mappings",
+    "ar": "Opening receivables",
+    "optional_empty": "Optional supporting records",
+}
+TITLES = {
+    "C01": "Delivered gallons remain unbilled in QuickBooks",
+    "C02": "Billed gallons have no matching delivery",
+    "C03": "Possible duplicate sale records",
+    "C04": "Sale amount differs from the approved price",
+    "C05": "Credit, refund or discount needs review",
+    "C06": "Payment needs allocation review",
+    "C07": "Card settlement differs from the QuickBooks deposit",
+    "C08": "Tank inventory needs review",
+    "C09": "Source coverage is out of date",
+    "C10": "Source import failed",
+    "C11": "Supporting records are missing",
+    "C12": "Accounting postings need review",
+}
+ACTIONS = {
+    "C01": "Check the delivery ticket and confirm billing with the office.",
+    "C02": "Confirm the delivery ticket before accepting the invoice.",
+    "C03": "Compare both source records before reversing any sale.",
+    "C04": "Confirm the effective price and approved discount with billing.",
+    "C05": "Confirm the original sale and approval with the accounting team.",
+    "C06": "Ask accounting to confirm the payment allocation.",
+    "C07": "Compare the processor statement, fees and bank deposit with accounting.",
+    "C08": "Verify the tank readings and movement log with operations.",
+    "C09": "Refresh the source export, then rerun the report.",
+    "C10": "Repair or re-export the source file, then rerun the report.",
+    "C11": "Supply the missing records or mapping, then rerun the report.",
+    "C12": "Ask accounting to review the linked posting and clearing account.",
+}
+BUSINESS_STYLE = """
+body{background:#f3f5f4;color:#172d2b}main{max-width:78rem;padding:3rem 2rem}
+h1{font-size:2.4rem;line-height:1.3;letter-spacing:-.025em;margin:0 0 .75rem}
+h2{letter-spacing:-.015em}h3{line-height:1.4}a{color:#005d74}
+.morning-header{border-bottom:1px solid #b8c7c2;padding-bottom:1.5rem}
+.headline{font-size:1.45rem;line-height:1.5;max-width:64ch;margin:1rem 0}
+.report-note{color:#405954;font-size:.9rem}.kpi-grid{display:grid;
+grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin:1rem 0}
+.kpi{background:#fff;padding:1.25rem;border:1px solid #b8c7c2;border-radius:12px}
+.kpi h3{font-size:1rem;margin:0}.kpi-value{font-size:2rem;line-height:1.3;
+font-weight:700;font-variant-numeric:tabular-nums;margin:.8rem 0}
+.kpi-value.unavailable{font-size:1.15rem;color:#8e1717;line-height:1.5}
+.kpi p:last-child{margin-bottom:0}.attention-card{background:#fff;
+border:1px solid #b8c7c2;border-radius:12px;padding:1.5rem;margin:1rem 0}
+.attention-card h3{margin:.4rem 0 .8rem;font-size:1.3rem;max-width:65ch}
+.priority{font-size:.85rem;font-weight:700;text-transform:uppercase;color:#8e1717}
+.attention-card.medium .priority{color:#765200}.attention-card p{color:#172d2b}
+.attention-card small{font-size:.8rem}.source-list{padding:0;list-style:none;
+background:#fff;border-top:1px solid #b8c7c2}
+.source-list li{display:flex;justify-content:space-between;gap:1rem;
+padding:.65rem 0;border-bottom:1px solid #b8c7c2}
+.source-list strong{display:inline-block;min-width:16rem}.state{font-weight:650}
+.state.success{color:#226044}.state.stale{color:#765200}
+.state.failed{color:#8e1717}.technical{margin-top:3rem;border-top:1px solid #b8c7c2;
+padding-top:1.5rem}.technical>summary{font-size:1.25rem}
+.disclosure{margin-top:1rem}.technical .status{font-size:1rem}
+footer{margin-top:3rem;color:#405954;font-size:.9rem}
+@media(max-width:60rem){.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:40rem){main{padding:1.5rem 1rem}h1{font-size:1.9rem}
+.headline{font-size:1.2rem}.kpi-grid{grid-template-columns:1fr}
+.source-list li{display:block}.source-list strong{display:block;min-width:0}
+.attention-card{padding:1rem}}
+@media print{body{background:#fff}.kpi-grid{grid-template-columns:repeat(4,1fr)}
+.kpi-value{font-size:1.4rem}.attention-card,.kpi{break-inside:avoid}
+.technical{font-size:.85rem}nav{display:none}}
+"""
+
+
+def formatted(value, unit):
+    """Format computed values only; never substitute a known partial amount."""
+    number = Decimal(value)
+    return (
+        (f"-${abs(number):,.2f}" if number < 0 else f"${number:,.2f}")
+        if unit == "USD"
+        else f"{number:,.3f} gal"
+    )
+
+
+def unavailable_reason(sheet, result):
+    refs = set().union(*(set(g["source_refs"]) for g in sheet["gaps"]))
+    reasons = []
+    for source in result["freshness"]:
+        if refs.intersection(source["source_refs"]) and source["status"] != "success":
+            name = SYSTEMS.get(source["source"], source["source"])
+            reason = name + (
+                " coverage is out of date"
+                if source["status"] == "stale"
+                else " import failed"
+            )
+            if reason not in reasons:
+                reasons.append(reason)
+    return "; ".join(reasons) or "Required source records or mappings are missing"
+
+
+def headline(result):
+    day = date.fromisoformat(result["run"]["business_date"])
+    count = len(result["checks"]["findings"])
+    noun = "item needs" if count == 1 else "items need"
+    text = f"{day.strftime('%A, %b')} {day.day}: {count} {noun} your attention. "
+    problems = sorted(
+        {
+            SYSTEMS.get(s["source"], s["source"])
+            + (
+                " coverage is out of date"
+                if s["status"] == "stale"
+                else " import failed"
+            )
+            for s in result["freshness"]
+            if s["status"] != "success"
+        }
+    )
+    text += "; ".join(problems) + ". " if problems else "All sources up to date. "
+    missing = [LABELS[k] for k, s in result["kpis"].items() if s["value"] is None]
+    if missing:
+        text += "Totals unavailable: " + ", ".join(missing) + ". "
+    if result["status"] != "complete":
+        text += "Report incomplete; some checks could not reach a conclusion."
+    return text.strip()
+
+
+def record_context(finding, raw_evidence):
+    """Use source identifiers verbatim; do not guess customer names or mappings."""
+    context = []
+    for ref in finding["source_refs"]:
+        raw = raw_evidence.get(ref, {}).get("raw", {})
+        if isinstance(raw, dict):
+            name = (
+                ref.split(":")[2]
+                if len(ref.split(":")) >= 3
+                else raw.get("Id", raw.get("transaction_id", ""))
+            )
+            if ref.startswith("manifest:"):
+                source = raw.get("source", "Source records")
+                name = SYSTEMS.get(source, source)
+            party = raw.get("customer_id", raw.get("asset_id", ""))
+            if not party:
+                party = raw.get("CustomerRef", {}).get("value", "")
+            text = " · ".join(str(v) for v in (name, party) if v)
+            if text and text not in context:
+                context.append(text)
+    return "; ".join(context) or "; ".join(finding["source_refs"])
+
+
+def impact(finding):
+    check, delta = finding["check_id"], finding["delta"]
+    if delta is None:
+        return "No dollar or gallon conclusion is supported by the available records."
+    if check == "C01":
+        return formatted(delta, "gal") + " delivered but not allocated to billing."
+    if check == "C02":
+        return formatted(delta, "gal") + " billed without a matching delivery."
+    if check in {"C07", "C08"}:
+        direction = "below" if Decimal(delta) < 0 else "above"
+        amount = formatted(abs(Decimal(delta)), "USD" if check == "C07" else "gal")
+        subject = "Deposit" if check == "C07" else "Tank reading"
+        return f"{subject} is {amount} {direction} the expected amount."
+    if check == "C05" and any(
+        ref.startswith(("qbo:CreditMemo:", "qbo:RefundReceipt:"))
+        for ref in finding["source_refs"]
+    ):
+        return formatted(finding["actual"], "USD") + " adjustment flagged for review."
+    if check in {"C04", "C06", "C12"}:
+        return formatted(delta, "USD") + " difference in the computed reconciliation."
+    if check == "C09":
+        return "Source coverage is incomplete. Affected totals are unavailable."
+    return finding["explanation"]
+
+
+def business_sections(result, raw_evidence):
+    out = [
+        '<header class="morning-header"><h1>Propane morning report</h1>',
+        '<p class="headline">' + escaped(headline(result)) + "</p>",
+        '<p class="report-note">Synthetic demonstration · '
+        + escaped(result["run"]["business_date"])
+        + " · America/Denver. No live integrations or accounting writes.</p>",
+        '<nav aria-label="Morning report"><a href="#today">Needs attention today</a>'
+        '<a href="#data-status">Data status</a>'
+        '<a href="#technical">Technical details</a>'
+        '</nav></header><section aria-labelledby="numbers"><h2 id="numbers">'
+        'Your business at a glance</h2><div class="kpi-grid">',
+    ]
+    for key in ("delivered", "retail", "revenue", "AR"):
+        sheet = result["kpis"][key]
+        value = sheet["value"]
+        text = (
+            unavailable_reason(sheet, result)
+            if value is None
+            else formatted(value, sheet["unit"])
+        )
+        state = " unavailable" if value is None else ""
+        out.append(
+            '<article class="kpi"><h3>'
+            + LABELS[key]
+            + '</h3><p class="kpi-value'
+            + state
+            + '">'
+            + escaped(text)
+            + '</p><p class="report-note">'
+            'Prior business day comparison not computed.</p><a href="#'
+            + anchor("worksheet:" + key)
+            + '">See calculation</a></article>'
+        )
+    total = result["kpis"]["total_gallons"]
+    total_text = (
+        unavailable_reason(total, result)
+        if total["value"] is None
+        else formatted(total["value"], total["unit"])
+    )
+    out.append(
+        "</div><p>Total gallons sold: "
+        + escaped(total_text)
+        + ". Measurement basis: "
+        + escaped(result["gallon_basis"])
+        + ".</p></section>"
+        '<section id="today"><h2>Needs attention today</h2>'
+    )
+    if not result["checks"]["findings"]:
+        out.append(
+            "<p>No business exceptions found. "
+            "Review data status for source coverage.</p>"
+        )
+    for finding in result["prioritized_findings"]:
+        check = finding["check_id"]
+        out.append(
+            '<article class="attention-card ' + escaped(finding["severity"]) + '">'
+            '<span class="priority">'
+            + escaped(finding["severity"])
+            + " priority</span><h3>"
+            + escaped(TITLES[check])
+            + ": "
+            + escaped(record_context(finding, raw_evidence))
+            + "</h3><p>"
+            + escaped(impact(finding))
+            + "</p><p><strong>Next step:</strong> "
+            + escaped(ACTIONS[check])
+            + '</p><details class="disclosure"><summary>'
+            "See source records</summary><p>"
+            + links(finding["source_refs"] + finding["related_refs"])
+            + "</p></details><small>Rule "
+            + escaped(check)
+            + "</small></article>"
+        )
+    out.append(
+        '</section><section id="data-status"><h2>Data status</h2>'
+        "<p>Last updated and coverage times in America/Denver. "
+        "A fresh export does not guarantee up-to-date coverage.</p>"
+        '<ul class="source-list">'
+    )
+    for source in result["freshness"]:
+        status = source["status"]
+        state = {"success": "Up to date", "stale": "Out of date"}.get(
+            status, "Import failed"
+        )
+        instant = source.get("extracted_at")
+        updated = (
+            datetime.fromisoformat(instant)
+            .astimezone(ZoneInfo("America/Denver"))
+            .strftime("%b %d, %Y %I:%M %p %Z")
+            if instant
+            else "time unavailable"
+        )
+        coverage = source.get("covered_through", "not available")
+        out.append(
+            "<li><span><strong>"
+            + escaped(SYSTEMS.get(source["source"], source["source"]))
+            + '</strong> <span class="state '
+            + escaped(status)
+            + '">'
+            + state
+            + "</span></span><span>Last updated "
+            + escaped(updated)
+            + "<br><small>Covered through "
+            + escaped(coverage)
+            + "</small></span></li>"
+        )
+    out.append("</ul></section>")
+    return "\n".join(out)
+
+
+def render(result, raw_evidence, *, narrative_status=None):
+    """Business-first view over computed results and full technical evidence."""
+    document = technical_report(result, raw_evidence, narrative_status=narrative_status)
+    document = document.replace("</style>", BUSINESS_STYLE + "</style>", 1)
+    document = document.replace(
+        '<main id="top">',
+        '<main id="top">'
+        + business_sections(result, raw_evidence)
+        + '<details class="technical" id="technical"><summary>Technical details — '
+        "checks, calculations and immutable evidence</summary>",
+        1,
+    )
+    return document.replace("</main>", "</details></main>", 1)

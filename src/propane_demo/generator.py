@@ -43,6 +43,8 @@ def generate(scenario="clean", seed=DEFAULT_SEED, business_date=DEFAULT_DATE):
     selected = (
         [f"P{i:02}" for i in range(1, 15)] if scenario == "issues" else [scenario]
     )
+    if scenario == "showcase":
+        selected = ["P01", "P03", "P07", "P08"]
     for name in selected:
         for patch in template["mutations"].get(name, []):
             rows = data[patch["file"]]

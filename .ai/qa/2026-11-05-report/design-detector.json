@@ -1,0 +1,52 @@
+[
+  {
+    "antipattern": "tight-leading",
+    "name": "Tight line height",
+    "description": "Line height below 1.3x the font size makes multi-line text hard to read. Use 1.5 to 1.7 for body text so lines have room to breathe.",
+    "severity": "warning",
+    "category": "quality",
+    "file": "/home/t3agent/propane-reconciliation-demo/.ai/cezar/worktrees/48514b5a-505f-4334-b375-462493d09cda/samples/showcase-report.html",
+    "line": 0,
+    "snippet": "line-height 1.28x (need >=1.3)"
+  },
+  {
+    "antipattern": "tight-leading",
+    "name": "Tight line height",
+    "description": "Line height below 1.3x the font size makes multi-line text hard to read. Use 1.5 to 1.7 for body text so lines have room to breathe.",
+    "severity": "warning",
+    "category": "quality",
+    "file": "/home/t3agent/propane-reconciliation-demo/.ai/cezar/worktrees/48514b5a-505f-4334-b375-462493d09cda/samples/issues-report.html",
+    "line": 0,
+    "snippet": "line-height 1.28x (need >=1.3)"
+  },
+  {
+    "antipattern": "aphoristic-cadence",
+    "name": "Aphoristic-cadence copy",
+    "description": "Three or more sections landing on a short rebuttal sentence (\"X. No Y.\" / \"X. Just Y.\") or a manufactured-contrast aphorism (\"Not a feature. A platform.\") reads as AI cadence, not voice. Once is fine; the pattern is the tell.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/home/t3agent/propane-reconciliation-demo/.ai/cezar/worktrees/48514b5a-505f-4334-b375-462493d09cda/samples/issues-report.html",
+    "line": 0,
+    "snippet": "3 aphoristic constructions: \"Synthetic demonstration · 2026-11-03 · America/Denver. No live integrations or a\""
+  },
+  {
+    "antipattern": "tight-leading",
+    "name": "Tight line height",
+    "description": "Line height below 1.3x the font size makes multi-line text hard to read. Use 1.5 to 1.7 for body text so lines have room to breathe.",
+    "severity": "warning",
+    "category": "quality",
+    "file": "/home/t3agent/propane-reconciliation-demo/.ai/cezar/worktrees/48514b5a-505f-4334-b375-462493d09cda/samples/clean-report.html",
+    "line": 0,
+    "snippet": "line-height 1.28x (need >=1.3)"
+  },
+  {
+    "antipattern": "aphoristic-cadence",
+    "name": "Aphoristic-cadence copy",
+    "description": "Three or more sections landing on a short rebuttal sentence (\"X. No Y.\" / \"X. Just Y.\") or a manufactured-contrast aphorism (\"Not a feature. A platform.\") reads as AI cadence, not voice. Once is fine; the pattern is the tell.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/home/t3agent/propane-reconciliation-demo/.ai/cezar/worktrees/48514b5a-505f-4334-b375-462493d09cda/samples/clean-report.html",
+    "line": 0,
+    "snippet": "3 aphoristic constructions: \"Synthetic demonstration · 2026-11-03 · America/Denver. No live integrations or a\""
+  }
+]

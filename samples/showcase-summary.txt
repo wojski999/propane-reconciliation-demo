@@ -1,0 +1,10 @@
+Complete synthetic run. 4 findings; 0 source alerts. 20 check scopes evaluated; 0 not evaluated. Review critical and high exceptions first, then inspect their source evidence. Offline computed summary; deterministic calculations only.
+delivered: 600.005 US gallons (complete).
+retail: 55.000 US gallons (complete).
+total_gallons: 655.005 US gallons (complete).
+revenue: 1290.02 USD (complete).
+AR: 860.01 USD (complete).
+[C01|cargas:delivery:D-MISSING] high; delta 100.000; threshold 0.001.
+[C03|pos:POS:T-DUP-A:1|pos:POS:T-DUP-B:1] high; delta 1; threshold 1.
+[C07|pos:batch:B-SETTLED|qbo:Deposit:DEP-SHORT:1] high; delta -10.00; threshold 0.01.
+[C08|cargas:reading:R-CLOSE|cargas:reading:R-OPEN] high; delta -30.000; threshold 6.000.
