@@ -121,8 +121,10 @@ client records, credentials, accounting writes, vendor adapters or production
 access. Real use first requires confirmed exports, identity/posting/tax/timing and
 measurement policies, least-privilege permissions and client-owned infrastructure.
 Source contracts are fictional, not claims about a vendor's actual export schema.
-C12 summary-journal aggregation and double-billing policy are separate follow-up
-work (#13). The optional final narrative summarizes computed results only.
+Issue [#13](https://github.com/wojski999/propane-reconciliation-demo/issues/13)
+tracks the separate delivery over-allocation/double-billing policy. C12 shared
+summary-journal aggregation also needs an agreed policy before real integration;
+it is not the subject of #13. The optional final narrative summarizes computed results only.
 Your real accounts, data and provider costs remain under your control.
 
 See the [approved specification](.ai/specs/2026-11-04-propane-reconciliation-demo.md),
@@ -139,7 +141,8 @@ Opt in explicitly with `--narrative` after setting both `ANTHROPIC_API_KEY` and
 `ANTHROPIC_MODEL` in your own environment. Do not put secrets in commands committed
 to this repository. No model is hard-coded. This sends only computed finding IDs,
 severities, preformatted KPI/delta/threshold strings, coverage and quality warnings
-to the account supplying the key. It never sends raw input records or evidence.
+to the account supplying the key. It never sends raw input records or evidence. Finding IDs can contain synthetic
+source keys; replace or pseudonymize those keys before any real-data use.
 The standard-library Messages adapter uses HTTPS, a 15-second socket timeout and
 one attempt with no retries. Provider usage can incur charges; no live call is
 needed to try or test the demo. The response token limit is 1200.
@@ -161,3 +164,16 @@ credentials, billing and revocation, with explicit permission for minimized AI
 processing. QBO OAuth's broad scope does not enforce read-only; a future adapter
 must restrict operations itself. No real integrations, scheduling, notifications
 or accounting writes are implemented here.
+
+## Delivery record
+
+All six implementation steps have merged, each through its own PR with CI and
+independent review: [fixtures #10](https://github.com/wojski999/propane-reconciliation-demo/pull/10),
+[imports #11](https://github.com/wojski999/propane-reconciliation-demo/pull/11),
+[checks #12](https://github.com/wojski999/propane-reconciliation-demo/pull/12),
+[inventory #14](https://github.com/wojski999/propane-reconciliation-demo/pull/14),
+[report #15](https://github.com/wojski999/propane-reconciliation-demo/pull/15) and
+[narrative #16](https://github.com/wojski999/propane-reconciliation-demo/pull/16).
+Foundation and validation corrections are in PRs #2 and #3. The final application
+gate passes **1661 tests**, **2069/2069 lines** and **954/954 branch exits**.
+See the [delivery evidence and remaining limits](.ai/runs/2026-11-05-demo-delivery.md).

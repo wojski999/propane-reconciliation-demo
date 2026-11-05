@@ -12,3 +12,5 @@ when a failed check, review finding or repeated mistake teaches a reusable lesso
 - [KPI event boundaries and evidence output](lessons/2026-11-04-kpi-event-boundaries.md): posting versus event cutoffs, credit/cash deduplication, basis gaps and raw failure pointers.
 - [Refunded credit capacity](lessons/2026-11-04-refunded-credit-capacity.md): revenue deduplication alone does not prove unapplied-credit disclosure; test shared ordered capacity.
 - [Narrative boundaries](lessons/2026-11-05-narrative-boundaries.md): minimized payloads, computed-result digest, honest validation and literal exit expectations.
+
+- [Delivery gates](lessons/2026-11-05-delivery-gates.md): adversarial review, native PR normalization and verified bounded observers.

@@ -1,9 +1,9 @@
 # Engineering standards
 
-Date: 2026-11-04. Updated: 2026-11-05. Status: foundation and business steps
-1–5 merged (PRs #2, #3, #10, #11, #12, #14, #15). Step 6 is implemented on its
-issue #9 branch, pending independent review, CI, QA and owner merge. The owner
-authorized implementation; this does not claim separate approval of every choice.
+Date: 2026-11-04. Updated: 2026-11-05. Status: foundation and all six business
+steps merged (PRs #2, #3, #10, #11, #12, #14, #15, #16). Green CI and independent
+review were required for each merge. The owner authorized implementation;
+this does not claim separate approval of every design choice.
 
 ## Layout and naming
 

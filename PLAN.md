@@ -1,8 +1,8 @@
 # Repository foundation plan
 
 Date: 2026-11-04. Updated: 2026-11-05. Phase A merged in PR #2, with validation correction PR #3.
-Business steps 1–5 merged through PR #15. Step 6 is implemented on its issue #9
-branch; independent review, CI, QA and owner merge remain pending.
+All six business steps merged through PR #16, with green current-head CI,
+independent reviews and static-report QA. Final delivery documentation is in review.
 The tables below retain historical foundation evidence.
 
 Checklist audit: the step table below records the repository setup sequence,
@@ -65,7 +65,7 @@ is corrected in this PR from the owner's explicit implementation authorization.
 | 3.10 | Open setup PR | 1:1 | done | PR #2 delivered and merged; correction PR #3 merged. |
 | 3.11 | Local skill overrides | 1:1 | done | SDLC records .ai/skills/<exact-name>/SKILL.md convention; no speculative override. |
 | 3.12 | First business issue | 1:1 process; choice task | done | Issue #4 implemented and merged in PR #10. |
-| 3.13 | Implement issue | 1:1 | done | Business steps 1–5 merged through PR #15. |
+| 3.13 | Implement issue | 1:1 | done | All six business steps merged through PR #16. |
 | 3.14 | Independent review | 1:1 | done | Foundation delivered; step-6 review remains separate. |
 | 3.15 | Override A/B exercise | 1:1; choice content | out of scope | Training exercise not needed for Phase A; no invented evidence. |
 | 3.16 | Optional orchestration | choice | out of scope | No project orchestration infrastructure committed. |
@@ -116,15 +116,18 @@ claimed as completed. The original steps 3.12–3.14 completed through the found
 
 The preserved smoke path generates only a synthetic marker through SQLite.
 Business schema, generator, import ledger, checks, KPIs and report are now merged
-through step 5. Step 6 adds optional narrative on this branch. Offline behavior
+through step 6, including optional narrative. Offline behavior
 remains the default. No live vendor access, deployment or accounting write occurs.
 
 ## Business implementation status — 2026-11-05
 
 The earlier sections describe the historical foundation setup, not current code.
-Foundation merged in PR #2 with correction PR #3. Business steps 1–5 are merged: fixtures PR #10,
-ingestion PR #11, rules PR #12, inventory PR #14 and KPI/report PR #15
-(main commit 87e0671). Step 6 is implemented on this branch for issue #9;
-its independent review, native human gate, PR CI, QA and merge remain pending.
-The full business spec stays active until all required work is merged.
+Foundation merged in PR #2 with correction PR #3. Business steps 1–6 are merged:
+fixtures PR #10, ingestion PR #11, rules PR #12, inventory PR #14,
+KPI/report PR #15 and optional narrative PR #16 (main commit 379699a).
+Issue #9 passed its native human gate, two independent reviews, green PR CI
+and static-report QA. All six implementation issues are closed.
+The completed business spec is in `.ai/specs/implemented/`; its original path remains
+a compatibility index for reviewed issue and PR links.
+Issue #13 remains an explicitly deferred policy decision, not unfinished demo scope.
 No live integration or deployment is authorized or claimed.
