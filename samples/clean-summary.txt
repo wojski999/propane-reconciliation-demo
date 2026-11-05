@@ -1,1 +1,6 @@
-Complete synthetic run. 0 findings; 0 source alerts. 20 check scopes evaluated; 0 not evaluated. Review critical and high exceptions first, then inspect their source evidence. Offline computed summary; no AI or network was used.
+Complete synthetic run. 0 findings; 0 source alerts. 20 check scopes evaluated; 0 not evaluated. Review critical and high exceptions first, then inspect their source evidence. Offline computed summary; deterministic calculations only.
+delivered: 600.005 US gallons (complete).
+retail: 55.000 US gallons (complete).
+total_gallons: 655.005 US gallons (complete).
+revenue: 1250.02 USD (complete).
+AR: 860.01 USD (complete).

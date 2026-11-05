@@ -28,6 +28,12 @@ scenario deliberately contains a failed POS feed and stale QBO coverage: its
 Use `--scenario clean` for a complete run with zero findings and zero alerts.
 [Committed clean sample](samples/clean-report.html) and
 [matching computed summary](samples/clean-summary.txt) need no installation.
+Inspect the [issues report](samples/issues-report.html),
+[computed results](samples/issues-results.json),
+[computed summary](samples/issues-summary.txt) and
+[illustrative narrative](samples/issues-illustrative-narrative.json) together.
+The committed illustration is authored, not a live Claude response; its digest
+binds it to the exact computed scenario and source digest.
 
 Other scenarios: `P01`–`P14`, `raw-repeat`, `wrong-clearing`. Each runs independently.
 Defaults are fixed: seed `20261104`, business date `2026-11-03`, cutoff at that
@@ -78,7 +84,7 @@ to pre-opening invoices/credits and customers absent from the opening snapshot
 therefore make AR incomplete; missing support is never inferred from current Balance.
 
 Output includes original synthetic `inputs/`, `results.json`, `alerts.json`,
-`evidence.json`, `summary.txt` and `report.html`. Repeating identical arguments
+`evidence.json`, `summary.txt`, `narrative.json` and `report.html`. Repeating identical offline arguments
 produces identical bytes. Files in the selected output directory are replaced;
 choose a separate directory to retain a run. SQLite is fresh and in-memory each
 time; no persistent cache or migration is introduced. Computed artifacts are
@@ -102,6 +108,7 @@ a separate exact oracle, hand-calculated KPI answers, adverse cutoffs/allocation
 source rollback, hostile HTML escaping, offline references and failure exits.
 CI uploads the real clean business report as `business-evidence-report`; the
 existing `foundation-smoke-report` artifact is retained.
+`issues-evidence-report` independently exposes the incomplete combined scenario.
 
 `propane-smoke --output artifacts/smoke.html` remains the separate infrastructure
 sample (default `artifacts/smoke.html`, exit 0/1/argparse 2). It explicitly evaluates
@@ -115,8 +122,7 @@ access. Real use first requires confirmed exports, identity/posting/tax/timing a
 measurement policies, least-privilege permissions and client-owned infrastructure.
 Source contracts are fictional, not claims about a vendor's actual export schema.
 C12 summary-journal aggregation and double-billing policy are separate follow-up
-work (#13). Live optional Claude narrative belongs to step 6 (#9); this step uses
-only a deterministic offline computed-results summary and never reads API keys.
+work (#13). The optional final narrative summarizes computed results only.
 Your real accounts, data and provider costs remain under your control.
 
 See the [approved specification](.ai/specs/2026-11-04-propane-reconciliation-demo.md),
@@ -125,3 +131,33 @@ See the [approved specification](.ai/specs/2026-11-04-propane-reconciliation-dem
 [contributor rules](AGENTS.md). Each business step has its own issue and PR;
 green current-head CI, independent financial/code review and static-report QA
 are required before merge.
+
+## Optional Claude narrative
+
+The default command is strictly offline even when environment credentials exist.
+Opt in explicitly with `--narrative` after setting both `ANTHROPIC_API_KEY` and
+`ANTHROPIC_MODEL` in your own environment. Do not put secrets in commands committed
+to this repository. No model is hard-coded. This sends only computed finding IDs,
+severities, preformatted KPI/delta/threshold strings, coverage and quality warnings
+to the account supplying the key. It never sends raw input records or evidence.
+The standard-library Messages adapter uses HTTPS, a 15-second socket timeout and
+one attempt with no retries. Provider usage can incur charges; no live call is
+needed to try or test the demo. The response token limit is 1200.
+
+Without either environment value, or on timeout, authentication/rate/network/
+provider error, empty/malformed output or unsupported citations, the report uses
+the deterministic computed summary. `narrative.json` and HTML expose status and a
+safe reason; failure does not change the computed results or business exit code.
+Generated text is escaped, labeled AI-generated and untrusted. Only response shape
+and cited finding IDs are validated, not sentence accuracy, arithmetic, causes or
+remedies. The prompt prohibits calculation, altered totals and unsupported advice;
+this is a behavioral instruction, not proof of compliance. Inspect the authoritative
+computed evidence before acting. Narratives never feed back into calculations.
+Illustrative text is explicitly not live-generated and is rejected for another
+digest, including a changed KPI with unchanged source identity.
+
+Real integration would use client-owned repository, deployment, accounts, data,
+credentials, billing and revocation, with explicit permission for minimized AI
+processing. QBO OAuth's broad scope does not enforce read-only; a future adapter
+must restrict operations itself. No real integrations, scheduling, notifications
+or accounting writes are implemented here.

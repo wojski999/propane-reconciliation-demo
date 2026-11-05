@@ -162,7 +162,7 @@ def duration(hours):
 
 def summary(result):
     counts = result["coverage"]
-    return (
+    header = (
         f"{result['status'].capitalize()} synthetic run. "
         f"{len(result['checks']['findings'])} findings; "
         f"{len(result['alerts'])} source alerts. "
@@ -170,8 +170,20 @@ def summary(result):
         f"{counts['not_evaluated']} not evaluated. "
         "Review critical and high exceptions first, then inspect "
         "their source evidence. "
-        "Offline computed summary; no AI or network was used."
+        "Offline computed summary; deterministic calculations only."
     )
+    lines = [header]
+    for key, sheet in result["kpis"].items():
+        value = sheet["value"] if sheet["value"] is not None else "Not available"
+        lines.append(f"{key}: {value} {sheet['unit']} ({sheet['status']}).")
+    for finding in result["prioritized_findings"]:
+        lines.append(
+            f"[{finding['finding_id']}] {finding['severity']}; "
+            f"delta {finding['delta']}; threshold {finding['threshold']}."
+        )
+    for alert in result["prioritized_alerts"]:
+        lines.append(f"Quality warning: {alert['reason_code']}.")
+    return "\n".join(lines)
 
 
 STYLE = """
@@ -202,8 +214,23 @@ table,tbody,tr,th,td{display:block}thead{display:none}tr{margin-bottom:1.5rem}}
 """
 
 
-def render(result, raw_evidence, narrative=None):
+def result_digest(result):
+    return hashlib.sha256(
+        json.dumps(result, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+
+
+def render(result, raw_evidence, *, narrative_status=None):
     """Escape source text, keys and optional untrusted narrative."""
+    if narrative_status is not None and narrative_status["digest"] != result_digest(
+        result
+    ):
+        narrative_status = {
+            "status": "computed_fallback",
+            "reason": "digest_mismatch",
+            "text": summary(result),
+            "digest": result_digest(result),
+        }
     run, checks = result["run"], result["checks"]
     out = [
         '<!doctype html><html lang="en"><meta charset="utf-8">',
@@ -279,12 +306,24 @@ def render(result, raw_evidence, narrative=None):
     out.append(
         (
             "</dl></section><section><h2>Computed summary</h2><p>"
-            "Offline deterministic summary. Live narrative is outside "
-            "this implementation step.</p><p>"
+            "Deterministic results remain authoritative.</p><pre>"
         )
-        + escaped(summary(result) if narrative is None else narrative)
-        + '</p></section><section id="exceptions"><h2>Prioritized exceptions</h2>'
+        + escaped(summary(result))
+        + '</pre></section><section id="exceptions"><h2>Prioritized exceptions</h2>'
     )
+    if narrative_status is not None:
+        out.append(
+            "<aside><h2>Optional narrative</h2><p>Narrative status: "
+            + escaped(narrative_status["status"])
+            + " · "
+            + escaped(narrative_status["reason"])
+            + "</p><p>AI-generated text is untrusted; illustrative text is not a live "
+            "Claude response. Only shape and cited finding IDs are validated, not "
+            "sentence accuracy, numbers, causes or remedies. Computed results remain "
+            "authoritative.</p><pre>"
+            + escaped(narrative_status["text"])
+            + "</pre></aside>"
+        )
     if not checks["findings"]:
         out.append(
             "<p>No business exceptions. All listed core check scopes "

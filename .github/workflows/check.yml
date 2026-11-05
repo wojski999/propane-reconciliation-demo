@@ -19,6 +19,7 @@ jobs:
         env:
           SMOKE_ARTIFACT: artifacts/smoke.html
           BUSINESS_ARTIFACT: artifacts/business-report.html
+          ISSUES_ARTIFACT: artifacts/issues-report.html
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
@@ -30,4 +31,10 @@ jobs:
         with:
           name: business-evidence-report
           path: artifacts/business-report.html
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: issues-evidence-report
+          path: artifacts/issues-report.html
           if-no-files-found: error

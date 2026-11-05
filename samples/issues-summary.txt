@@ -1,0 +1,13 @@
+Incomplete synthetic run. 5 findings; 2 source alerts. 6 check scopes evaluated; 16 not evaluated. Review critical and high exceptions first, then inspect their source evidence. Offline computed summary; deterministic calculations only.
+delivered: Not available US gallons (unavailable).
+retail: Not available US gallons (unavailable).
+total_gallons: Not available US gallons (unavailable).
+revenue: Not available USD (unavailable).
+AR: Not available USD (unavailable).
+[C10|manifest:POS-FAILED] critical; delta None; threshold any failure.
+[C09|manifest:QBO-STALE] high; delta 1; threshold 24.
+[C11|cargas:delivery:D-NO-MAPPING] high; delta None; threshold required.
+[C11|cargas:reading:R-NO-READING-OPEN|identity:asset:ASSET-NO-READING] high; delta None; threshold required.
+[C08|cargas:reading:R-TRUCK-OPEN|cargas:reading:R-UNCERTAIN] medium; delta None; threshold 2.000.
+Quality warning: CSV_SCHEMA.
+Quality warning: STALE_COVERAGE.

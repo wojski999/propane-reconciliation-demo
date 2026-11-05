@@ -14,6 +14,7 @@ from propane_demo.contracts import SCENARIOS
 from propane_demo.generator import DEFAULT_DATE, DEFAULT_SEED, generate
 from propane_demo.ingestion import ingest
 from propane_demo.kpis import calculate
+from propane_demo.narrative import build
 from propane_demo.report import collect_refs, evidence, render, summary
 from propane_demo.rule_inputs import from_database, reconcile_database
 
@@ -116,7 +117,7 @@ def write_json(path, value):
     )
 
 
-def execute(files, output):
+def execute(files, output, *, narrative=False, client=None):
     """Preserve computed artifacts before rendering, never "
     "retain an old report."""
     db = ingest(files.__getitem__)
@@ -136,8 +137,12 @@ def execute(files, output):
     write_json(output / "alerts.json", result["alerts"])
     write_json(output / "evidence.json", raw)
     (output / "summary.txt").write_text(summary(result) + "\n", encoding="utf-8")
+    text = build(
+        result, enabled=narrative, **({} if client is None else {"client": client})
+    )
+    write_json(output / "narrative.json", text)
     try:
-        report.write_text(render(result, raw), encoding="utf-8")
+        report.write_text(render(result, raw, narrative_status=text), encoding="utf-8")
     except (ValueError, TypeError, OSError):
         report.unlink(missing_ok=True)
         raise
@@ -147,6 +152,11 @@ def execute(files, output):
 def main(argv=None):
     parser = Parser(
         description="Generate an offline synthetic propane evidence report."
+    )
+    parser.add_argument(
+        "--narrative",
+        action="store_true",
+        help="Opt in to paid Claude text; requires key and model environment values",
     )
     parser.add_argument("--scenario", choices=SCENARIOS, default="issues")
     parser.add_argument("--output", type=Path, default=Path("output"))
@@ -170,7 +180,7 @@ def main(argv=None):
             files["run.json"] = (
                 json.dumps(run, indent=2, sort_keys=True) + "\n"
             ).encode()
-        status = execute(files, args.output)
+        status = execute(files, args.output, narrative=args.narrative)
     except (ValueError, TypeError, OSError, sqlite3.Error, UnicodeError):
         print(
             (
