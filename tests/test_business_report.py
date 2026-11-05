@@ -12,7 +12,7 @@ import pytest
 from test_ingestion import change
 from test_rules import ORACLE
 
-from propane_demo import business, report
+from propane_demo import business, narrative, report
 from propane_demo.contracts import SCENARIOS
 from propane_demo.generator import generate
 from propane_demo.ingestion import ingest
@@ -59,7 +59,27 @@ def test_all_scenarios_exact_end_to_end_oracle_and_html(tmp_path, scenario):
     ]
     assert [a["alert_id"] for a in result["alerts"]] == expected["alerts"]
     assert set(result["checks"]["not_evaluated"]) == set(expected["not_evaluated"])
-    assert status == (2 if result["status"] == "incomplete" else 0)
+    expected_exits = {
+        "clean": 0,
+        "issues": 2,
+        "P01": 0,
+        "P02": 0,
+        "P03": 0,
+        "P04": 0,
+        "P05": 0,
+        "P06": 0,
+        "P07": 0,
+        "P08": 0,
+        "P09": 2,  # Uncertain reading makes inventory support incomplete.
+        "P10": 2,
+        "P11": 2,
+        "P12": 2,
+        "P13": 0,
+        "P14": 2,  # Missing original refund sale prevents a revenue total.
+        "raw-repeat": 0,
+        "wrong-clearing": 0,
+    }
+    assert status == expected_exits[scenario]
     document = Document((output / "report.html").read_text())
     assert len(document.ids) == len(set(document.ids))
     assert all(
@@ -92,6 +112,10 @@ def test_all_scenarios_exact_end_to_end_oracle_and_html(tmp_path, scenario):
             artifact.parent.mkdir(parents=True, exist_ok=True)
             artifact.write_bytes((output / "report.html").read_bytes())
     if scenario == "issues":
+        if os.environ.get("ISSUES_ARTIFACT"):
+            artifact = Path(os.environ["ISSUES_ARTIFACT"])
+            artifact.parent.mkdir(parents=True, exist_ok=True)
+            artifact.write_bytes((output / "report.html").read_bytes())
         assert status == 2
         assert result["prioritized_alerts"][0]["severity"] == "critical"
         text = (output / "report.html").read_text()
@@ -212,7 +236,16 @@ def test_hostile_source_keys_raw_narrative_and_every_anchor(tmp_path):
     result["checks"]["findings"][0]["explanation"] = hostile
     result["prioritized_findings"][0]["explanation"] = hostile
     raw[hostile] = {"raw": hostile}
-    text = report.render(result, raw, narrative=hostile)
+    text = report.render(
+        result,
+        raw,
+        narrative_status={
+            "digest": report.result_digest(result),
+            "status": "AI_generated",
+            "reason": "citations_validated_only",
+            "text": hostile,
+        },
+    )
     parsed = Document(text)
     assert "script" not in parsed.tags and not parsed.assets
     assert "&lt;script src=&quot;https://evil.test/x&quot;&gt;" in text
@@ -362,7 +395,9 @@ def test_installed_business_command_no_key_or_network(tmp_path, monkeypatch):
 def test_committed_sample_matches_current_computation_and_render():
     result, raw = run()
     root = Path(__file__).resolve().parents[1] / "samples"
-    assert (root / "clean-report.html").read_text() == report.render(result, raw)
+    assert (root / "clean-report.html").read_text() == report.render(
+        result, raw, narrative_status=narrative.build(result)
+    )
     assert json.loads((root / "clean-results.json").read_text()) == result
     assert (root / "clean-summary.txt").read_text() == report.summary(result) + "\n"
 

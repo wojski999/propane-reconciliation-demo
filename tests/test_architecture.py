@@ -18,11 +18,13 @@ ALLOWED_INTERNAL_IMPORTS = {
     "rules": set(),
     "kpis": {"rules"},
     "report": set(),
+    "narrative": {"report"},
     "business": {
         "contracts",
         "generator",
         "ingestion",
         "kpis",
+        "narrative",
         "report",
         "rule_inputs",
     },

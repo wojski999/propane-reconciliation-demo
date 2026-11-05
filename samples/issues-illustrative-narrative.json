@@ -1,0 +1,11 @@
+{
+  "digest": "2b244e3837b52f538a7d6df3e22c4d2c32da0d879deea690c21f96bacf05e7da",
+  "provenance": "Illustrative authored Claude-style summary; not live API-generated.",
+  "response": {
+    "finding_ids": [
+      "C10|manifest:POS-FAILED",
+      "C09|manifest:QBO-STALE"
+    ],
+    "text": "Incomplete synthetic evidence: review the critical and high findings [C10|manifest:POS-FAILED] [C09|manifest:QBO-STALE]. Affected totals are not available; inspect computed worksheets and quality warnings."
+  }
+}

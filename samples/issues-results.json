@@ -1,0 +1,1115 @@
+{
+  "alerts": [
+    {
+      "alert_id": "C09|manifest:QBO-STALE",
+      "check_id": "C09",
+      "observed_at": "2026-11-04T07:00:00+00:00",
+      "reason_code": "STALE_COVERAGE",
+      "related_refs": [
+        "file:qbo.json",
+        "policy:POLICY-1"
+      ],
+      "run_id": "synthetic-20261104-2026-11-03-issues",
+      "severity": "high",
+      "source": "qbo",
+      "source_refs": [
+        "manifest:QBO-STALE"
+      ],
+      "status": "open"
+    },
+    {
+      "alert_id": "C10|manifest:POS-FAILED",
+      "check_id": "C10",
+      "observed_at": "2026-11-04T07:00:00+00:00",
+      "reason_code": "CSV_SCHEMA",
+      "related_refs": [
+        "file:pos.csv:row:2"
+      ],
+      "run_id": "synthetic-20261104-2026-11-03-issues",
+      "severity": "critical",
+      "source": "pos",
+      "source_refs": [
+        "manifest:POS-FAILED"
+      ],
+      "status": "open"
+    }
+  ],
+  "check_scopes": {
+    "C01": {
+      "source_refs": [
+        "manifest:QBO-STALE"
+      ],
+      "status": "not_evaluated"
+    },
+    "C01:D-NO-MAPPING": {
+      "missing_lookup_key": "customer:UNKNOWN;item:UNKNOWN",
+      "source_refs": [
+        "cargas:delivery:D-NO-MAPPING"
+      ],
+      "status": "not_evaluated"
+    },
+    "C02": {
+      "source_refs": [
+        "manifest:QBO-STALE"
+      ],
+      "status": "not_evaluated"
+    },
+    "C03:pos": {
+      "source_refs": [
+        "manifest:POS-FAILED"
+      ],
+      "status": "not_evaluated"
+    },
+    "C03:qbo": {
+      "source_refs": [
+        "manifest:QBO-STALE"
+      ],
+      "status": "not_evaluated"
+    },
+    "C04:pos": {
+      "reason": "Customer price class requires QBO customer support.",
+      "source_refs": [
+        "manifest:QBO-STALE"
+      ],
+      "status": "not_evaluated"
+    },
+    "C04:qbo": {
+      "source_refs": [
+        "manifest:QBO-STALE"
+      ],
+      "status": "not_evaluated"
+    },
+    "C05:pos": {
+      "source_refs": [
+        "manifest:POS-FAILED"
+      ],
+      "status": "not_evaluated"
+    },
+    "C05:qbo": {
+      "source_refs": [
+        "manifest:QBO-STALE"
+      ],
+      "status": "not_evaluated"
+    },
+    "C06": {
+      "source_refs": [
+        "manifest:QBO-STALE"
+      ],
+      "status": "not_evaluated"
+    },
+    "C07": {
+      "source_refs": [
+        "manifest:POS-FAILED",
+        "manifest:QBO-STALE"
+      ],
+      "status": "not_evaluated"
+    },
+    "C08": {
+      "status": "evaluated"
+    },
+    "C08:BOUNDARY": {
+      "status": "evaluated"
+    },
+    "C08:BULK-A": {
+      "source_refs": [
+        "manifest:POS-FAILED"
+      ],
+      "status": "not_evaluated"
+    },
+    "C08:DEPOT": {
+      "status": "evaluated"
+    },
+    "C08:ISOLATED": {
+      "source_refs": [
+        "manifest:POS-FAILED"
+      ],
+      "status": "not_evaluated"
+    },
+    "C08:TRUCK-A": {
+      "reason": "Endpoint quality is not valid.",
+      "source_refs": [
+        "cargas:reading:R-TRUCK-OPEN",
+        "cargas:reading:R-UNCERTAIN"
+      ],
+      "status": "not_evaluated"
+    },
+    "C08:TRUCK-NO-READING": {
+      "missing_lookup_key": "asset:TRUCK-NO-READING;boundary:2026-11-04T07:00:00+00:00",
+      "source_refs": [
+        "cargas:reading:R-NO-READING-OPEN",
+        "identity:asset:ASSET-NO-READING"
+      ],
+      "status": "not_evaluated"
+    },
+    "C09": {
+      "status": "evaluated"
+    },
+    "C10": {
+      "status": "evaluated"
+    },
+    "C11": {
+      "status": "evaluated"
+    },
+    "C12": {
+      "source_refs": [
+        "manifest:QBO-STALE"
+      ],
+      "status": "not_evaluated"
+    }
+  },
+  "checks": {
+    "alerts": [
+      {
+        "alert_id": "C09|manifest:QBO-STALE",
+        "check_id": "C09",
+        "observed_at": "2026-11-04T07:00:00+00:00",
+        "reason_code": "STALE_COVERAGE",
+        "related_refs": [
+          "file:qbo.json",
+          "policy:POLICY-1"
+        ],
+        "run_id": "synthetic-20261104-2026-11-03-issues",
+        "severity": "high",
+        "source": "qbo",
+        "source_refs": [
+          "manifest:QBO-STALE"
+        ],
+        "status": "open"
+      },
+      {
+        "alert_id": "C10|manifest:POS-FAILED",
+        "check_id": "C10",
+        "observed_at": "2026-11-04T07:00:00+00:00",
+        "reason_code": "CSV_SCHEMA",
+        "related_refs": [
+          "file:pos.csv:row:2"
+        ],
+        "run_id": "synthetic-20261104-2026-11-03-issues",
+        "severity": "critical",
+        "source": "pos",
+        "source_refs": [
+          "manifest:POS-FAILED"
+        ],
+        "status": "open"
+      }
+    ],
+    "consolidation": {
+      "contributions": [],
+      "delta": null,
+      "expected": null,
+      "observed": null,
+      "status": "unavailable"
+    },
+    "findings": [
+      {
+        "actual": null,
+        "business_date": "2026-11-03",
+        "check_id": "C08",
+        "delta": null,
+        "expected": null,
+        "explanation": "Endpoint quality is not valid. No shortage/excess verdict.",
+        "finding_id": "C08|cargas:reading:R-TRUCK-OPEN|cargas:reading:R-UNCERTAIN",
+        "missing_reference": null,
+        "related_refs": [
+          "inventory:movement:M-TRANSFER-IN",
+          "inventory:movement:M-TRANSFER-OUT",
+          "policy:POLICY-1"
+        ],
+        "rule_version": "1",
+        "severity": "medium",
+        "source_refs": [
+          "cargas:reading:R-TRUCK-OPEN",
+          "cargas:reading:R-UNCERTAIN"
+        ],
+        "status": "sensor_uncertain",
+        "threshold": "2.000"
+      },
+      {
+        "actual": "25",
+        "business_date": "2026-11-03",
+        "check_id": "C09",
+        "delta": "1",
+        "expected": "24",
+        "explanation": "Source coverage is stale; dependent scopes are unavailable.",
+        "finding_id": "C09|manifest:QBO-STALE",
+        "missing_reference": null,
+        "related_refs": [
+          "file:qbo.json",
+          "policy:POLICY-1"
+        ],
+        "rule_version": "1",
+        "severity": "high",
+        "source_refs": [
+          "manifest:QBO-STALE"
+        ],
+        "status": "alert",
+        "threshold": "24"
+      },
+      {
+        "actual": "CSV_SCHEMA",
+        "business_date": "2026-11-03",
+        "check_id": "C10",
+        "delta": null,
+        "expected": null,
+        "explanation": "Import failed; dependent scopes are unavailable.",
+        "finding_id": "C10|manifest:POS-FAILED",
+        "missing_reference": null,
+        "related_refs": [
+          "file:pos.csv:row:2"
+        ],
+        "rule_version": "1",
+        "severity": "critical",
+        "source_refs": [
+          "manifest:POS-FAILED"
+        ],
+        "status": "alert",
+        "threshold": "any failure"
+      },
+      {
+        "actual": null,
+        "business_date": "2026-11-03",
+        "check_id": "C11",
+        "delta": null,
+        "expected": null,
+        "explanation": "Required supporting evidence is absent or ambiguous.",
+        "finding_id": "C11|cargas:delivery:D-NO-MAPPING",
+        "missing_reference": {
+          "lookup_key": "customer:UNKNOWN;item:UNKNOWN",
+          "system": "identity",
+          "type": "customer/item"
+        },
+        "related_refs": [
+          "policy:POLICY-1"
+        ],
+        "rule_version": "1",
+        "severity": "high",
+        "source_refs": [
+          "cargas:delivery:D-NO-MAPPING"
+        ],
+        "status": "not_evaluated",
+        "threshold": "required"
+      },
+      {
+        "actual": null,
+        "business_date": "2026-11-03",
+        "check_id": "C11",
+        "delta": null,
+        "expected": null,
+        "explanation": "Required supporting evidence is absent or ambiguous.",
+        "finding_id": "C11|cargas:reading:R-NO-READING-OPEN|identity:asset:ASSET-NO-READING",
+        "missing_reference": {
+          "lookup_key": "asset:TRUCK-NO-READING;boundary:2026-11-04T07:00:00+00:00",
+          "system": "cargas",
+          "type": "closing_reading"
+        },
+        "related_refs": [
+          "policy:POLICY-1"
+        ],
+        "rule_version": "1",
+        "severity": "high",
+        "source_refs": [
+          "cargas:reading:R-NO-READING-OPEN",
+          "identity:asset:ASSET-NO-READING"
+        ],
+        "status": "not_evaluated",
+        "threshold": "required"
+      }
+    ],
+    "freshness_evaluated": true,
+    "inventory": {
+      "BOUNDARY": {
+        "asset_id": "BOUNDARY",
+        "contributions": [
+          {
+            "gallons": "1000.000",
+            "kind": "opening",
+            "source_refs": [
+              "cargas:reading:R-BOUNDARY-OPEN"
+            ]
+          }
+        ],
+        "delta": "5.000",
+        "expected": "1000.000",
+        "gallon_basis": "net_60F",
+        "ledger_inputs": [],
+        "observed": "1005.000",
+        "source_refs": [
+          "cargas:reading:R-BOUNDARY-CLOSE",
+          "cargas:reading:R-BOUNDARY-OPEN"
+        ],
+        "status": "evaluated",
+        "tolerance": "5.000"
+      },
+      "BULK-A": {
+        "asset_id": "BULK-A",
+        "contributions": [],
+        "delta": null,
+        "expected": null,
+        "gallon_basis": null,
+        "ledger_inputs": [
+          {
+            "gallons": "-100.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-OUT"
+            ]
+          },
+          {
+            "gallons": "200.000",
+            "kind": "purchase",
+            "source_refs": [
+              "inventory:movement:M-PURCHASE"
+            ]
+          },
+          {
+            "gallons": "-50.000",
+            "kind": "retail_sale",
+            "source_refs": [
+              "inventory:movement:M-RETAIL"
+            ]
+          }
+        ],
+        "observed": null,
+        "source_refs": [
+          "cargas:reading:R-CLOSE",
+          "cargas:reading:R-OPEN",
+          "inventory:movement:M-OUT",
+          "inventory:movement:M-PURCHASE",
+          "inventory:movement:M-RETAIL",
+          "manifest:POS-FAILED"
+        ],
+        "status": "not_evaluated",
+        "tolerance": null
+      },
+      "DEPOT": {
+        "asset_id": "DEPOT",
+        "contributions": [
+          {
+            "gallons": "500.000",
+            "kind": "opening",
+            "source_refs": [
+              "cargas:reading:R-DEPOT-OPEN"
+            ]
+          },
+          {
+            "gallons": "-50.000",
+            "kind": "transfer_out",
+            "source_refs": [
+              "inventory:movement:M-TRANSFER-IN",
+              "inventory:movement:M-TRANSFER-OUT"
+            ]
+          }
+        ],
+        "delta": "0.000",
+        "expected": "450.000",
+        "gallon_basis": "net_60F",
+        "ledger_inputs": [
+          {
+            "gallons": "-50.000",
+            "kind": "transfer_out",
+            "source_refs": [
+              "inventory:movement:M-TRANSFER-OUT"
+            ]
+          }
+        ],
+        "observed": "450.000",
+        "source_refs": [
+          "cargas:reading:R-DEPOT-CLOSE",
+          "cargas:reading:R-DEPOT-OPEN"
+        ],
+        "status": "evaluated",
+        "tolerance": "2.500"
+      },
+      "ISOLATED": {
+        "asset_id": "ISOLATED",
+        "contributions": [],
+        "delta": null,
+        "expected": null,
+        "gallon_basis": null,
+        "ledger_inputs": [
+          {
+            "gallons": "-5.000",
+            "kind": "retail_sale",
+            "source_refs": [
+              "inventory:movement:M-CYLINDER"
+            ]
+          },
+          {
+            "gallons": "-20.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-D-COMB-A"
+            ]
+          },
+          {
+            "gallons": "-30.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-D-COMB-B"
+            ]
+          },
+          {
+            "gallons": "-100.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-D-CREDIT"
+            ]
+          },
+          {
+            "gallons": "-50.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-D-PAID"
+            ]
+          },
+          {
+            "gallons": "-50.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-D-PAY"
+            ]
+          },
+          {
+            "gallons": "-100.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-D-PRICE"
+            ]
+          },
+          {
+            "gallons": "-50.000",
+            "kind": "customer_delivery",
+            "source_refs": [
+              "inventory:movement:M-D-SPLIT"
+            ]
+          }
+        ],
+        "observed": null,
+        "source_refs": [
+          "cargas:reading:R-ISOLATED-CLOSE",
+          "cargas:reading:R-ISOLATED-OPEN",
+          "inventory:movement:M-CYLINDER",
+          "inventory:movement:M-D-COMB-A",
+          "inventory:movement:M-D-COMB-B",
+          "inventory:movement:M-D-CREDIT",
+          "inventory:movement:M-D-PAID",
+          "inventory:movement:M-D-PAY",
+          "inventory:movement:M-D-PRICE",
+          "inventory:movement:M-D-SPLIT",
+          "manifest:POS-FAILED"
+        ],
+        "status": "not_evaluated",
+        "tolerance": null
+      },
+      "TRUCK-A": {
+        "asset_id": "TRUCK-A",
+        "contributions": [
+          {
+            "gallons": "100.000",
+            "kind": "opening",
+            "source_refs": [
+              "cargas:reading:R-TRUCK-OPEN"
+            ]
+          },
+          {
+            "gallons": "50.000",
+            "kind": "transfer_in",
+            "source_refs": [
+              "inventory:movement:M-TRANSFER-IN",
+              "inventory:movement:M-TRANSFER-OUT"
+            ]
+          }
+        ],
+        "delta": null,
+        "expected": null,
+        "gallon_basis": "net_60F",
+        "ledger_inputs": [
+          {
+            "gallons": "50.000",
+            "kind": "transfer_in",
+            "source_refs": [
+              "inventory:movement:M-TRANSFER-IN"
+            ]
+          }
+        ],
+        "observed": null,
+        "source_refs": [
+          "cargas:reading:R-TRUCK-OPEN",
+          "cargas:reading:R-UNCERTAIN"
+        ],
+        "status": "sensor_uncertain",
+        "tolerance": "2.000"
+      },
+      "TRUCK-NO-READING": {
+        "asset_id": "TRUCK-NO-READING",
+        "contributions": [],
+        "delta": null,
+        "expected": null,
+        "gallon_basis": null,
+        "ledger_inputs": [],
+        "observed": null,
+        "source_refs": [],
+        "status": "not_evaluated",
+        "tolerance": null
+      }
+    },
+    "not_evaluated": {
+      "C01": {
+        "source_refs": [
+          "manifest:QBO-STALE"
+        ],
+        "status": "not_evaluated"
+      },
+      "C01:D-NO-MAPPING": {
+        "missing_lookup_key": "customer:UNKNOWN;item:UNKNOWN",
+        "source_refs": [
+          "cargas:delivery:D-NO-MAPPING"
+        ],
+        "status": "not_evaluated"
+      },
+      "C02": {
+        "source_refs": [
+          "manifest:QBO-STALE"
+        ],
+        "status": "not_evaluated"
+      },
+      "C03:pos": {
+        "source_refs": [
+          "manifest:POS-FAILED"
+        ],
+        "status": "not_evaluated"
+      },
+      "C03:qbo": {
+        "source_refs": [
+          "manifest:QBO-STALE"
+        ],
+        "status": "not_evaluated"
+      },
+      "C04:pos": {
+        "reason": "Customer price class requires QBO customer support.",
+        "source_refs": [
+          "manifest:QBO-STALE"
+        ],
+        "status": "not_evaluated"
+      },
+      "C04:qbo": {
+        "source_refs": [
+          "manifest:QBO-STALE"
+        ],
+        "status": "not_evaluated"
+      },
+      "C05:pos": {
+        "source_refs": [
+          "manifest:POS-FAILED"
+        ],
+        "status": "not_evaluated"
+      },
+      "C05:qbo": {
+        "source_refs": [
+          "manifest:QBO-STALE"
+        ],
+        "status": "not_evaluated"
+      },
+      "C06": {
+        "source_refs": [
+          "manifest:QBO-STALE"
+        ],
+        "status": "not_evaluated"
+      },
+      "C07": {
+        "source_refs": [
+          "manifest:POS-FAILED",
+          "manifest:QBO-STALE"
+        ],
+        "status": "not_evaluated"
+      },
+      "C08:BULK-A": {
+        "source_refs": [
+          "manifest:POS-FAILED"
+        ],
+        "status": "not_evaluated"
+      },
+      "C08:ISOLATED": {
+        "source_refs": [
+          "manifest:POS-FAILED"
+        ],
+        "status": "not_evaluated"
+      },
+      "C08:TRUCK-A": {
+        "reason": "Endpoint quality is not valid.",
+        "source_refs": [
+          "cargas:reading:R-TRUCK-OPEN",
+          "cargas:reading:R-UNCERTAIN"
+        ],
+        "status": "not_evaluated"
+      },
+      "C08:TRUCK-NO-READING": {
+        "missing_lookup_key": "asset:TRUCK-NO-READING;boundary:2026-11-04T07:00:00+00:00",
+        "source_refs": [
+          "cargas:reading:R-NO-READING-OPEN",
+          "identity:asset:ASSET-NO-READING"
+        ],
+        "status": "not_evaluated"
+      },
+      "C12": {
+        "source_refs": [
+          "manifest:QBO-STALE"
+        ],
+        "status": "not_evaluated"
+      },
+      "KPI:AR": {
+        "source_refs": [
+          "manifest:QBO-STALE"
+        ],
+        "status": "unavailable"
+      },
+      "KPI:delivered": {
+        "source_refs": [
+          "cargas:delivery:D-NO-MAPPING"
+        ],
+        "status": "unavailable"
+      },
+      "KPI:inventory": {
+        "missing_lookup_key": "asset:TRUCK-NO-READING;boundary:2026-11-04T07:00:00+00:00",
+        "source_refs": [
+          "cargas:reading:R-NO-READING-OPEN",
+          "identity:asset:ASSET-NO-READING"
+        ],
+        "status": "unavailable"
+      },
+      "KPI:retail": {
+        "source_refs": [
+          "manifest:POS-FAILED"
+        ],
+        "status": "unavailable"
+      },
+      "KPI:revenue": {
+        "source_refs": [
+          "manifest:POS-FAILED",
+          "manifest:QBO-STALE"
+        ],
+        "status": "unavailable"
+      }
+    }
+  },
+  "coverage": {
+    "core_checks": 12,
+    "evaluated": 6,
+    "not_evaluated": 16,
+    "passed": 0
+  },
+  "display_as_of": "2026-11-04T00:00:00-07:00",
+  "freshness": [
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "cargas",
+      "source_refs": [
+        "manifest:CARGAS-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "optional_empty",
+      "source_refs": [
+        "manifest:EMPTY-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "identity",
+      "source_refs": [
+        "manifest:IDENTITY-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "inventory",
+      "source_refs": [
+        "manifest:INVENTORY-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "ar",
+      "source_refs": [
+        "manifest:AR-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "pos",
+      "source_refs": [
+        "manifest:POS-FAILED"
+      ],
+      "status": "failed",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "prices",
+      "source_refs": [
+        "manifest:PRICES-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-02T23:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "qbo",
+      "source_refs": [
+        "manifest:QBO-STALE"
+      ],
+      "status": "stale",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "readings",
+      "source_refs": [
+        "manifest:READINGS-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "settlements",
+      "source_refs": [
+        "manifest:SETTLEMENTS-OK"
+      ],
+      "status": "success",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    },
+    {
+      "covered_through": "2026-11-04T00:00:00-07:00",
+      "extracted_at": "2026-11-04T00:00:00-07:00",
+      "source": "qbo",
+      "source_refs": [
+        "manifest:UPDATES-OK"
+      ],
+      "status": "stale",
+      "window_end": "2026-11-04T00:00:00-07:00",
+      "window_start": "2026-10-26T01:00:00-06:00"
+    }
+  ],
+  "gallon_basis": "net_60F",
+  "kpis": {
+    "AR": {
+      "contributions": [],
+      "gaps": [
+        {
+          "missing_lookup_key": "eligible_source_window:AR",
+          "source_refs": [
+            "manifest:QBO-STALE"
+          ]
+        }
+      ],
+      "known_value": "0.00",
+      "reported_balance_comparisons": [],
+      "status": "unavailable",
+      "unapplied_cash": {
+        "contributions": [],
+        "gaps": [
+          {
+            "missing_lookup_key": "eligible_source_window:AR",
+            "source_refs": [
+              "manifest:QBO-STALE"
+            ]
+          }
+        ],
+        "known_value": "0.00",
+        "status": "unavailable",
+        "unit": "USD",
+        "value": null
+      },
+      "unapplied_credits": {
+        "contributions": [],
+        "gaps": [
+          {
+            "missing_lookup_key": "eligible_source_window:AR",
+            "source_refs": [
+              "manifest:QBO-STALE"
+            ]
+          }
+        ],
+        "known_value": "0.00",
+        "status": "unavailable",
+        "unit": "USD",
+        "value": null
+      },
+      "unit": "USD",
+      "value": null
+    },
+    "delivered": {
+      "contributions": [],
+      "gaps": [
+        {
+          "missing_lookup_key": "eligible_source_window:delivered",
+          "source_refs": [
+            "cargas:delivery:D-NO-MAPPING"
+          ]
+        }
+      ],
+      "known_value": "0.000",
+      "status": "unavailable",
+      "unit": "US gallons",
+      "value": null
+    },
+    "retail": {
+      "contributions": [],
+      "gaps": [
+        {
+          "missing_lookup_key": "eligible_source_window:retail",
+          "source_refs": [
+            "manifest:POS-FAILED"
+          ]
+        },
+        {
+          "missing_lookup_key": "fresh_qbo_item_classification",
+          "source_refs": [
+            "manifest:QBO-STALE"
+          ]
+        }
+      ],
+      "known_value": "0.000",
+      "status": "unavailable",
+      "unit": "US gallons",
+      "value": null
+    },
+    "revenue": {
+      "contributions": [],
+      "gaps": [
+        {
+          "missing_lookup_key": "eligible_source_window:revenue",
+          "source_refs": [
+            "manifest:POS-FAILED",
+            "manifest:QBO-STALE"
+          ]
+        }
+      ],
+      "known_value": "0.00",
+      "status": "unavailable",
+      "unit": "USD",
+      "value": null
+    },
+    "total_gallons": {
+      "contributions": [],
+      "gaps": [
+        {
+          "missing_lookup_key": "eligible_source_window:delivered",
+          "source_refs": [
+            "cargas:delivery:D-NO-MAPPING"
+          ]
+        },
+        {
+          "missing_lookup_key": "eligible_source_window:retail",
+          "source_refs": [
+            "manifest:POS-FAILED"
+          ]
+        },
+        {
+          "missing_lookup_key": "fresh_qbo_item_classification",
+          "source_refs": [
+            "manifest:QBO-STALE"
+          ]
+        }
+      ],
+      "known_value": "0.000",
+      "status": "unavailable",
+      "unit": "US gallons",
+      "value": null
+    }
+  },
+  "policy_version": "1",
+  "prioritized_alerts": [
+    {
+      "alert_id": "C10|manifest:POS-FAILED",
+      "check_id": "C10",
+      "observed_at": "2026-11-04T07:00:00+00:00",
+      "reason_code": "CSV_SCHEMA",
+      "related_refs": [
+        "file:pos.csv:row:2"
+      ],
+      "run_id": "synthetic-20261104-2026-11-03-issues",
+      "severity": "critical",
+      "source": "pos",
+      "source_refs": [
+        "manifest:POS-FAILED"
+      ],
+      "status": "open"
+    },
+    {
+      "alert_id": "C09|manifest:QBO-STALE",
+      "check_id": "C09",
+      "observed_at": "2026-11-04T07:00:00+00:00",
+      "reason_code": "STALE_COVERAGE",
+      "related_refs": [
+        "file:qbo.json",
+        "policy:POLICY-1"
+      ],
+      "run_id": "synthetic-20261104-2026-11-03-issues",
+      "severity": "high",
+      "source": "qbo",
+      "source_refs": [
+        "manifest:QBO-STALE"
+      ],
+      "status": "open"
+    }
+  ],
+  "prioritized_findings": [
+    {
+      "actual": "CSV_SCHEMA",
+      "business_date": "2026-11-03",
+      "check_id": "C10",
+      "delta": null,
+      "expected": null,
+      "explanation": "Import failed; dependent scopes are unavailable.",
+      "finding_id": "C10|manifest:POS-FAILED",
+      "missing_reference": null,
+      "related_refs": [
+        "file:pos.csv:row:2"
+      ],
+      "rule_version": "1",
+      "severity": "critical",
+      "source_refs": [
+        "manifest:POS-FAILED"
+      ],
+      "status": "alert",
+      "threshold": "any failure"
+    },
+    {
+      "actual": "25",
+      "business_date": "2026-11-03",
+      "check_id": "C09",
+      "delta": "1",
+      "expected": "24",
+      "explanation": "Source coverage is stale; dependent scopes are unavailable.",
+      "finding_id": "C09|manifest:QBO-STALE",
+      "missing_reference": null,
+      "related_refs": [
+        "file:qbo.json",
+        "policy:POLICY-1"
+      ],
+      "rule_version": "1",
+      "severity": "high",
+      "source_refs": [
+        "manifest:QBO-STALE"
+      ],
+      "status": "alert",
+      "threshold": "24"
+    },
+    {
+      "actual": null,
+      "business_date": "2026-11-03",
+      "check_id": "C11",
+      "delta": null,
+      "expected": null,
+      "explanation": "Required supporting evidence is absent or ambiguous.",
+      "finding_id": "C11|cargas:delivery:D-NO-MAPPING",
+      "missing_reference": {
+        "lookup_key": "customer:UNKNOWN;item:UNKNOWN",
+        "system": "identity",
+        "type": "customer/item"
+      },
+      "related_refs": [
+        "policy:POLICY-1"
+      ],
+      "rule_version": "1",
+      "severity": "high",
+      "source_refs": [
+        "cargas:delivery:D-NO-MAPPING"
+      ],
+      "status": "not_evaluated",
+      "threshold": "required"
+    },
+    {
+      "actual": null,
+      "business_date": "2026-11-03",
+      "check_id": "C11",
+      "delta": null,
+      "expected": null,
+      "explanation": "Required supporting evidence is absent or ambiguous.",
+      "finding_id": "C11|cargas:reading:R-NO-READING-OPEN|identity:asset:ASSET-NO-READING",
+      "missing_reference": {
+        "lookup_key": "asset:TRUCK-NO-READING;boundary:2026-11-04T07:00:00+00:00",
+        "system": "cargas",
+        "type": "closing_reading"
+      },
+      "related_refs": [
+        "policy:POLICY-1"
+      ],
+      "rule_version": "1",
+      "severity": "high",
+      "source_refs": [
+        "cargas:reading:R-NO-READING-OPEN",
+        "identity:asset:ASSET-NO-READING"
+      ],
+      "status": "not_evaluated",
+      "threshold": "required"
+    },
+    {
+      "actual": null,
+      "business_date": "2026-11-03",
+      "check_id": "C08",
+      "delta": null,
+      "expected": null,
+      "explanation": "Endpoint quality is not valid. No shortage/excess verdict.",
+      "finding_id": "C08|cargas:reading:R-TRUCK-OPEN|cargas:reading:R-UNCERTAIN",
+      "missing_reference": null,
+      "related_refs": [
+        "inventory:movement:M-TRANSFER-IN",
+        "inventory:movement:M-TRANSFER-OUT",
+        "policy:POLICY-1"
+      ],
+      "rule_version": "1",
+      "severity": "medium",
+      "source_refs": [
+        "cargas:reading:R-TRUCK-OPEN",
+        "cargas:reading:R-UNCERTAIN"
+      ],
+      "status": "sensor_uncertain",
+      "threshold": "2.000"
+    }
+  ],
+  "rule_version": "1",
+  "run": {
+    "as_of": "2026-11-04T07:00:00+00:00",
+    "business_date": "2026-11-03",
+    "contract_version": "1",
+    "run_id": "synthetic-20261104-2026-11-03-issues",
+    "window_end": "2026-11-04T07:00:00+00:00",
+    "window_start": "2026-11-03T07:00:00+00:00"
+  },
+  "source_digest": "d7376dbadfa5132530ed1d336d0fa4f3077095cf170d3ce49ae9026bd76922c2",
+  "status": "incomplete"
+}

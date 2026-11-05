@@ -1,16 +1,16 @@
 # Engineering standards
 
-Date: 2026-11-04. Status: proposed standards for review in the foundation PR.
-The owner authorized Phase A implementation with the stack below; independent
-review and merge remain pending. This document does not claim separate approval
-of every engineering choice.
+Date: 2026-11-04. Updated: 2026-11-05. Status: foundation and business steps
+1–5 merged (PRs #2, #3, #10, #11, #12, #14, #15). Step 6 is implemented on its
+issue #9 branch, pending independent review, CI, QA and owner merge. The owner
+authorized implementation; this does not claim separate approval of every choice.
 
 ## Layout and naming
 
 Python 3.12, standard-library SQLite and HTML; no framework, ORM, DI container or
 runtime dependencies. Use one `src/propane_demo/` package, snake_case modules,
 functions, variables, tables and columns; PascalCase types and UPPER_CASE constants.
-Use Decimal for money/quantity arithmetic when introduced; floats are not financial
+Use Decimal/scaled integers for money/quantity arithmetic; floats are not financial
 values. Add real modules when needed, never empty speculative layers.
 
 Current graph: `cli -> smoke -> standard library`;
@@ -37,11 +37,11 @@ and test new edges in the same PR.
 Use explicit boundary validation with standard-library types and ValueError for
 invalid values; use the same validated representation downstream. Do not introduce
 a second schema library or scattered coercion. Business schemas and record-level
-validation belong to the first two implementation issues, not this smoke fixture.
-The current CLI accepts only an output path; argparse rejects invalid arguments.
+validation were implemented in steps 1–2. The separate smoke CLI accepts an output
+path; the business CLI validates scenario, date, seed and cutoff.
 Catch expected boundary failures, emit a safe error and nonzero status. Never
 catch broad Exception to report success. The smoke CLI catches OSError and exits 1;
-usage errors exit 2. No stale audit result or financial verdict is produced.
+usage errors exit 2. No successful report is claimed on fatal boundaries.
 SQLite smoke state is in-memory and discarded. Step-2 ingestion uses a fresh in-memory schema for every invocation and source
 savepoints; no persistent migration format is introduced. Raw bytes and failure
 manifests survive source rollback. No simulated migrations.
@@ -53,7 +53,7 @@ environment files or generated databases. No remote calls in default execution o
 CI. Parameterize SQL; escape every source/generated string in HTML. No remote
 assets, executable source HTML or integration write endpoints. Workflow permissions
 are read-only and actions pinned to commit SHAs. Never log raw exception details.
-Run with no secrets. A future optional narrative adapter must remain outside rules.
+Run with no secrets. The optional narrative adapter remains outside rules.
 
 ## Validation and review checklist
 
@@ -82,12 +82,14 @@ Coverage is a safety requirement, not proof of business correctness.
 
 | Requirement | Implementation | Evidence | Deferred |
 |---|---|---|---|
-| Layout | src package | Installed CLI E2E | Business modules |
-| Validation | argparse | Invalid option test | Source contracts |
-| Errors | Safe OSError | mkdir/write tests | Import alerts |
-| Dependencies | AST allowlist | Architecture test | New real edges |
-| Security | SQL parameters, escaping | Hostile label test | Optional API |
-| Quality | make check | CI and HTML artifact | Audit acceptance |
+| Layout | src package | Installed CLI E2E | Real adapters |
+| Validation | Atomic import | Failure isolation | Vendor schemas |
+| Calculations | Pure rules/KPIs | Exact oracle | Client policies |
+| Errors | Safe boundaries | Failure E2E | Scheduling |
+| Dependencies | AST allowlist | Architecture tests | None |
+| Security | Escape/minimize | Hostile/fake tests | Real credentials |
+| Quality | make check | Exact coverage | Owner merge |
+
 
 ## Step-5 dependency extension
 
@@ -96,5 +98,21 @@ report / contracts`; `kpis -> rules` (pure helpers only); `report -> standard li
 The purity allowlist and banned IO/dynamic-call tests apply to kpis as well as rules.
 The business command owns files and safe exits, while kpis returns only detached
 worksheets. Rendering accepts computed results and immutable evidence, escapes
-all dynamic text and uses hashed local IDs. No application layer reads the oracle,
-network or optional narrative credentials. Existing smoke remains separate.
+all dynamic text and uses hashed local IDs. No application layer reads the oracle. Existing smoke remains separate.
+
+## Step-6 narrative boundary
+
+`business -> narrative -> report -> standard library`. Only narrative owns optional
+HTTPS and environment access, behind explicit CLI opt-in. Rules and KPIs remain
+pure and cannot import narrative, networking or rendering. Minimal computed payloads
+use an explicit allowlist; raw evidence and source records never reach the client.
+No runtime dependency or SDK is needed for the single Messages POST. Its contract
+follows the [official API reference](https://platform.claude.com/docs/en/api/messages/create).
+Tests inject fake HTTPS/client responses; default runs and CI never call a provider.
+Shape/citation validation is deliberately not a semantic truth claim. Digest binding
+covers the full computed result; illustrative text never claims API provenance.
+
+The requirement-to-evidence table reflects business steps 1–6 on this branch.
+Business validation includes exact 18-scenario oracles, import rollback, pure
+financial/inventory worksheets, source evidence closure, safe exits, hostile HTML
+and optional adapter success/failure tests. Independent review and QA own sign-off.

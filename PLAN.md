@@ -1,8 +1,9 @@
 # Repository foundation plan
 
-Date: 2026-11-04. Phase A delivery branch; not merged. Steps marked done describe
-verified branch content, not availability on main. Owner explicitly approved
-implementation and the stack; independent review and merge remain separate.
+Date: 2026-11-04. Updated: 2026-11-05. Phase A merged in PR #2, with validation correction PR #3.
+Business steps 1–5 merged through PR #15. Step 6 is implemented on its issue #9
+branch; independent review, CI, QA and owner merge remain pending.
+The tables below retain historical foundation evidence.
 
 Checklist audit: the step table below records the repository setup sequence,
 owner-approved stack adaptations, scope exclusions and verification evidence.
@@ -45,13 +46,13 @@ is corrected in this PR from the owner's explicit implementation authorization.
 | 2.9 | Tracker | choice | approved 2026-11-04 | GitHub Issues, code and PRs; default label taxonomy. |
 | 2.10 | Application foundation | 1:1 process; choice stack | deviation | Approved minimal smoke path only; no ORM/DI/framework scaffolding. |
 | 2.11 | Local database | choice | done | Standard-library in-memory SQLite, no service/credentials/Docker. |
-| 2.12 | Engineering standards | 1:1 process; choice content | proposal | Standards implemented for PR review under authorized Phase A; not separately owner-reviewed yet. |
+| 2.12 | Engineering standards | 1:1 process; choice content | done | Standards merged in PR #2; no separate approval of every choice claimed. |
 | 2.13 | Fresh checkout validation | 1:1 | done | Fresh archive of cb121f4: editable install and full make check passed. |
 | 2.14 | PR CI | 1:1 process; choice tools | done | CI invokes make check; pinned actions; temporary SQLite and installed CLI E2E. |
 | 2.15 | Coverage | 1:1; choice gate | done | All src discovered; separate exact 100% line/branch gates; negative gate tests. |
 | 2.16 | Merge gate | 1:1; choice ruleset | done | Green current-head CI plus independent approval policy; no ruleset changes. |
 | 2.17 | Safety-net evidence | 1:1 | done | PR #2 run 41845784755 green; downloaded HTML matches local artifact. |
-| 2.18 | Commit and merge | 1:1 | todo | Commits and PR #2 delivered; independent review and merge remain separate. |
+| 2.18 | Commit and merge | 1:1 | done | Foundation PR #2 and correction PR #3 merged. |
 | 3.1 | Pipeline prerequisites | 1:1 | deviation | Static HTML pytest E2E replaces browser automation by owner decision. |
 | 3.2 | Skill roles | 1:1 | done | Read installed pipeline/open-PR instructions and references; author/reviewer/maintainer roles. |
 | 3.3 | Project skill install | 1:1 | done | All open-mercato skills, Codex and Claude project scope, relative symlinks. |
@@ -61,11 +62,11 @@ is corrected in this PR from the owner's explicit implementation authorization.
 | 3.7 | Pipeline configuration | 1:1 process; choice answers | approved 2026-11-04 | Owner delegated make check, GitHub, no browser, default labels, QA and docs. |
 | 3.8 | Local equals CI | 1:1 | done | Both run make check; CI supplies only HTML artifact destination. |
 | 3.9 | Generated file review | 1:1 | done | Static HTML QA adaptation; existing AGENTS preserved and extended in foundation step. |
-| 3.10 | Open setup PR | 1:1 | done | PR #2 opened with om-open-pr; review and merge remain separate. |
+| 3.10 | Open setup PR | 1:1 | done | PR #2 delivered and merged; correction PR #3 merged. |
 | 3.11 | Local skill overrides | 1:1 | done | SDLC records .ai/skills/<exact-name>/SKILL.md convention; no speculative override. |
-| 3.12 | First business issue | 1:1 process; choice task | out of scope | Phase B belongs to parent assignment. |
-| 3.13 | Implement issue | 1:1 | out of scope | Phase C; no business code in foundation. |
-| 3.14 | Independent review | 1:1 | todo | Parent owns final review and any merge. |
+| 3.12 | First business issue | 1:1 process; choice task | done | Issue #4 implemented and merged in PR #10. |
+| 3.13 | Implement issue | 1:1 | done | Business steps 1–5 merged through PR #15. |
+| 3.14 | Independent review | 1:1 | done | Foundation delivered; step-6 review remains separate. |
 | 3.15 | Override A/B exercise | 1:1; choice content | out of scope | Training exercise not needed for Phase A; no invented evidence. |
 | 3.16 | Optional orchestration | choice | out of scope | No project orchestration infrastructure committed. |
 | 3.17 | Later pipeline refresh | 1:1 | out of scope | Re-run after future toolchain/taxonomy updates. |
@@ -90,7 +91,7 @@ smoke state; persistent import schema/migrations belong to the import issue.
 Explicit boundary validation uses ValueError and argparse today; source contracts
 come later. These adaptations avoid framework dependencies and speculative code.
 Rejecting the stack would require replacing packaging, CI, tests and smoke path;
-no business implementation would be lost because none is implemented yet.
+business schema, rules, calculations and acceptance evidence would also need migration.
 
 ## Pipeline answers and limits
 
@@ -99,9 +100,9 @@ no browser (static HTML with pytest E2E); default labels; QA gate on, green CI a
 independent approval; specs `.ai/specs`; all default process docs. Queue eligibility
 and other optional settings retain skill defaults, without installing workers or
 activating automerge labels. GitHub rulesets query returned an empty list; enforcement is process policy plus CI, not configured branch protection. No native approval is claimed.
-The standards are proposed for this PR's independent review. Agent-runtime
+The foundation standards merged in PR #2; validation correction merged in PR #3. Agent-runtime
 provisioning, comparison exercises and override A/B homework are explicitly not
-claimed as completed. Steps 3.12-3.14 continue through parent-owned phases/review.
+claimed as completed. The original steps 3.12–3.14 completed through the foundation delivery.
 
 ## Foundation acceptance
 
@@ -111,10 +112,19 @@ claimed as completed. Steps 3.12-3.14 continue through parent-owned phases/revie
 - [x] Project skills, lock and relative symlinks; pipeline docs and tracker descriptor.
 - [x] Fresh committed checkout passes installation and full validation.
 - [x] PR CI green and uploaded HTML artifact inspected (run 41845784755; final head follow-up on PR).
-- [ ] Independent approved review and merge (separate responsibility).
+- [x] Foundation merge in PR #2 and validation correction in PR #3.
 
-The smoke path generates only a synthetic marker through SQLite and writes an
-HTML infrastructure specimen. It supplies no business schema, oracle, check,
-import ledger, KPI, narrative adapter or business CLI; specification section 11
-remains the ordered backlog. It is offline after package installation. No browser
-QA, live vendor access, deployment or accounting write is performed.
+The preserved smoke path generates only a synthetic marker through SQLite.
+Business schema, generator, import ledger, checks, KPIs and report are now merged
+through step 5. Step 6 adds optional narrative on this branch. Offline behavior
+remains the default. No live vendor access, deployment or accounting write occurs.
+
+## Business implementation status — 2026-11-05
+
+The earlier sections describe the historical foundation setup, not current code.
+Foundation merged in PR #2 with correction PR #3. Business steps 1–5 are merged: fixtures PR #10,
+ingestion PR #11, rules PR #12, inventory PR #14 and KPI/report PR #15
+(main commit 87e0671). Step 6 is implemented on this branch for issue #9;
+its independent review, native human gate, PR CI, QA and merge remain pending.
+The full business spec stays active until all required work is merged.
+No live integration or deployment is authorized or claimed.
