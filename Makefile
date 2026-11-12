@@ -43,7 +43,7 @@ deploy-azure:
 
 destroy-azure:
 	az resource delete --resource-group $(AZURE_RESOURCE_GROUP) --name $(STACK) \
-	  --resource-type Microsoft.App/containerApps
+	  --resource-type Microsoft.App/containerApps --api-version 2026-07-01
 	az resource delete --resource-group $(AZURE_RESOURCE_GROUP) --name $(STACK)-env \
-	  --resource-type Microsoft.App/managedEnvironments
+	  --resource-type Microsoft.App/managedEnvironments --api-version 2026-07-01
 	az deployment group delete --resource-group $(AZURE_RESOURCE_GROUP) --name $(STACK)

@@ -140,6 +140,19 @@ def test_deploy_workflow_is_manual_oidc_and_checks_secrets_first():
     assert uses and all(re.search(r"@[0-9a-f]{40}$", ref) for ref in uses)
 
 
+def test_deploy_step_cannot_mask_failures_or_skip_image_check():
+    workflow = read(".github/workflows/deploy.yml")
+    # An explicit `shell: bash` runs with -o pipefail, so `make | tail` fails.
+    assert re.search(
+        r"    defaults:\n      run:\n(?:\s*#.*\n)*\s+shell: bash\n", workflow
+    )
+    steps = workflow.split("    steps:\n", 1)[1]
+    image_check = steps.index('docker manifest inspect "$IMAGE"')
+    assert image_check < steps.index("actions/checkout")
+    deploy = steps.split("name: Deploy or destroy", 1)[1]
+    assert deploy.index('[[ "$url" == https://* ]]') < deploy.index("Public address")
+
+
 def test_image_publishing_is_limited_to_main():
     workflow = read(".github/workflows/container.yml")
     jobs = workflow.split("\njobs:\n", 1)[1]

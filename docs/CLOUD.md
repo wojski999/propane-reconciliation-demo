@@ -46,11 +46,20 @@ Data sprawdzenia wszystkich wierszy: 2026-11-12.
 2. Upublicznij paczkę (GHCR nie dziedziczy widoczności repo): GitHub → Twój
    profil → Packages → `propane-reconciliation-demo` → Package settings →
    Change visibility → Public.
-3. Utwórz środowisko wdrożeniowe (w terminalu z `gh`):
+3. Utwórz środowisko wdrożeniowe dostępne tylko z gałęzi `main` (w terminalu z
+   `gh`). Role w chmurach ufają temu środowisku, więc ta reguła blokuje
+   wdrożenie ze zmienionego workflow na innej gałęzi:
 
    ```sh
-   gh api -X PUT repos/wojski999/propane-reconciliation-demo/environments/cloud-deploy
+   R=repos/wojski999/propane-reconciliation-demo/environments/cloud-deploy
+   gh api -X PUT "$R" --input - <<'JSON'
+   {"deployment_branch_policy": {"protected_branches": false, "custom_branch_policies": true}}
+   JSON
+   gh api -X POST "$R/deployment-branch-policies" -f name=main -f type=branch
+   gh api "$R/deployment-branch-policies" --jq '.branch_policies[].name'
    ```
+
+   Ostatnie polecenie ma wypisać tylko `main`.
 
 Polecenia poniżej uruchamiasz w przeglądarkowej konsoli chmury (AWS CloudShell,
 Azure Cloud Shell): CLI jest tam zainstalowane i zalogowane. Najpierw pobierz repo:
@@ -118,10 +127,11 @@ Rolę może przejąć wyłącznie workflow z tego repo w środowisku `cloud-depl
    sed "s/SUBSCRIPTION_ID/$SUB/" deploy/azure/deployer-role.json > /tmp/role.json
    az role definition create --role-definition @/tmp/role.json
    APP_ID=$(az ad app create --display-name propane-demo-deployer --query appId -o tsv)
-   az ad sp create --id "$APP_ID"
+   SP_ID=$(az ad sp create --id "$APP_ID" --query id -o tsv)
    az ad app federated-credential create --id "$APP_ID" \
      --parameters deploy/azure/github-federated-credential.json
-   az role assignment create --assignee "$APP_ID" --role "Propane Demo Deployer" \
+   az role assignment create --assignee-object-id "$SP_ID" \
+     --assignee-principal-type ServicePrincipal --role "Propane Demo Deployer" \
      --scope "/subscriptions/$SUB/resourceGroups/propane-reconciliation-demo"
    echo "AZURE_CLIENT_ID=$APP_ID"
    echo "AZURE_TENANT_ID=$(az account show --query tenantId -o tsv)"
@@ -161,8 +171,10 @@ gh workflow run deploy.yml --repo wojski999/propane-reconciliation-demo -f cloud
 
 Workflow loguje się przez OIDC, wdraża obraz z bieżącego commita `main`, czeka na
 `/healthz` i wypisuje publiczny adres HTTPS w podsumowaniu biegu
-(`gh run view --repo wojski999/propane-reconciliation-demo`). Bez sekretów kończy
-się błędem przed jakimkolwiek krokiem w chmurze. Publiczny log biegu w zakładce
+(`gh run view --repo wojski999/propane-reconciliation-demo`). Bez sekretów albo
+bez opublikowanego obrazu `sha-<commit>` kończy się błędem przed jakimkolwiek
+krokiem w chmurze. Uruchom go dopiero, gdy workflow `Container` na tym commicie
+`main` jest zielony (`gh run list --workflow container.yml --branch main --limit 1`). Publiczny log biegu w zakładce
 Actions jest sprawdzalnym dowodem wdrożenia.
 
 Alternatywa z zalogowanym CLI (np. w CloudShell): `make deploy-aws` albo
