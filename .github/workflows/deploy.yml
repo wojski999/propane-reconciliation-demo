@@ -1,0 +1,76 @@
+name: Deploy demo
+# Manual only. Logs in with OIDC (no long-lived keys) and stops before any cloud
+# step when the cloud-deploy environment secrets are not configured.
+on:
+  workflow_dispatch:
+    inputs:
+      cloud:
+        description: Target cloud
+        type: choice
+        options: [aws, azure]
+      action:
+        description: Deploy or remove everything
+        type: choice
+        options: [deploy, destroy]
+permissions:
+  contents: read
+concurrency:
+  group: deploy-${{ inputs.cloud }}
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: cloud-deploy
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      CLOUD: ${{ inputs.cloud }}
+      ACTION: ${{ inputs.action }}
+      IMAGE: ghcr.io/${{ github.repository }}:sha-${{ github.sha }}
+      AWS_DEPLOY_ROLE_ARN: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    defaults:
+      run:
+        # GitHub's explicit bash shell adds -o pipefail, so a failing make in a
+        # pipeline fails the step instead of being masked by tail.
+        shell: bash
+    steps:
+      - name: Preflight - require main, configured secrets and a published image
+        run: |
+          [ "$GITHUB_REF" = refs/heads/main ] || { echo "::error::Run from main only."; exit 1; }
+          if [ "$CLOUD" = aws ]; then required="AWS_DEPLOY_ROLE_ARN"
+          else required="AZURE_CLIENT_ID AZURE_TENANT_ID AZURE_SUBSCRIPTION_ID"; fi
+          missing=""
+          for name in $required; do [ -n "${!name}" ] || missing="$missing $name"; done
+          [ -z "$missing" ] || { echo "::error::Missing cloud-deploy secrets:$missing"; exit 1; }
+          if [ "$ACTION" = deploy ] && ! docker manifest inspect "$IMAGE" >/dev/null; then
+            echo "::error::$IMAGE is not published or not public; wait for the Container workflow on main."
+            exit 1
+          fi
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - if: inputs.cloud == 'aws'
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: eu-central-1
+      - if: inputs.cloud == 'azure'
+        uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Deploy or destroy
+        run: |
+          if [ "$ACTION" = destroy ]; then make "destroy-$CLOUD"; exit 0; fi
+          url="$(make --silent "deploy-$CLOUD" IMAGE="$IMAGE" | tail -n 1)"
+          [[ "$url" == https://* ]] || { echo "::error::Deploy returned no HTTPS address."; exit 1; }
+          echo "Public address: $url" | tee -a "$GITHUB_STEP_SUMMARY"
+          for _ in $(seq 1 20); do
+            curl --fail --silent --show-error "${url%/}/healthz" && exit 0
+            sleep 30
+          done
+          echo "::error::Health check did not pass at ${url%/}/healthz"; exit 1

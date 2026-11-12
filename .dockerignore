@@ -1,0 +1,6 @@
+# Build context allowlist: only what the image build needs.
+*
+!pyproject.toml
+!src/
+!deploy/nginx.conf
+**/__pycache__

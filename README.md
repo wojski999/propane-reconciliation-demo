@@ -142,6 +142,22 @@ See the [approved specification](.ai/specs/2026-11-04-propane-reconciliation-dem
 green current-head CI, independent financial/code review and static-report QA
 are required before merge.
 
+## Run as a container or in the cloud
+
+One image serves the deterministic `showcase` output, generated from built-in
+synthetic data at build time, as a non-root nginx on port 8080 with `/healthz`:
+
+```sh
+make container-smoke
+```
+
+The same image deploys to AWS (Lightsail container service, CloudFormation) and
+Azure (Container Apps, Bicep) with one command each, giving a default public HTTPS
+address. Nothing is deployed until the owner supplies cloud access; credentials
+come only from a CLI login or GitHub OIDC. The owner runbook, exact permissions and
+cost table are in [docs/CLOUD.md](docs/CLOUD.md) (Polish); the decisions and
+sources are in the [cloud deployment spec](.ai/specs/2026-11-12-cloud-deployment.md).
+
 ## Optional Claude narrative
 
 The default command is strictly offline even when environment credentials exist.
