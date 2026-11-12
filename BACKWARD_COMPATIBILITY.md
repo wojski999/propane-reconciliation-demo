@@ -44,3 +44,11 @@ make check and foundation-smoke-report remain unchanged; CI additionally exports
 business-evidence-report from the real clean-scenario E2E test. No runtime dependency,
 persistent SQLite format or migration is introduced. The internal KPI/report JSON is
 versioned with run contract/rule/policy metadata, not a promised external API.
+
+Cloud deployment readiness (2026-11-12) adds a container image, CloudFormation and
+Bicep templates, Make targets `container-smoke`, `validate-infra`, `deploy-*` and
+`destroy-*`, a `Container` workflow (jobs `smoke`, `infra`, `publish` on main) and a
+manual `Deploy demo` workflow. Application code, both CLIs, their exits and artifacts,
+`make check`, the `check` job and existing artifact names are unchanged. The image
+tag `ghcr.io/wojski999/propane-reconciliation-demo:main` and immutable `sha-<commit>`
+tags are new deployment contracts; the served files are the business CLI output.

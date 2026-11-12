@@ -155,3 +155,16 @@ def test_make_targets_use_the_committed_templates():
         assert re.search(rf"^{target}:$", makefile, flags=re.MULTILINE)
     assert "--template-file deploy/aws/template.json" in makefile
     assert "--template-file deploy/azure/main.bicep" in makefile
+
+
+def test_oidc_trust_is_bound_to_this_repository_environment():
+    subject = "repo:wojski999/propane-reconciliation-demo:environment:cloud-deploy"
+    assert "environment: cloud-deploy" in read(".github/workflows/deploy.yml")
+    (statement,) = json.loads(read("deploy/aws/github-trust-policy.json"))["Statement"]
+    condition = statement["Condition"]["StringEquals"]
+    assert condition["token.actions.githubusercontent.com:sub"] == subject
+    assert condition["token.actions.githubusercontent.com:aud"] == "sts.amazonaws.com"
+    assert statement["Action"] == "sts:AssumeRoleWithWebIdentity"
+    credential = json.loads(read("deploy/azure/github-federated-credential.json"))
+    assert credential["subject"] == subject
+    assert credential["audiences"] == ["api://AzureADTokenExchange"]

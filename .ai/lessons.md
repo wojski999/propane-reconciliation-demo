@@ -15,3 +15,4 @@ when a failed check, review finding or repeated mistake teaches a reusable lesso
 
 - [Delivery gates](lessons/2026-11-05-delivery-gates.md): adversarial review, native PR normalization and verified bounded observers.
 - [Portable QA evidence](lessons/2026-11-05-portable-qa-evidence.md): repository-relative tool paths, existing targets and host-path checks before public delivery.
+- [Container and IaC validation](lessons/2026-11-12-container-and-iac-validation.md): explicit file modes in images, Bicep warnings as errors, negative validator checks.
