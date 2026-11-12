@@ -1,0 +1,26 @@
+{
+  "Name": "Propane Demo Deployer",
+  "IsCustom": true,
+  "Description": "Deploy and remove the propane demo Container App in one resource group.",
+  "Actions": [
+    "Microsoft.Resources/subscriptions/resourceGroups/read",
+    "Microsoft.Resources/deployments/read",
+    "Microsoft.Resources/deployments/write",
+    "Microsoft.Resources/deployments/delete",
+    "Microsoft.Resources/deployments/validate/action",
+    "Microsoft.Resources/deployments/operations/read",
+    "Microsoft.Resources/deployments/operationstatuses/read",
+    "Microsoft.App/managedEnvironments/read",
+    "Microsoft.App/managedEnvironments/write",
+    "Microsoft.App/managedEnvironments/delete",
+    "Microsoft.App/managedEnvironments/join/action",
+    "Microsoft.App/containerApps/read",
+    "Microsoft.App/containerApps/write",
+    "Microsoft.App/containerApps/delete",
+    "Microsoft.App/locations/*/read"
+  ],
+  "NotActions": [],
+  "DataActions": [],
+  "NotDataActions": [],
+  "AssignableScopes": ["/subscriptions/SUBSCRIPTION_ID/resourceGroups/propane-reconciliation-demo"]
+}

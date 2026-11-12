@@ -1,0 +1,34 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ManageDemoStackOnly",
+      "Effect": "Allow",
+      "Action": [
+        "cloudformation:CreateChangeSet",
+        "cloudformation:DeleteChangeSet",
+        "cloudformation:DeleteStack",
+        "cloudformation:DescribeChangeSet",
+        "cloudformation:DescribeStackEvents",
+        "cloudformation:DescribeStacks",
+        "cloudformation:ExecuteChangeSet",
+        "cloudformation:GetTemplateSummary"
+      ],
+      "Resource": "arn:aws:cloudformation:*:*:stack/propane-reconciliation-demo/*"
+    },
+    {
+      "Sid": "LightsailContainerServiceHandler",
+      "Effect": "Allow",
+      "Action": [
+        "lightsail:CreateContainerService",
+        "lightsail:CreateContainerServiceDeployment",
+        "lightsail:DeleteContainerService",
+        "lightsail:GetContainerServices",
+        "lightsail:TagResource",
+        "lightsail:UntagResource",
+        "lightsail:UpdateContainerService"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

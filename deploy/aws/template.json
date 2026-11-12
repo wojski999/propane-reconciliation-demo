@@ -1,0 +1,48 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Propane reconciliation demo (synthetic data) on an Amazon Lightsail container service with a default HTTPS endpoint.",
+  "Parameters": {
+    "Image": {
+      "Type": "String",
+      "Description": "Public container image reference, for example ghcr.io/OWNER/REPO:main.",
+      "AllowedPattern": "^[a-z0-9.-]+/[a-z0-9._/-]+(:[A-Za-z0-9._-]+)?(@sha256:[a-f0-9]{64})?$"
+    }
+  },
+  "Resources": {
+    "Demo": {
+      "Type": "AWS::Lightsail::Container",
+      "Properties": {
+        "ServiceName": "propane-reconciliation-demo",
+        "Power": "nano",
+        "Scale": 1,
+        "ContainerServiceDeployment": {
+          "Containers": [
+            {
+              "ContainerName": "web",
+              "Image": { "Ref": "Image" },
+              "Ports": [{ "Port": "8080", "Protocol": "HTTP" }]
+            }
+          ],
+          "PublicEndpoint": {
+            "ContainerName": "web",
+            "ContainerPort": 8080,
+            "HealthCheckConfig": {
+              "Path": "/healthz",
+              "SuccessCodes": "200",
+              "IntervalSeconds": 30,
+              "TimeoutSeconds": 5,
+              "HealthyThreshold": 2,
+              "UnhealthyThreshold": 3
+            }
+          }
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "Url": {
+      "Description": "Public HTTPS address of the demo.",
+      "Value": { "Fn::GetAtt": ["Demo", "Url"] }
+    }
+  }
+}

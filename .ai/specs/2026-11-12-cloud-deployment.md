@@ -91,9 +91,13 @@ tests can inspect it. Least-privilege AWS actions come from the resource handler
 schema of `AWS::Lightsail::Container`:
 https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-lightsail
 
-Destroy: AWS deletes the CloudFormation stack. Azure runs a Complete-mode
-deployment of an empty template into the dedicated resource group, which deletes
-every resource in it while the deployer stays scoped to that group.
+Destroy: AWS deletes the CloudFormation stack and waits for completion. Azure
+deletes the Container App, then its environment (explicit dependency order), then
+the deployment record, so the deployer stays scoped to the dedicated resource
+group. A Complete-mode empty deployment was rejected because it does not
+guarantee that the app is removed before its environment.
+Bicep reports unknown properties only as warnings, so `make validate-infra`
+treats any Bicep warning as a failure.
 
 ### GitHub Actions authentication: OIDC only
 
