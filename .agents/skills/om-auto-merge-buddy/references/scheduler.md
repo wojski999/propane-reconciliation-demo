@@ -32,6 +32,12 @@ launch/crash result remains protected until its work is proved stopped.
 This prevents stale actors from mutating the same PR, while allowing unrelated
 PR work between instances. Separate clones still honor tracker claims.
 
+At queue startup, apply `references/stalled-claims.md` before admission, and
+repeat its cheap check when a protected claim is due. A dead reservation must
+not indefinitely hide its tracker claim from recovery. Recovery clears only
+the observed dead owner’s reservation after tracker cleanup succeeds; it does
+not reset attempts, findings, human gates or existing work products.
+
 Initialization/admission may create an unreserved row only while locked and
 after confirming no current reservation/claim; reserving an existing row requires
 its own token or the proven-dead recovery rule. Before every subsequent state
@@ -152,6 +158,13 @@ are reevaluated under this invocation’s current config/CLI, not their saved
 policy; retain automatic evidence so a native-only wait never repeats a stage. A block permits inspection only, never a
 stage retry until the existing unblock rules hold. Keep pending follow-up filing
 in the separate run handoff even after removing its PR from `activePrs`.
+
+For a `host-review-required` reason, keep the saved head, target and refusal
+evidence. At a due check, compare the relevant native review and effective
+merge authority under `references/automerge-now.md` → Host review protection.
+Elapsed time alone does not make this item actionable. If no relevant change
+can be verified, keep the wait. A change in head, target or item policy goes
+back through the applicable gates and evidence reconciliation.
 
 With a nonempty active list (except this invocation’s explicit reset admission), check due tracked PRs first, most recently worked
 first (PR number breaks ties), including completed CI found at entrance. Then
@@ -436,7 +449,7 @@ it must not reset that PR’s clock or restore its old queue position.
 
 After all three signals and the resolved independent-review policy are freshly
 verified, **before** either prepare/merge action, checkpoint `readyAt` plus
-`readyHead` and a canonical `readyPolicy` identity (target, independent-review
+`readyHead` and a canonical `readyPolicy` identity (target, two-label approval policy, independent-review
 requirement, risk and CI policies). Set it once while that exact readiness
 holds. Keep `firstReadyAt` as earliest observed readiness. Clear current
 `readyAt`/head/policy/duration on real invalidation; after successful revalidation

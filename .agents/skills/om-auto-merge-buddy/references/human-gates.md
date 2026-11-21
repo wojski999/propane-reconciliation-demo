@@ -3,7 +3,9 @@
 Apply these gates before bootstrap/reconciliation, before and after each stage,
 after a replacement/retarget, and immediately before either finish action.
 They outrank every signal, QA routing preference, `--force`, CI waiver and host
-protection bypass. Read fresh tracker facts; a saved ready record is not permission.
+protection bypass. Read fresh tracker facts. Always apply §1. When both
+`automerge-now` and `automerge-force` are currently present, skip §§2–2c and
+use the automation-only approval checks in `references/automerge-now.md`.
 
 ## Gate map
 
@@ -15,11 +17,12 @@ adapting this skill starts in one place. The detail lives where noted.
 | Human veto | `qa-failed`, `do-not-merge` or an unresolved human QA NO-GO | Section 1 |
 | Protected areas | Migrations, money, permissions or tenant isolation, architecture, backward-incompatible changes | Section 2 |
 | Human-only by policy | A configured label or author | Section 2b |
+| Human-QA marker | `qaGateLabel` names a narrower label than `needs-qa` | Section 2c |
 | Independent review | Required native approval is missing | `references/independent-review.md` |
 | QA routing | Required approval is missing or coverage has gaps | `references/qa-routing.md` |
 | Risk override limits | What `--force` and `automerge-force` may skip | `references/risk-override.md` |
 | CI | A check is failing or pending; proved baseline waivers | `references/signals.md`, `references/ci-baseline.md` |
-| Off switch | The queue label is gone or `automerge-blocked` is set; only a verified approval-only buddy block permits cheap CI recovery | `SKILL.md` rules, `references/ci-approval.md` |
+| Off switch | Neither authorization label remains or `automerge-blocked` is set; only a verified approval-only buddy block permits cheap CI recovery | `SKILL.md` rules, `references/ci-approval.md` |
 
 To adapt the areas to another product, edit the area table in section 2 and
 the configuration in section 2b. Keep the stop and release rules unchanged.
@@ -33,7 +36,8 @@ relevant author identity/permission means `waiting-human`, never guessed clearan
 
 - `qa-failed` or `do-not-merge` is a hard stop by itself. No automatic FAIL report,
   `needs-qa`, current-head pin or author lookup is required for these labels.
-  Preserve the existing SDLC hard stops `blocked` and active manual-testing `qa` too.
+  Preserve `blocked` in both policies. Active manual-testing `qa` stops the visit
+  under both policies, even with current automated QA evidence.
 - An unresolved human QA **NO-GO** is a hard stop without any label. Accept a
   case-insensitive explicit verdict such as `QA verdict: NO-GO` or an unambiguous
   human QA rejection of this PR with `NO-GO` (also `NO GO`/`NO_GO`). Verify a human
@@ -54,7 +58,10 @@ relevant author identity/permission means `waiting-human`, never guessed clearan
   deletion, an edit erasing the verdict, or unavailable history is not clearance.
 - Labels must also be removed by a human before resuming; resolving a comment
   cannot bypass a remaining hard-stop label. Never remove those labels, use
-  `set_pipeline_label`, or invoke autofix/QA to clear a veto. Do not add an extra
+  `set_pipeline_label`, or invoke autofix/QA to clear a veto. Fixing the reported
+  QA findings is allowed and expected, because it does not clear the veto. Run
+  stage 1 once on that head with the QA findings `INHERITED`, request a re-test,
+  and still end `waiting-human` (`references/qa-verdicts.md`). Do not add an extra
   `automerge-blocked` label merely for this human wait.
 
 On a veto, invalidate QA, remove `automerge-signal-2-qa`, record
@@ -75,11 +82,11 @@ always treated as `risk-high` for the gates, even without a risk label:
 
 | Area | Examples to inspect |
 |---|---|
-| Migrations | Added/modified executable schema or data migrations, migration runners and destructive/backfill behavior |
-| Permissions or tenant isolation | Authorization policies/checks, roles/grants, scope filters, tenant context propagation, cross-tenant reads/writes and bypass paths |
-| Money | Prices/totals, currencies/rounding, charges/payments, refunds, billing, balances, payouts and financial transaction retry/idempotency |
-| Architecture changes | Substantive changes to service/module boundaries, persistence or state ownership, execution/deployment topology, shared extension contracts, or cross-component communication and dependency direction |
-| Backward-incompatible changes | Removing, renaming or incompatibly changing published APIs/events, CLI flags, config/serialized formats, persisted data contracts, supported integrations, or externally relied-on behavior |
+| Migrations | Migrations that rewrite, delete, backfill or move existing rows, or drop or rename columns and tables, plus changes to migration runners. An additive migration (new table, new nullable column, new index) with up/down evidence is not protected |
+| Permissions or tenant isolation | Changes that widen or remove access control: a new or loosened authorization check, a grant or feature given by default, a new cross-tenant or cross-organization read or write path, a removed or bypassed scope filter, changed tenant context propagation |
+| Money | Changes to how amounts are computed or moved: prices and totals, currencies and rounding, charges and payments, refunds, billing, balances, payouts, financial retry and idempotency. Labels, display formatting and hiding amounts from a role are not money changes |
+| Architecture changes | Substantive changes to service/module boundaries, persistence or state ownership, execution/deployment topology, shared extension contracts, or cross-component communication and dependency direction. New code or refactors inside one module's existing boundaries are not |
+| Backward-incompatible changes | Removing, renaming or changing the shape of published APIs/events, CLI flags, config/serialized formats, persisted data contracts or supported integrations, or changing documented successful behavior. A new refusal for input that was already invalid, a bound on pagination or size, or stricter validation of malformed input is not backward-incompatible |
 
 A local behavior-preserving refactor within existing boundaries is not an
 architecture change by itself. An additive API is not backward-incompatible
@@ -87,6 +94,13 @@ unless existing consumers or supported behavior stop working. Read the repo's
 architecture/design decisions, public contracts and `BACKWARD_COMPATIBILITY.md`
 when present; inspect affected consumers rather than trusting a PR title, label
 or an author's assertion that the change is compatible.
+
+**Tightening is not widening.** A change that only narrows what is allowed
+(fails closed, scopes a read further, rejects more input, removes data from a
+response) is not protected on that ground. It stays on the automatic route with
+strict review and complex QA that must include the negative cases (wrong tenant,
+wrong organization, missing feature, malformed input). When it is unclear whether
+a change widens or narrows access, treat it as protected.
 
 A filename or incidental mention alone is not proof; explain the concrete changed
 behavior and cite paths/lines. Unknown/truncated diff or uncertain impact cannot
@@ -112,6 +126,20 @@ A bot or `om-auto-qa-pr` self-sign-off, including one posted under a human accou
 cannot satisfy this gate. Changed heads require a fresh human pin or an explicit
 human scope assessment with a fresh `QA head:`; automatic carry-forward is insufficient.
 
+**Evidence-review sign-off.** A verified human QA reviewer may sign off by
+reviewing a completed `om-auto-qa-pr` PASS on the current head that covers the
+protected behavior and its negative cases, and by personally re-running at least
+one negative case. The note names the reviewed evidence and the re-run case and
+carries `QA head:`. It is a human sign-off and satisfies this gate; the automatic
+PASS alone still does not.
+
+**Clean backports.** A PR targeting a release branch inherits the human QA
+sign-off and any technical approval of its origin PR when the origin is merged
+into the default branch with that approval, and the backport carries the same
+changes apart from clean context differences. Record the origin PR and the
+inherited sign-off URLs. Conflict resolutions, extra commits or differing hunks
+need fresh human QA for those hunks.
+
 ### Additional architecture and compatibility decision
 
 For architecture or backward-incompatible changes, require **explicit human
@@ -133,7 +161,8 @@ compatibility path remains a blocker under `BACKWARD_COMPATIBILITY.md` and
 When no compatibility policy exists, require a documented transition plan and
 explicit maintainer acceptance rather than silently permitting the break.
 A changed head or target requires fresh applicable human approval/assessment;
-never automatically carry a technical decision to a new revision or target.
+never automatically carry a technical decision to a new revision or target,
+except a clean backport as defined in section 2.
 
 Missing technical approval or required compatibility evidence ends
 `waiting-human`, invalidates QA/current readiness and removes the QA signal as
@@ -163,10 +192,26 @@ as new features or UX changes. Two configuration keys name it:
 Such a PR follows section 2's human QA rule: QA cannot be `n/a`, an automatic
 PASS and `qa-self-verified` are supporting evidence only, and it needs
 `qa-approved` with a pinned `QA head:` human sign-off. `--force` and
-`automerge-force` cannot waive it. It needs no technical approval unless
+`automerge-force` cannot waive it without `automerge-now`. It needs no technical approval unless
 section 2 also applies. Record `human-only: <label | author>` in the status
 reason. Read labels fresh on every visit; removing the label returns the PR to
 the ordinary route, while an author entry applies for as long as it is configured.
+
+## 2c. Mark human-QA work with the gate label
+
+When `qaGateLabel` names a label other than `needs-qa`, that label is how human
+testers find the work sections 2 and 2b reserve for them. On every visit, after
+classifying the current head, apply it through the guarded `apply_label` to a PR
+that falls under section 2 or 2b, and add the reason to the existing status
+comment (`human-qa label: <area | human-only label | author>`). Remove it only
+when this skill applied it and a later classification of the current head finds
+that neither section applies; never remove one a human applied.
+
+A missing label never waives sections 2 and 2b. A present one is a human-QA
+request whoever applied it: signal 2 then needs the pinned human QA sign-off of
+section 2 (`qa-approved` plus a verified human reviewer's `QA head:` note), and a
+completed automatic PASS or an `om-auto-qa-pr` self-sign-off never satisfies it.
+Never apply or remove `qaReadyLabel`; the repository keeps it current.
 
 ## 3. Make the stop visible in the existing status comment
 
@@ -208,4 +253,10 @@ Never leave `Risk checks: skipped` or `ready` describing a protected PR.
 | Breaking public contract, `--force`, human QA PASS, missing required deprecation/migration path | Continue human wait; compatibility blocker cannot be waived by QA |
 | Architecture/compatibility change, all pinned human approvals and required compatibility evidence, no veto | Eligible for normal strict CR/CI and finish checks |
 | Ordinary fix, no veto or protected behavior | Existing automatic path remains available |
+| Fail-closed tightening of a scope or permission check, negative cases covered by complex QA | Automatic path; no personal human QA |
+| New 409 or validation error for input that was already invalid | Not backward-incompatible; no technical approval |
+| Additive nullable column migration with up/down evidence | Not protected on migration grounds |
+| Protected area, automatic PASS covering negative cases, human reviewed it and re-ran one negative case with `QA head:` | Human gate satisfied |
+| Clean backport of a merged origin with human sign-off | Inherits the origin's sign-off; record both URLs |
+| Backport with conflict resolution in a protected area | Fresh human QA for the resolved hunks |
 | Veto arrives during a stage or before finish/replacement | Recheck and stop; invalidate QA/readiness |
