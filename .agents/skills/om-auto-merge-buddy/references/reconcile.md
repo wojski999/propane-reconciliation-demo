@@ -1,13 +1,13 @@
 # Entrance reconciliation — judge evidence and the changes since it
 
-Apply `references/human-gates.md` first. Human vetoes stop work; protected-area changes require strict risk checks and pinned human QA. Automatic PASS reuse, `n/a`, self-sign-off and automatic routing below never bypass these gates.
+Resolve fresh labels first and apply `references/human-gates.md`. For the two-label pair use `references/automerge-now.md` for CR, QA and CI, including the exact-head covered auto-QA requirement. The ordinary approval decisions below apply to other items.
 
 Run this procedure at the entrance of **every visit**, before choosing a stage,
 even when all three signal labels and a same-head status record already exist.
 Repeat it after a stage moves the head, after a replacement or retarget, and at
 the final gate for any evidence or revision that changed during the visit.
 
-Resolve fresh per-item mode/risk under `references/item-policy.md` before evaluating evidence, including after label-only changes on an unchanged head.
+Resolve fresh per-item mode/risk under `references/item-policy.md` before evaluating evidence, including after label-only changes on an unchanged head. Retain the prior evidence provenance until you finish revalidating under the new policy. For a change in the two-label policy, use `references/automerge-now.md` before reusing a signal or readiness.
 
 ## 1. Establish facts before using labels
 
@@ -66,7 +66,9 @@ before launching a stage. For **each signal**, record:
 - `retain`, `carry-forward` or `invalidate`, its concrete reason and the next action (`delta review`, affected QA scenarios, current-head CI reading, or waiting-human).
 
 Rewrite held records to the assessed current head/target with the source link
-and carry-forward reason, and remove invalidated signal labels immediately.
+and carry-forward reason. Publish the verified labels and the same status record
+together under `references/signals.md`, restoring any missing label backed by
+current evidence and removing invalidated labels immediately.
 Keep a missing-evidence or unknown-scope reason visible. The ladder starts at
 the first **actually missing** signal; it never reruns already-supported work
 solely because a label exists, and never skips work solely because one exists.
